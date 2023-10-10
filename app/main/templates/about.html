@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <h3>About</h3>
+    <br>
+    <h4>The app</h4>
+    <div class="text-justified">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p>
+                    This is the Warranty App.
+                </p>
+
+                <p class="mini-text-xsmall">
+                    App version history: <br>
+                    {% for version in versions %}
+                        &nbsp;&nbsp;&nbsp;{{ version }}<br>
+                    {% endfor %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <h4>The author</h4>
+    <div class="text-justified">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <table class="table table-responsive text-centered no-border">
+                    <tbody>
+                        <tr>
+                            <td class="col-sm-1 no-top-border">
+                                <img src="{{ url_for('main.static', filename='pictures/tomasmuhr.png') }}" 
+                                height=75px" width="75px"><br>
+                                Tomáš Mühr
+                            </td>
+                            <td class="col-sm-5 no-top-border">
+                                <p>
+                                    Currently working as a GIS Specialist with interest in Python 
+                                    programming language.<br>
+                                    Thinking about moving his carrer on to use 
+                                    Python programming on a more regular basis.
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    Discovered Python thanks to the ESRI ArcGIS software when seeking a way to automate 
+                    tedious and repetitive GIS tasks and routines. Enjoys learning new things, e.g. by 
+                    making apps for fun.
+                </p>
+
+                <p>
+                    In his free time, he enjoys wandering in nature, riding a bike and playing and watching 
+                    sports. He also has a special love for playing board games, especially long and complex ones. 
+                </p>
+
+                <p>
+                    Feel free to visit his
+                    <a href="https://www.linkedin.com/in/tomas-muhr/" target="blank">LinkedIn</a> (registration required), 
+                    profile.
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+{% endblock app_content %}
