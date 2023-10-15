@@ -1,12 +1,12 @@
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
 from flask import Flask
-from config import DevelopmentConfig, TestingConfig
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+from app.config import get_config_mode
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -14,12 +14,16 @@ bootstrap = Bootstrap5()
 
 load_dotenv(".env")
 
-def create_app(config_class=TestingConfig):
+# Get config class
+config_class = get_config_mode()
+
+# Create app
+def create_app(config_class=config_class):
     app = Flask(__name__)
     
-    app.config.from_object(config_class)
+    app.config.from_object(config_class) 
    
-    db.init_app(app)
+    db.init_app(app) 
     migrate.init_app(app, db)
     bootstrap.init_app(app)
     
@@ -52,10 +56,10 @@ def register_extensions(app):
         "\n%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"))
 
     file_handler.setLevel(logging.INFO)
-    app.logger.addHandler(file_handler)
+    app.logger.addHandler(file_handler) 
     
     app.logger.setLevel(logging.INFO)
-    app.logger.info("Warranty_web startup")
-    app.logger.info(f"Running in {os.environ.get('FLASK_ENV')} mode")
+    app.logger.info("Warranty_web startup") 
+    app.logger.info(f"Running in {os.environ.get('FLASK_ENV')} mode") 
     
       
