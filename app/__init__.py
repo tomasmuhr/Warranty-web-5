@@ -14,8 +14,12 @@ bootstrap = Bootstrap5()
 
 load_dotenv(".env")
 
-# Get config class
-config_class = get_config_mode()
+# Check environment
+if os.environ.get("FLASK_ENV") == "production" and os.environ.get("FLASK_DEBUG") == "1":
+    exit("FLASK_DEBUG cannot be set to 1 in production mode")
+else:
+    # Get config class
+    config_class = get_config_mode()
 
 # Create app
 def create_app(config_class=config_class):
@@ -59,7 +63,8 @@ def register_extensions(app):
     app.logger.addHandler(file_handler) 
     
     app.logger.setLevel(logging.INFO)
-    app.logger.info("Warranty_web startup") 
-    app.logger.info(f"Running in {os.environ.get('FLASK_ENV')} mode") 
+    app.logger.info("Warranty-web startup") 
+    app.logger.info(f"App mode: {os.environ.get('FLASK_ENV')}")
+    app.logger.info(f"Debug mode: {os.environ.get('FLASK_DEBUG')}")
     
       

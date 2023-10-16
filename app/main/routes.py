@@ -9,9 +9,22 @@ def index():
 
 @main_bp.route("/about")
 def about():
-    # update also in footer
     versions = (
         "1.0 - initial version",
         )
     return render_template("about.html", title="About", versions=versions)
 
+
+@main_bp.route("/items")
+def items():
+    return render_template("items.html", title="Items")
+
+
+@main_bp.route("/shops")
+def shops():
+    return render_template("shops.html", title="Shops")
+
+
+@main_bp.route("/database")
+def database():
+    return render_template("database.html", title="Database")
