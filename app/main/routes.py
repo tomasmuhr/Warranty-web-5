@@ -1,8 +1,9 @@
 from flask import render_template
 from app.main import main_bp
+from app.main.forms import AddShopForm
 
-@main_bp.route("/", methods=['GET', 'POST'])
-@main_bp.route("/index", methods=['GET', 'POST'])
+@main_bp.route("/", methods=['GET'])
+@main_bp.route("/index", methods=['GET'])
 def index():
     return render_template("index.html", title="Home")
     
@@ -20,9 +21,13 @@ def items():
     return render_template("items.html", title="Items")
 
 
-@main_bp.route("/shops")
+@main_bp.route("/shops", methods=['GET', 'POST'])
 def shops():
-    return render_template("shops.html", title="Shops")
+    add_shop_form = AddShopForm()
+    
+    return render_template("shops.html",
+                           title="Shops",
+                           add_shop_form=add_shop_form)
 
 
 @main_bp.route("/database")

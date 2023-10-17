@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import TextAreaField, SubmitField
+from wtforms import StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired
 
 
@@ -9,11 +9,15 @@ from wtforms.validators import DataRequired
 #     submit = SubmitField("Send message", name="send_message")
     
 
-class ShopForm(FlaskForm):
-    pass
-    # TODO
+class AddShopForm(FlaskForm):
+    name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
+    description = TextAreaField("Shop description")
+    street = StringField("Street*", validators=[DataRequired()])
+    city = StringField("City*", validators=[DataRequired()])
+    zip_code = StringField("Zip Code*", validators=[DataRequired()])
+    submit = SubmitField("Add shop", name="add_shop")
     
 
-class WarrantyForm(FlaskForm):
+class AddItemForm(FlaskForm):
     pass
     # TODO

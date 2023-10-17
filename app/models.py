@@ -70,6 +70,7 @@ class Settings(db.Model):
 class Shop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    description = db.Column(db.String(255))
     street = db.Column(db.String(150))
     city = db.Column(db.String(64))
     zip_code = db.Column(db.String(10))
