@@ -70,23 +70,22 @@ class Settings(db.Model):
 class Shop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    description = db.Column(db.String(255))
     street = db.Column(db.String(150))
     city = db.Column(db.String(64))
     zip_code = db.Column(db.String(10))
+    items = db.relationship("Item", backref="shop")
 
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    shop_id = db.Column(db.Integer, db.ForeignKey("shop.id", name="fk_item_shop_id"))
     receipt_nr = db.Column(db.String(20))
     amount = db.Column(db.Integer)
     price_per_piece = db.Column(db.Integer)
     warranty_months = db.Column(db.Integer)
     comment = db.Column(db.String(255))
-    dates_id = db.Column(db.Integer, db.ForeignKey("dates.id", name="fk_item_dates_id"))
-
+    shop_id = db.Column(db.Integer, db.ForeignKey("shop.id", name="fk_item_shop_id"))
+    dates = db.relationship("Dates", backref="item")
 
 class Dates(db.Model):
     id = db.Column(db.Integer, primary_key=True)

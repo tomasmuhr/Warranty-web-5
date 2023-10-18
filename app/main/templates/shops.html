@@ -34,42 +34,27 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col">Column 1</th>
-                    <th scope="col">Column 2</th>
-                    <th scope="col">Column 3</th>
-                    <th scope="col">Column 4</th>
-                    <th scope="col">Column 5</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Street</th>
+                    <th scope="col">City</th>
+                    <th scope="col">Zip code</th>
+                    <th scope="col">Items</th>
+                    <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr class="">
-                    <td scope="row">R1C1</td>
-                    <td>R1C2</td>
-                    <td>R1C3</td>
-                    <td>R1C4</td>
-                    <td>R1C5</td>
-                </tr>
-                <tr class="">
-                    <td scope="row">Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                </tr>
-                <tr class="">
-                    <td scope="row">Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                </tr>
-                <tr class="">
-                    <td scope="row">Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                    <td>Item</td>
-                </tr>
+                {% for shop, items_count in shop_rows %}
+                    <tr>
+                        <td>{{ shop.id }}</td>
+                        <td>{{ shop.name }}</td>
+                        <td>{{ shop.street }}</td>
+                        <td>{{ shop.city }}</td>
+                        <td>{{ shop.zip_code }}</td>
+                        <td>{{ items_count }}</td>
+                        <td>actions here</td>
+                    </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>

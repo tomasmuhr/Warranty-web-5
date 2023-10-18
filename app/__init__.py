@@ -1,3 +1,4 @@
+from pathlib import Path
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
 from flask import Flask
@@ -14,12 +15,14 @@ bootstrap = Bootstrap5()
 
 load_dotenv(".env")
 
+
 # Check environment
 if os.environ.get("FLASK_ENV") == "production" and os.environ.get("FLASK_DEBUG") == "1":
     exit("FLASK_DEBUG cannot be set to 1 in production mode")
 else:
-    # Get config class
+    # Get config class for create_app() function
     config_class = get_config_mode()
+
 
 # Create app
 def create_app(config_class=config_class):
@@ -32,12 +35,12 @@ def create_app(config_class=config_class):
     bootstrap.init_app(app)
     
     register_blueprints(app)
-    register_extensions(app)
+    register_logging(app)
+    configure_database(app)
     
     return app
 
 
-# Helper functions
 def register_blueprints(app):
     from app.errors import errors_bp
     app.register_blueprint(errors_bp)
@@ -46,18 +49,20 @@ def register_blueprints(app):
     app.register_blueprint(main_bp)
     
 
-# Extension functions
-def register_extensions(app):
-    # File logging
-    if not os.path.exists("logs"):
-        os.mkdir("logs")
+def register_logging(app):
+    # if not os.path.exists("logs"):
+        # os.mkdir("logs")
+        
+    logs_path = Path("logs")
+    if not logs_path.exists():
+        logs_path.mkdir()
 
     file_handler = RotatingFileHandler("logs/warranty_web.log",
                                         maxBytes=10240,
                                         backupCount=10)
 
     file_handler.setFormatter(logging.Formatter(
-        "\n%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"))
+        "%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]"))
 
     file_handler.setLevel(logging.INFO)
     app.logger.addHandler(file_handler) 
@@ -66,5 +71,13 @@ def register_extensions(app):
     app.logger.info("Warranty-web startup") 
     app.logger.info(f"App mode: {os.environ.get('FLASK_ENV')}")
     app.logger.info(f"Debug mode: {os.environ.get('FLASK_DEBUG')}")
+    app.logger.info(f"Database URI: {app.config['SQLALCHEMY_DATABASE_URI']}")
     
-      
+    
+def configure_database(app):
+    with app.app_context():
+        db.create_all()
+        
+    @app.teardown_request
+    def remove_database_session(exception=None):
+        db.session.remove()

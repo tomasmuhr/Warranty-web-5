@@ -20,7 +20,6 @@ class Config:
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_RECYCLE = 180
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 180}
-    DEFAULT_COLOR_THEME = 1
 
 
 class DevelopmentConfig(Config):

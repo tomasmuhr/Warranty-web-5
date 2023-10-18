@@ -11,7 +11,6 @@ from wtforms.validators import DataRequired
 
 class AddShopForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
-    description = TextAreaField("Shop description")
     street = StringField("Street*", validators=[DataRequired()])
     city = StringField("City*", validators=[DataRequired()])
     zip_code = StringField("Zip Code*", validators=[DataRequired()])
