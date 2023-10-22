@@ -64,7 +64,7 @@ from app import db
 
 class Settings(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    dark_mode = db.Column(db.Integer())
+    dark_mode = db.Column(db.Integer)
     
 
 class Shop(db.Model):
