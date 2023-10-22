@@ -1,4 +1,5 @@
 import csv
+from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
@@ -8,9 +9,10 @@ from flask_migrate import Migrate
 import logging
 from logging.handlers import RotatingFileHandler
 import os
-
 from sqlalchemy import column
 from app.config import get_config_mode
+from dateutil.relativedelta import relativedelta
+
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -79,10 +81,13 @@ def configure_database(app):
     with app.app_context():
         db.create_all()
         
+        # Load fake data
         app_mode = os.environ.get("FLASK_ENV")
+        
         if app_mode == "development":
+            # FAKE SHOPS
             db_shops_count = db.session.query(column("Shop")).count()
-            
+        
             if not db_shops_count > 1:
                 csv_path = Path("app/data/fake_shops.csv")
                 
@@ -106,11 +111,65 @@ def configure_database(app):
                     app.logger.info("Fake shops ready.")
             else:
                 app.logger.info("Fake shops in database already filled.")
-
+                
+            # FAKE ITEMS
+            db_items_count = db.session.query(column("Item")).count()
+            
+            if not db_items_count > 1:
+                csv_path = Path("app/data/fake_items.csv")
+                
+                if csv_path.exists():
+                    with open(csv_path, "r", encoding="utf-8") as f:
+                        csv_reader = csv.DictReader(f)
+                        
+                        for row in csv_reader:
+                            new_item = Item(name=row["name"],
+                                            receipt_nr=row["receipt_nr"],
+                                            amount=row["amount"],
+                                            price_per_piece=row["price"],
+                                            comment=row["comment"],
+                                            shop_id=row["shop_id"])
+                            
+                            db.session.add(new_item)
+                            
+                        db.session.commit()
+                        
+                    # delete abundant items
+                    db.session.query(Item).filter(Item.id > 46).delete()
+                    db.session.commit()
+                    app.logger.info("Fake items ready.")
+                    
+            # FAKE DATES
+            db_dates_count = db.session.query(column("Dates")).count()
+            
+            if not db_dates_count > 1:
+                csv_path = Path("app/data/fake_dates.csv")
+                
+                if csv_path.exists():
+                    with open(csv_path, "r", encoding="utf-8") as f:
+                        csv_reader = csv.DictReader(f)
+                        
+                        for row in csv_reader:
+                            p_date = datetime.strptime(row["purchase_date"], "%Y-%m-%d")
+                            
+                            new_dates = Dates(item_id=row["item_id"],
+                                              warranty_months=row["warranty_months"],
+                                              purchase_date = p_date,
+                                              expiration_date=p_date + relativedelta(months=int(row["warranty_months"])))
+                            
+                            db.session.add(new_dates)
+                            
+                        db.session.commit()
+                    
+                    # delete abundant dates
+                    db.session.query(Dates).filter(Dates.id > 46).delete()
+                    db.session.commit()
+                    app.logger.info("Fake dates ready.")
+                    
 
     @app.teardown_request
     def remove_database_session(exception=None):
         db.session.remove()
 
 
-from app.models import Shop
+from app.models import Dates, Item, Shop

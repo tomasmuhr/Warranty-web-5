@@ -81,7 +81,7 @@ class Item(db.Model):
     name = db.Column(db.String(64))
     receipt_nr = db.Column(db.String(20))
     amount = db.Column(db.Integer)
-    price_per_piece = db.Column(db.Integer)
+    price_per_piece = db.Column(db.Float)
     comment = db.Column(db.String(255))
     shop_id = db.Column(db.Integer, db.ForeignKey("shop.id", name="fk_item_shop_id"))
     dates = db.relationship("Dates", backref="item")

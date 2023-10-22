@@ -4,6 +4,7 @@ __aliens-web
 users.db
 app/user/databases/
 app/_backup/
+logs/
 
 
 # Byte-compiled / optimized / DLL files
