@@ -1,3 +1,4 @@
+import csv
 from pathlib import Path
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
@@ -7,6 +8,8 @@ from flask_migrate import Migrate
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+
+from sqlalchemy import column
 from app.config import get_config_mode
 
 db = SQLAlchemy()
@@ -50,10 +53,8 @@ def register_blueprints(app):
     
 
 def register_logging(app):
-    # if not os.path.exists("logs"):
-        # os.mkdir("logs")
-        
     logs_path = Path("logs")
+    
     if not logs_path.exists():
         logs_path.mkdir()
 
@@ -78,6 +79,38 @@ def configure_database(app):
     with app.app_context():
         db.create_all()
         
+        app_mode = os.environ.get("FLASK_ENV")
+        if app_mode == "development":
+            db_shops_count = db.session.query(column("Shop")).count()
+            
+            if not db_shops_count > 1:
+                csv_path = Path("app/data/fake_shops.csv")
+                
+                if csv_path.exists():
+                    with open(csv_path, "r", encoding="utf-8") as f:
+                        csv_reader = csv.DictReader(f)
+                        
+                        for row in csv_reader:
+                            new_shop = Shop(name=row["name"],
+                                            street=row["street"],
+                                            city=row["city"],
+                                            zip_code=row["zip"])
+                            
+                            db.session.add(new_shop)
+                            
+                        db.session.commit()
+                        
+                    # delete abundant shops
+                    db.session.query(Shop).filter(Shop.id > 20).delete()
+                    db.session.commit()
+                    app.logger.info("Fake shops ready.")
+            else:
+                app.logger.info("Fake shops in database already filled.")
+
+
     @app.teardown_request
     def remove_database_session(exception=None):
         db.session.remove()
+
+
+from app.models import Shop

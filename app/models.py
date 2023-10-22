@@ -82,7 +82,6 @@ class Item(db.Model):
     receipt_nr = db.Column(db.String(20))
     amount = db.Column(db.Integer)
     price_per_piece = db.Column(db.Integer)
-    warranty_months = db.Column(db.Integer)
     comment = db.Column(db.String(255))
     shop_id = db.Column(db.Integer, db.ForeignKey("shop.id", name="fk_item_shop_id"))
     dates = db.relationship("Dates", backref="item")
@@ -90,6 +89,7 @@ class Item(db.Model):
 class Dates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("item.id", name="fk_dates_item_id"))
+    warranty_months = db.Column(db.Integer)
     purchase_date = db.Column(db.Date())
     expiration_date = db.Column(db.Date())
 
