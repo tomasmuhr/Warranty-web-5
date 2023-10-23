@@ -8,24 +8,7 @@
         </button>
 
         <!-- Modal -->
-        <div class="modal fade" id="addShop" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="shop-details">Shop Details</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        {{ render_form(add_shop_form) }}
-                    </div>
-                    <br>
-                    <div class="text-danger">
-                        * values are required
-                    </div>
-                    <br>
-                </div>
-            </div>
-        </div>
+        {% include '_shops_modal_add.html' %}
     </div>
 
     <hr>

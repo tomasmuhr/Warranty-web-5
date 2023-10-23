@@ -1,9 +1,11 @@
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from app.main import main_bp
-from app.main.forms import AddShopForm
-from app.models import Item, Shop
+from app.main.forms import AddItemForm, AddShopForm
+from app.models import Dates, Item, Shop
 from app import db
+from dateutil.relativedelta import relativedelta
+
 
 @main_bp.route("/", methods=['GET'])
 @main_bp.route("/index", methods=['GET'])
@@ -21,7 +23,43 @@ def about():
 
 @main_bp.route("/items")
 def items():
-    return render_template("items.html", title="Items")
+    add_item_form = AddItemForm()
+
+    if "add_item" in request.form and add_item_form.validate_on_submit():
+        item = Item(name=add_item_form.name.data,
+                    receipt_nr=add_item_form.receipt_nr.data,
+                    amount=add_item_form.amount.data,
+                    price_per_piece=add_item_form.price_per_piece.data,
+                    comment=add_item_form.comment.data,
+                    shop_id=add_item_form.shop.data)
+        
+        dates = Dates(item_id=item.id,
+                      warranty_months=add_item_form.warranty_months.data,
+                      purchase_date=add_item_form.purchase_date.data,
+                      expiration_date=add_item_form.purchase_date.data + \
+                          relativedelta(months=add_item_form.warranty_months.data))
+        
+        item.dates.append(dates)
+        
+        
+        db.session.add(item)
+        db.session.commit()
+        
+        flash("Item successfully added!", category="success")
+        
+        return redirect(url_for("main.items"))
+
+    item_rows = db.session \
+        .query(Item, Dates) \
+        .outerjoin(Dates) \
+        .all()
+        
+    return render_template("items.html",
+                           title="Items",
+                           add_item_form=add_item_form,
+                           item_rows=item_rows)
+
+
 
 
 @main_bp.route("/shops", methods=['GET', 'POST'])

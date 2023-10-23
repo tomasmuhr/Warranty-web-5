@@ -1,9 +1,65 @@
 {% extends 'base.html' %}
+{% from 'bootstrap5/form.html' import render_form %}
 
 {% block app_content %}
     <div class="text-center">
-        <!-- <div class="row col-sm-6 col-sm-offset-3"> -->
-            <h3>Items</h3>
-        <!-- </div> -->
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#itemAdd">
+            Add Item
+        </button>
+
+        <!-- Modal -->
+        {% include '_items_modal_add.html' %}
     </div>
+
+    <hr>
+
+    <div class="table-responsive">
+        <table class="table table-sm table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Shop</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Comment</th>
+                    <th scope="col">Purchase Date</th>
+                    <th scope="col">Warranty Length</th>
+                    <th scope="col">Warranty Expiration</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item, dates in item_rows %}
+                    <tr>
+                        <td>{{ item.id }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.shop }}</td>
+                        <td>{{ item.price_per_piece }}</td>
+                        <td>{{ item.amount }}</td>
+                        <td>{{ item.comment }}</td>
+                        <td>{{ dates.purchase_date }}</td>
+                        <td>{{ dates.warranty_months }}</td>
+                        <td>{{ dates.expiration_date }}</td>
+                        <td>
+                            <!-- Edit button -->
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit">
+                                Edit
+                            </button>
+                            
+                            <!-- Delete button -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete">
+                                Delete
+                            </button>
+
+                            <!-- Modals -->
+                            {% include '_items_modal_edit.html' %}
+                            {% include '_items_modal_delete.html' %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
 {% endblock app_content %}
