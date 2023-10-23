@@ -87,8 +87,9 @@ def configure_database(app):
         if app_mode == "development":
             # FAKE SHOPS
             db_shops_count = db.session.query(column("Shop")).count()
+            app.logger.info(f"Fake shops count: {db_shops_count}")
         
-            if not db_shops_count > 1:
+            if db_shops_count <= 1:
                 csv_path = Path("app/data/fake_shops.csv")
                 
                 if csv_path.exists():
@@ -108,14 +109,15 @@ def configure_database(app):
                     # delete abundant shops
                     db.session.query(Shop).filter(Shop.id > 20).delete()
                     db.session.commit()
-                    app.logger.info("Fake shops ready.")
+                    app.logger.info("Fake shops filled.")
             else:
                 app.logger.info("Fake shops in database already filled.")
                 
             # FAKE ITEMS
             db_items_count = db.session.query(column("Item")).count()
+            app.logger.info(f"Fake items count: {db_items_count}")
             
-            if not db_items_count > 1:
+            if db_items_count <= 1:
                 csv_path = Path("app/data/fake_items.csv")
                 
                 if csv_path.exists():
@@ -137,12 +139,16 @@ def configure_database(app):
                     # delete abundant items
                     db.session.query(Item).filter(Item.id > 46).delete()
                     db.session.commit()
-                    app.logger.info("Fake items ready.")
+                    app.logger.info("Fake items filled.")
+                    
+            else:
+                app.logger.info("Fake items in database already filled.")
                     
             # FAKE DATES
             db_dates_count = db.session.query(column("Dates")).count()
+            app.logger.info(f"Fake dates count: {db_dates_count}")
             
-            if not db_dates_count > 1:
+            if db_dates_count <= 1:
                 csv_path = Path("app/data/fake_dates.csv")
                 
                 if csv_path.exists():
@@ -164,7 +170,10 @@ def configure_database(app):
                     # delete abundant dates
                     db.session.query(Dates).filter(Dates.id > 46).delete()
                     db.session.commit()
-                    app.logger.info("Fake dates ready.")
+                    app.logger.info("Fake dates filled.")
+                    
+            else:
+                app.logger.info("Fake dates in database already filled.")
                     
 
     @app.teardown_request

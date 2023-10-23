@@ -52,7 +52,21 @@
                         <td>{{ shop.city }}</td>
                         <td>{{ shop.zip_code }}</td>
                         <td>{{ items_count }}</td>
-                        <td>actions here</td>
+                        <td>
+                            <!-- Edit button -->
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit">
+                                Edit
+                            </button>
+                            
+                            <!-- Delete button -->
+                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete">
+                                Delete
+                            </button>
+
+                            <!-- Modals -->
+                            {% include '_shops_modal_edit.html' %}
+                            {% include '_shops_modal_delete.html' %}
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
