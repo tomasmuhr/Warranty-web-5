@@ -2,11 +2,11 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="shop-details">Shop Details</h5>
+                <h5 class="modal-title" id="shop-details">Item Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ render_form(add_item_form) }}
+                {{ render_form(add_item_form, button_size="sm") }}
             </div>
             <br>
             <div class="text-danger">

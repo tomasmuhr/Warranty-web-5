@@ -4,7 +4,7 @@
 {% block app_content %}
     <div class="text-center">
         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#itemAdd">
-            Add Item
+            Add New Item
         </button>
 
         <!-- Modal -->
@@ -20,12 +20,12 @@
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Shop</th>
-                    <th scope="col">Price</th>
                     <th scope="col">Amount</th>
+                    <th scope="col">Price</th>
                     <th scope="col">Comment</th>
                     <th scope="col">Purchase Date</th>
-                    <th scope="col">Warranty Length</th>
-                    <th scope="col">Warranty Expiration</th>
+                    <th scope="col">W. Length</th>
+                    <th scope="col">W. Expiration</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -34,9 +34,9 @@
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.shop }}</td>
-                        <td>{{ item.price_per_piece }}</td>
+                        <td>{{ item.shop.name }}</td>
                         <td>{{ item.amount }}</td>
+                        <td>{{ item.price_per_piece }}</td>
                         <td>{{ item.comment }}</td>
                         <td>{{ dates.purchase_date }}</td>
                         <td>{{ dates.warranty_months }}</td>

@@ -79,6 +79,9 @@ def register_logging(app):
     
 def configure_database(app):
     with app.app_context():
+        # Create database if it does not exist
+        # db_path = Path(db.engine.url.database)
+        # if not db_path.exists():
         db.create_all()
         
         # Load fake data

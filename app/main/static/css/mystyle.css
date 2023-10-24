@@ -9,11 +9,15 @@
     margin-left: auto;
 }
 
-/* Texts */
-/* .text-centered {
-    text-align: center;
-} */
-
 .text-justified {
     text-align: justify;
+}
+
+.table-sm {
+    font-size: smaller;
+    vertical-align: middle;
+}
+
+.form-control {
+    text-align: center;
 }

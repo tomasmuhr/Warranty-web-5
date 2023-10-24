@@ -4,7 +4,7 @@
 {% block app_content %}
     <div class="text-center">
         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addShop">
-            Add Shop
+            Add New Shop
         </button>
 
         <!-- Modal -->
@@ -34,7 +34,7 @@
                         <td>{{ shop.street }}</td>
                         <td>{{ shop.city }}</td>
                         <td>{{ shop.zip_code }}</td>
-                        <td>{{ items_count }}</td>
+                        <td>{{ items_count if items_count else 0 }}</td>
                         <td>
                             <!-- Edit button -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit">
