@@ -45,7 +45,7 @@ def items():
         db.session.add(item)
         db.session.commit()
         
-        flash("Item successfully added!", category="success")
+        flash("The record has been successfully added.", category="success")
         
         return redirect(url_for("main.items"))
     
@@ -76,7 +76,7 @@ def shops():
         db.session.add(shop)
         db.session.commit()
         
-        flash("Shop successfully added!", category="success")
+        flash("The record has been successfully added!", category="success")
         
         return redirect(url_for("main.shops"))
     
@@ -95,3 +95,27 @@ def shops():
 @main_bp.route("/database")
 def database():
     return render_template("database.html", title="Database")
+
+
+@main_bp.route("/delete_item/<int:item_id>", methods=['GET'])
+def delete_item(item_id: int):
+    item = Item.query.filter_by(id=item_id).first()
+    
+    db.session.delete(item)
+    db.session.commit()
+    
+    flash("The record has been successfully deleted.", category="success")
+    
+    return redirect(url_for("main.items"))
+
+
+@main_bp.route("/delete_shop/<int:shop_id>", methods=['GET'])
+def delete_shop(shop_id: int):
+    shop = Shop.query.filter_by(id=shop_id).first()
+    
+    db.session.delete(shop)
+    db.session.commit()
+    
+    flash("The record has been successfully deleted.", category="success")
+    
+    return redirect(url_for("main.shops"))
