@@ -80,104 +80,108 @@ def register_logging(app):
 def configure_database(app):
     with app.app_context():
         # Create database if it does not exist
-        # db_path = Path(db.engine.url.database)
-        # if not db_path.exists():
-        db.create_all()
+        db_path = Path(db.engine.url.database)
         
-        # Load fake data
-        app_mode = os.environ.get("FLASK_ENV")
-        
-        if app_mode == "development":
-            # FAKE SHOPS
-            db_shops_count = db.session.query(column("Shop")).count()
-            app.logger.info(f"Fake shops count: {db_shops_count}")
-        
-            if db_shops_count <= 1:
-                csv_path = Path("app/data/fake_shops.csv")
-                
-                if csv_path.exists():
-                    with open(csv_path, "r", encoding="utf-8") as f:
-                        csv_reader = csv.DictReader(f)
-                        
-                        for row in csv_reader:
-                            new_shop = Shop(name=row["name"],
-                                            street=row["street"],
-                                            city=row["city"],
-                                            zip_code=row["zip"])
-                            
-                            db.session.add(new_shop)
-                            
-                        db.session.commit()
-                        
-                    # delete abundant shops
-                    db.session.query(Shop).filter(Shop.id > 20).delete()
-                    db.session.commit()
-                    app.logger.info("Fake shops filled.")
-            else:
-                app.logger.info("Fake shops in database already filled.")
-                
-            # FAKE ITEMS
-            db_items_count = db.session.query(column("Item")).count()
-            app.logger.info(f"Fake items count: {db_items_count}")
+        if not db_path.exists():
+            db.create_all()
             
-            if db_items_count <= 1:
-                csv_path = Path("app/data/fake_items.csv")
-                
-                if csv_path.exists():
-                    with open(csv_path, "r", encoding="utf-8") as f:
-                        csv_reader = csv.DictReader(f)
-                        
-                        for row in csv_reader:
-                            new_item = Item(name=row["name"],
-                                            receipt_nr=row["receipt_nr"],
-                                            amount=row["amount"],
-                                            price_per_piece=row["price"],
-                                            comment=row["comment"],
-                                            shop_id=row["shop_id"])
-                            
-                            db.session.add(new_item)
-                            
-                        db.session.commit()
-                        
-                    # delete abundant items
-                    db.session.query(Item).filter(Item.id > 46).delete()
-                    db.session.commit()
-                    app.logger.info("Fake items filled.")
-                    
-            else:
-                app.logger.info("Fake items in database already filled.")
-                    
-            # FAKE DATES
-            db_dates_count = db.session.query(column("Dates")).count()
-            app.logger.info(f"Fake dates count: {db_dates_count}")
+            # Load fake data
+            app_mode = os.environ.get("FLASK_ENV")
             
-            if db_dates_count <= 1:
-                csv_path = Path("app/data/fake_dates.csv")
-                
-                if csv_path.exists():
-                    with open(csv_path, "r", encoding="utf-8") as f:
-                        csv_reader = csv.DictReader(f)
-                        
-                        for row in csv_reader:
-                            p_date = datetime.strptime(row["purchase_date"], "%Y-%m-%d")
+            if app_mode == "development":
+                # FAKE SHOPS
+                db_shops_count = db.session.query(column("Shop")).count()
+                app.logger.info(f"Fake shops count: {db_shops_count}")
+            
+                if db_shops_count <= 1:
+                    csv_path = Path("app/data/fake_shops.csv")
+                    
+                    if csv_path.exists():
+                        with open(csv_path, "r", encoding="utf-8") as f:
+                            csv_reader = csv.DictReader(f)
                             
-                            new_dates = Dates(item_id=row["item_id"],
-                                              warranty_months=row["warranty_months"],
-                                              purchase_date = p_date,
-                                              expiration_date=p_date + relativedelta(months=int(row["warranty_months"])))
+                            for row in csv_reader:
+                                new_shop = Shop(name=row["name"],
+                                                street=row["street"],
+                                                city=row["city"],
+                                                zip_code=row["zip"])
+                                
+                                db.session.add(new_shop)
+                                
+                            db.session.commit()
                             
-                            db.session.add(new_dates)
-                            
+                        # delete abundant shops
+                        db.session.query(Shop).filter(Shop.id > 20).delete()
                         db.session.commit()
+                        app.logger.info("Fake shops filled.")
+                else:
+                    app.logger.info("Fake shops in database already filled.")
                     
-                    # delete abundant dates
-                    db.session.query(Dates).filter(Dates.id > 46).delete()
-                    db.session.commit()
-                    app.logger.info("Fake dates filled.")
+                # FAKE ITEMS
+                db_items_count = db.session.query(column("Item")).count()
+                app.logger.info(f"Fake items count: {db_items_count}")
+                
+                if db_items_count <= 1:
+                    csv_path = Path("app/data/fake_items.csv")
                     
-            else:
-                app.logger.info("Fake dates in database already filled.")
+                    if csv_path.exists():
+                        with open(csv_path, "r", encoding="utf-8") as f:
+                            csv_reader = csv.DictReader(f)
+                            
+                            for row in csv_reader:
+                                new_item = Item(name=row["name"],
+                                                receipt_nr=row["receipt_nr"],
+                                                amount=row["amount"],
+                                                price_per_piece=row["price"],
+                                                comment=row["comment"],
+                                                shop_id=row["shop_id"])
+                                
+                                db.session.add(new_item)
+                                
+                            db.session.commit()
+                            
+                        # delete abundant items
+                        db.session.query(Item).filter(Item.id > 46).delete()
+                        db.session.commit()
+                        app.logger.info("Fake items filled.")
+                        
+                else:
+                    app.logger.info("Fake items in database already filled.")
+                        
+                # FAKE DATES
+                db_dates_count = db.session.query(column("Dates")).count()
+                app.logger.info(f"Fake dates count: {db_dates_count}")
+                
+                if db_dates_count <= 1:
+                    csv_path = Path("app/data/fake_dates.csv")
                     
+                    if csv_path.exists():
+                        with open(csv_path, "r", encoding="utf-8") as f:
+                            csv_reader = csv.DictReader(f)
+                            
+                            for row in csv_reader:
+                                p_date = datetime.strptime(row["purchase_date"], "%Y-%m-%d")
+                                
+                                new_dates = Dates(item_id=row["item_id"],
+                                                warranty_months=row["warranty_months"],
+                                                purchase_date = p_date,
+                                                expiration_date=p_date + relativedelta(months=int(row["warranty_months"])))
+                                
+                                db.session.add(new_dates)
+                                
+                            db.session.commit()
+                        
+                        # delete abundant dates
+                        db.session.query(Dates).filter(Dates.id > 46).delete()
+                        db.session.commit()
+                        app.logger.info("Fake dates filled.")
+                        
+                else:
+                    app.logger.info("Fake dates in database already filled.")
+            
+        else:
+            app.logger.info(f"Database already exists.")
+                        
 
     @app.teardown_request
     def remove_database_session(exception=None):

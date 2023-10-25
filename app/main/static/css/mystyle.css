@@ -18,6 +18,7 @@
     vertical-align: middle;
 }
 
-.form-control {
+.form-control,
+.form-select {
     text-align: center;
 }

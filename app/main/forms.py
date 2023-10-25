@@ -16,7 +16,10 @@ class AddItemForm(FlaskForm):
     # shop = SelectField("Shop*",
     #                     choices=[("todo1", "TODO1"), ("todo2", "TODO2")],
     #                     coerce=str, validators=[DataRequired()])
-    shop = IntegerField("Shop*", validators=[DataRequired()])
+    shop = SelectField("Shop*", validators=[DataRequired()],
+                        choices=[(1, "Tempus Mauris Erat Incorporated"),
+                                 (2, "A Magna Ltd")],
+                        coerce=int)
     receipt_nr = StringField("Receipt Nr")
     amount = StringField("Amount")
     price_per_piece = StringField("Price per piece") # TODO add only numeric values

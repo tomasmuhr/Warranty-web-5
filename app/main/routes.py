@@ -81,7 +81,7 @@ def shops():
         return redirect(url_for("main.shops"))
     
     shop_rows = db.session \
-        .query(Shop, func.sum(Item.amount)) \
+        .query(Shop, func.count(Item.id)) \
         .outerjoin(Item) \
         .group_by(Shop.id) \
         .all()
