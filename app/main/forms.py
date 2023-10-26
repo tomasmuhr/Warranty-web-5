@@ -10,6 +10,10 @@ class AddShopForm(FlaskForm):
     zip_code = StringField("Zip Code")
     submit = SubmitField("Add shop", name="add_shop")
     
+    
+class EditShopForm(AddShopForm):
+    submit = SubmitField("Update shop", name="update_shop")
+    
 
 class AddItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})

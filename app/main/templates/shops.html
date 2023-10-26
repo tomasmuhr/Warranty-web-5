@@ -22,11 +22,21 @@
                     <th scope="col">Street</th>
                     <th scope="col">City</th>
                     <th scope="col">Zip code</th>
-                    <th scope="col">Items</th>
+                    <th scope="col">Records</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Search</th>
+                    <th scope="col">Search</th>
+                    <th scope="col">Search</th>
+                    <th scope="col">Search</th>
+                    <th scope="col">Search</th>
+                    <th scope="col"></th>
+                </tr>
+
                 {% for shop, items_count in shop_rows %}
                     <tr>
                         <td>{{ shop.id }}</td>
@@ -37,7 +47,7 @@
                         <td>{{ items_count if items_count else 0 }}</td>
                         <td>
                             <!-- Edit button -->
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
                                 Edit
                             </button>
                             
