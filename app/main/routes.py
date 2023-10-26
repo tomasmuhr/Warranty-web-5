@@ -2,7 +2,7 @@ import re
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from app.main import main_bp
-from app.main.forms import AddItemForm, AddShopForm, EditShopForm
+from app.main.forms import AddItemForm, ShopForm
 from app.models import Dates, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -66,9 +66,9 @@ def items():
 
 @main_bp.route("/shops", methods=['GET', 'POST'])
 def shops():
-    add_shop_form = AddShopForm()
+    add_shop_form = ShopForm()
     
-    if "add_shop" in request.form and add_shop_form.validate_on_submit():
+    if "shop_form" in request.form and add_shop_form.validate_on_submit():
         shop = Shop(name=add_shop_form.name.data,
                     street=add_shop_form.street.data if add_shop_form.street.data else "n/a",
                     city=add_shop_form.city.data if add_shop_form.city.data else "n/a",
@@ -113,15 +113,9 @@ def delete_item(item_id: int):
 @main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
 def edit_shop(shop_id: int):
     shop = Shop.query.filter_by(id=shop_id).first()
-    edit_shop_form = EditShopForm()
+    edit_shop_form = ShopForm()
     
-    conditions = (edit_shop_form.validate_on_submit(),)
-    print(edit_shop_form.validate_on_submit())
-    
-    if all(conditions):
-        print(request.args)
-    
-    # if "update_shop" in request.form and edit_shop_form.validate_on_submit():
+    if "shop_form" in request.form and edit_shop_form.is_submitted():
         edit_shop_form.populate_obj(shop)
         
         db.session.commit()
@@ -132,7 +126,6 @@ def edit_shop(shop_id: int):
     
     return redirect(url_for("main.shops"))
     
-
 
 @main_bp.route("/delete_shop/<int:shop_id>", methods=['GET'])
 def delete_shop(shop_id: int):

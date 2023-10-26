@@ -3,18 +3,14 @@ from wtforms import DateField, FloatField, IntegerField, SelectField, StringFiel
 from wtforms.validators import DataRequired
 
 
-class AddShopForm(FlaskForm):
+class ShopForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     street = StringField("Street")
     city = StringField("City")
     zip_code = StringField("Zip Code")
-    submit = SubmitField("Add shop", name="add_shop")
+    submit = SubmitField("Add shop", name="shop_form")
     
     
-class EditShopForm(AddShopForm):
-    submit = SubmitField("Update shop", name="update_shop")
-    
-
 class AddItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     # shop = SelectField("Shop*",
