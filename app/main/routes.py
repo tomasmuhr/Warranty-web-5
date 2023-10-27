@@ -2,7 +2,7 @@ import re
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from app.main import main_bp
-from app.main.forms import AddItemForm, ShopForm
+from app.main.forms import ItemForm, ShopForm
 from app.models import Dates, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -22,48 +22,7 @@ def about():
     return render_template("about.html", title="About", versions=versions)
 
 
-@main_bp.route("/items", methods=['GET', 'POST'])
-def items():
-    add_item_form = AddItemForm()
-
-    if "add_item" in request.form and add_item_form.validate_on_submit():
-        print("je tam")
-        item = Item(name=add_item_form.name.data,
-                    receipt_nr=add_item_form.receipt_nr.data,
-                    amount=add_item_form.amount.data if add_item_form.amount.data else 0,
-                    price_per_piece=add_item_form.price_per_piece.data if add_item_form.price_per_piece.data else 0.0,
-                    comment=add_item_form.comment.data,
-                    shop_id=add_item_form.shop.data)
-        
-        dates = Dates(item_id=item.id,
-                      purchase_date=add_item_form.purchase_date.data,
-                      warranty_months=add_item_form.warranty_months.data,
-                      expiration_date=add_item_form.purchase_date.data + \
-                          relativedelta(months=add_item_form.warranty_months.data))
-        
-        item.dates.append(dates)
-        
-        db.session.add(item)
-        db.session.commit()
-        
-        flash("The record has been successfully added.", category="success")
-        
-        return redirect(url_for("main.items"))
-    
-    else:
-        print("nie je tam")
-
-    item_rows = db.session \
-        .query(Item, Dates) \
-        .outerjoin(Dates) \
-        .all()
-        
-    return render_template("items.html",
-                           title="Items",
-                           add_item_form=add_item_form,
-                           item_rows=item_rows)
-
-
+# --- SHOPS ---
 @main_bp.route("/shops", methods=['GET', 'POST'])
 def shops():
     add_shop_form = ShopForm()
@@ -93,23 +52,6 @@ def shops():
                            shop_rows=shop_rows)
 
 
-@main_bp.route("/database")
-def database():
-    return render_template("database.html", title="Database")
-
-
-@main_bp.route("/delete_item/<int:item_id>", methods=['GET'])
-def delete_item(item_id: int):
-    item = Item.query.filter_by(id=item_id).first()
-    
-    db.session.delete(item)
-    db.session.commit()
-    
-    flash("The record has been successfully deleted.", category="success")
-    
-    return redirect(url_for("main.items"))
-
-
 @main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
 def edit_shop(shop_id: int):
     shop = Shop.query.filter_by(id=shop_id).first()
@@ -137,3 +79,77 @@ def delete_shop(shop_id: int):
     flash("The record has been successfully deleted.", category="success")
     
     return redirect(url_for("main.shops"))
+
+
+# --- ITEMS ---
+@main_bp.route("/items", methods=['GET', 'POST'])
+def items():
+    add_item_form = ItemForm()
+
+    if "item_form" in request.form and add_item_form.validate_on_submit():
+        item = Item(name=add_item_form.name.data,
+                    receipt_nr=add_item_form.receipt_nr.data,
+                    amount=add_item_form.amount.data if add_item_form.amount.data else 0,
+                    price_per_piece=add_item_form.price_per_piece.data if add_item_form.price_per_piece.data else 0.0,
+                    comment=add_item_form.comment.data,
+                    shop_id=add_item_form.shop.data)
+        
+        dates = Dates(item_id=item.id,
+                      purchase_date=add_item_form.purchase_date.data,
+                      warranty_months=add_item_form.warranty_months.data,
+                      expiration_date=add_item_form.purchase_date.data + \
+                          relativedelta(months=add_item_form.warranty_months.data))
+        
+        item.dates.append(dates)
+        
+        db.session.add(item)
+        db.session.commit()
+        
+        flash("The record has been successfully added.", category="success")
+        
+        return redirect(url_for("main.items"))
+    
+    item_rows = db.session \
+        .query(Item, Dates) \
+        .outerjoin(Dates) \
+        .all()
+        
+    return render_template("items.html",
+                           title="Items",
+                           add_item_form=add_item_form,
+                           item_rows=item_rows)
+    
+    
+@main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
+def edit_item(item_id: int):
+    shop = Item.query.filter_by(id=item_id).first()
+    edit_item_form = ItemForm()
+    
+    if "item_form" in request.form and edit_item_form.is_submitted():
+        edit_item_form.populate_obj(shop)
+        
+        db.session.commit()
+        
+        flash("The record has been successfully edited.", category="success")
+        
+        return redirect(url_for("main.items"))
+    
+    return redirect(url_for("main.items"))
+    
+
+@main_bp.route("/delete_item/<int:item_id>", methods=['GET'])
+def delete_item(item_id: int):
+    item = Item.query.filter_by(id=item_id).first()
+    
+    db.session.delete(item)
+    db.session.commit()
+    
+    flash("The record has been successfully deleted.", category="success")
+    
+    return redirect(url_for("main.items"))
+
+
+
+@main_bp.route("/database")
+def database():
+    return render_template("database.html", title="Database")

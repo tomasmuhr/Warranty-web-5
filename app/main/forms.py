@@ -11,7 +11,7 @@ class ShopForm(FlaskForm):
     submit = SubmitField("Add shop", name="shop_form")
     
     
-class AddItemForm(FlaskForm):
+class ItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     # shop = SelectField("Shop*",
     #                     choices=[("todo1", "TODO1"), ("todo2", "TODO2")],
@@ -26,4 +26,4 @@ class AddItemForm(FlaskForm):
     comment = StringField("Comment") # TODO add only numeric values
     purchase_date = DateField("Purchase date*", validators=[DataRequired()])
     warranty_months = IntegerField("Warranty months*", validators=[DataRequired()])
-    submit = SubmitField("Add item", name="add_item")
+    submit = SubmitField("Add item", name="item_form")
