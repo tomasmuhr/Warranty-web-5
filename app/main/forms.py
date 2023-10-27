@@ -25,5 +25,5 @@ class ItemForm(FlaskForm):
     price_per_piece = StringField("Price per piece") # TODO add only numeric values
     comment = StringField("Comment") # TODO add only numeric values
     purchase_date = DateField("Purchase date*", validators=[DataRequired()])
-    warranty_months = IntegerField("Warranty months*", validators=[DataRequired()])
+    warranty_months = IntegerField("Warranty length (months)*", validators=[DataRequired()])
     submit = SubmitField("Add item", name="item_form")
