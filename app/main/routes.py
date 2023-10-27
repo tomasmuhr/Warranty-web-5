@@ -122,12 +122,20 @@ def items():
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
-    shop = Item.query.filter_by(id=item_id).first()
     edit_item_form = ItemForm()
     
     if "item_form" in request.form and edit_item_form.is_submitted():
-        edit_item_form.populate_obj(shop)
+        item_id = request.form["item_id"]
+        item = Item.query.get(item_id)
         
+        item.name = edit_item_form.name.data
+        item.receipt_nr = edit_item_form.receipt_nr.data
+        item.amount = edit_item_form.amount.data
+        item.price_per_piece = edit_item_form.price_per_piece.data
+        item.comment = edit_item_form.comment.data
+        item.shop_id = edit_item_form.shop.data
+        
+        db.session.update(item)
         db.session.commit()
         
         flash("The record has been successfully edited.", category="success")

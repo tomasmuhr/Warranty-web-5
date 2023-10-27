@@ -20,6 +20,7 @@
                     <th scope="col">ID</th>
                     <th scope="col">Name</th>
                     <th scope="col">Shop</th>
+                    <th scope="col">Receipt nr</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Price</th>
                     <th scope="col">Comment</th>
@@ -30,6 +31,7 @@
                 </tr>
                 <tr>
                     <th scope="col"></th>
+                    <th scope="col">Search</th>
                     <th scope="col">Search</th>
                     <th scope="col">Search</th>
                     <th scope="col"></th>
@@ -47,6 +49,7 @@
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
                         <td>{{ item.shop.name }}</td>
+                        <td>{{ item.receipt_nr }}</td>
                         <td>{{ item.amount }}</td>
                         <td>{{ item.price_per_piece }}</td>
                         <td>{{ item.comment }}</td>
