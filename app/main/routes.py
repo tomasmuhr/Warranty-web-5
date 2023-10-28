@@ -62,7 +62,7 @@ def edit_shop(shop_id: int):
             edit_shop_form.populate_obj(shop)
             
             db.session.commit()
-            
+             
             flash("The record has been successfully edited.", category="success")
             
             return redirect(url_for("main.shops"))

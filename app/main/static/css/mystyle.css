@@ -1,3 +1,7 @@
+.container-pages {
+    padding-top: 70px;
+}
+
 /* Dark mode */
 .dark-mode {
     background-color: #333;

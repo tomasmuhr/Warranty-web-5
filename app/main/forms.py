@@ -18,6 +18,7 @@ class ItemForm(FlaskForm):
                                  (2, "A Magna Ltd")],
                         coerce=int)
     receipt_nr = StringField("Receipt Nr")
+    # numeric fields optional by default
     amount = IntegerField("Amount", validators=[Optional()])
     price_per_piece = FloatField("Price per piece", validators=[Optional()])
     comment = StringField("Comment")
