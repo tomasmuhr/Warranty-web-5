@@ -1,9 +1,7 @@
+from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import DateField, FloatField, IntegerField, SelectField, StringField, TextAreaField, SubmitField
 from wtforms.validators import DataRequired, Optional
-from flask import current_app
-
-from app.models import Shop
 
 
 class ShopForm(FlaskForm):
@@ -25,17 +23,14 @@ class ItemForm(FlaskForm):
     amount = IntegerField("Amount", validators=[Optional()])
     price_per_piece = FloatField("Price per piece", validators=[Optional()])
     comment = StringField("Comment")
-    purchase_date = DateField("Purchase date*", validators=[DataRequired()])
-    warranty_months = IntegerField("Warranty length (months)*", validators=[DataRequired()])
+    purchase_date = DateField("Purchase date*", validators=[DataRequired()],
+                              default=date.today())
+    warranty_months = IntegerField("Warranty length (months)*", validators=[DataRequired()],
+                                   default=12)
     submit = SubmitField("Add item", name="item_form")
     
-    def __init__(self):
+    def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
-        self.shop.choices = self.get_shop_records()
+        self.shop.choices = shop_choices
         self.shop.coerce = int
-        
-    def get_shop_records(self):
-        with current_app.app_context():
-            shops = Shop.query.all()
-            return [(int(shop.id), shop.name) for shop in shops]
         
