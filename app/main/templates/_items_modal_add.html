@@ -6,7 +6,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                {{ render_form(add_item_form, button_size="sm") }}
+                <!-- TODO render_form to form fields to make shops with scrollbar -->
+                {{ render_form(add_item_form,
+                    button_size="sm") }}
             </div>
             <br>
             <div class="text-danger">

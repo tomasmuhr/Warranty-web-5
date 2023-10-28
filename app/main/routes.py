@@ -88,9 +88,9 @@ def items():
     add_item_form = ItemForm()
     
     if request.method == "POST":
+        print(add_item_form.shop.data)
+        print(add_item_form.data)
         if "item_form" in request.form and add_item_form.validate_on_submit():
-            print(type(add_item_form.amount.data))
-            print(type(add_item_form.price_per_piece.data))
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
