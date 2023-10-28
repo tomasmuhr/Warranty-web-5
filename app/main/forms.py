@@ -19,11 +19,12 @@ class ItemForm(FlaskForm):
                                 #  (2, "A Magna Ltd")],
                         # coerce=int)
     receipt_nr = StringField("Receipt Nr")
-    # numeric fields optional by default
-    amount = IntegerField("Amount", validators=[Optional()])
+    amount = IntegerField("Amount", validators=[Optional(),
+                                                NumberRange(min=1,)])
     # price_per_piece_pattern = r'^(?:\d+|\d*\.\d+)$'
     price_per_piece = DecimalField("Price per piece",
-                                   validators=[Optional()])#,
+                                   validators=[Optional(),
+                                               NumberRange(min=0,)])
     comment = StringField("Comment")
     purchase_date = DateField("Purchase date*",
                               validators=[DataRequired()],

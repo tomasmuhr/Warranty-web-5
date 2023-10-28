@@ -87,11 +87,12 @@ def delete_shop(shop_id: int):
 def items():
     shops = Shop.query.all()
     shop_choices = [(int(shop.id), shop.name) for shop in shops]
+    shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
     add_item_form = ItemForm(shop_choices)
     
     if request.method == "POST":
-        if "item_form" in request.form:# and add_item_form.validate_on_submit():
+        if "item_form" in request.form and add_item_form.submit():
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
