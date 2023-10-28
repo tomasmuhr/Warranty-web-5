@@ -57,14 +57,15 @@ def edit_shop(shop_id: int):
     shop = Shop.query.filter_by(id=shop_id).first()
     edit_shop_form = ShopForm()
     
-    if "shop_form" in request.form and edit_shop_form.is_submitted():
-        edit_shop_form.populate_obj(shop)
-        
-        db.session.commit()
-        
-        flash("The record has been successfully edited.", category="success")
-        
-        return redirect(url_for("main.shops"))
+    if request.method == "POST":
+        if "shop_form" in request.form and edit_shop_form.is_submitted():
+            edit_shop_form.populate_obj(shop)
+            
+            db.session.commit()
+            
+            flash("The record has been successfully edited.", category="success")
+            
+            return redirect(url_for("main.shops"))
     
     return redirect(url_for("main.shops"))
     
@@ -85,29 +86,36 @@ def delete_shop(shop_id: int):
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
     add_item_form = ItemForm()
-
-    if "item_form" in request.form and add_item_form.validate_on_submit():
-        item = Item(name=add_item_form.name.data,
-                    receipt_nr=add_item_form.receipt_nr.data,
-                    amount=add_item_form.amount.data if add_item_form.amount.data else 0,
-                    price_per_piece=add_item_form.price_per_piece.data if add_item_form.price_per_piece.data else 0.0,
-                    comment=add_item_form.comment.data,
-                    shop_id=add_item_form.shop.data)
+    
+    if request.method == "POST":
+        if "item_form" in request.form and add_item_form.validate_on_submit():
+            print(type(add_item_form.amount.data))
+            print(type(add_item_form.price_per_piece.data))
+            item = Item(name=add_item_form.name.data,
+                        receipt_nr=add_item_form.receipt_nr.data,
+                        amount=add_item_form.amount.data,
+                        price_per_piece=add_item_form.price_per_piece.data,
+                        comment=add_item_form.comment.data,
+                        shop_id=add_item_form.shop.data)
+            
+            dates = Dates(item_id=item.id,
+                        purchase_date=add_item_form.purchase_date.data,
+                        warranty_months=add_item_form.warranty_months.data,
+                        expiration_date=add_item_form.purchase_date.data + \
+                            relativedelta(months=add_item_form.warranty_months.data))
+            
+            item.dates.append(dates)
+            
+            db.session.add(item)
+            db.session.commit()
+            
+            flash("The record has been successfully added.", category="success")
+            
+            return redirect(url_for("main.items"))
         
-        dates = Dates(item_id=item.id,
-                      purchase_date=add_item_form.purchase_date.data,
-                      warranty_months=add_item_form.warranty_months.data,
-                      expiration_date=add_item_form.purchase_date.data + \
-                          relativedelta(months=add_item_form.warranty_months.data))
-        
-        item.dates.append(dates)
-        
-        db.session.add(item)
-        db.session.commit()
-        
-        flash("The record has been successfully added.", category="success")
-        
-        return redirect(url_for("main.items"))
+        else:
+            flash("Something went wrong.", category="danger")
+            print(add_item_form.errors)
     
     item_rows = db.session \
         .query(Item, Dates) \
@@ -125,8 +133,9 @@ def edit_item(item_id: int):
     edit_item_form = ItemForm()
     
     if "item_form" in request.form and edit_item_form.is_submitted():
-        item_id = request.form["item_id"]
-        item = Item.query.get(item_id)
+        # item_id = request.form["item_id"]
+        # item = Item.query.get(item_id)
+        item = Item.query.filter_by(id=item_id).first()
         
         item.name = edit_item_form.name.data
         item.receipt_nr = edit_item_form.receipt_nr.data
