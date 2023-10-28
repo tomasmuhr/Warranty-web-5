@@ -1,7 +1,7 @@
 from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import DateField, FloatField, IntegerField, SelectField, StringField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired, Optional
+from wtforms.validators import DataRequired, Optional, NumberRange, Regexp
 
 
 class ShopForm(FlaskForm):
@@ -13,6 +13,7 @@ class ShopForm(FlaskForm):
     
     
 class ItemForm(FlaskForm):
+    price_pattern_regexp = r"^(?:\d+|\d*\.\d+)$"
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     shop = SelectField("Shop*", validators=[DataRequired()])#,
                         # choices=[(1, "Tempus Mauris Erat Incorporated"),
@@ -21,11 +22,14 @@ class ItemForm(FlaskForm):
     receipt_nr = StringField("Receipt Nr")
     # numeric fields optional by default
     amount = IntegerField("Amount", validators=[Optional()])
-    price_per_piece = FloatField("Price per piece", validators=[Optional()])
+    price_per_piece = IntegerField("Price per piece",
+                                   validators=[Regexp(price_pattern_regexp, message="Enter a valid number or floating-point number.")])
     comment = StringField("Comment")
-    purchase_date = DateField("Purchase date*", validators=[DataRequired()],
+    purchase_date = DateField("Purchase date*",
+                              validators=[DataRequired()],
                               default=date.today())
-    warranty_months = IntegerField("Warranty length (months)*", validators=[DataRequired()],
+    warranty_months = IntegerField("Warranty length (months)*",
+                                   validators=[DataRequired(), NumberRange(min=1,)],
                                    default=12)
     submit = SubmitField("Add item", name="item_form")
     
