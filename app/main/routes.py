@@ -1,4 +1,3 @@
-import re
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from app.main import main_bp
@@ -168,7 +167,15 @@ def delete_item(item_id: int):
     return redirect(url_for("main.items"))
 
 
-
+# DATABASE
 @main_bp.route("/database")
 def database():
     return render_template("database.html", title="Database")
+
+
+# SEARCH
+@main_bp.route("/search", methods=["POST"])
+def search():
+    return render_template("search.html", title="Search")
+
+
