@@ -1,7 +1,7 @@
 from datetime import date
 from flask_wtf import FlaskForm
 from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired, Optional, NumberRange, Regexp
+from wtforms.validators import DataRequired, Optional, NumberRange
 
 
 class ShopForm(FlaskForm):
@@ -23,10 +23,7 @@ class ItemForm(FlaskForm):
     amount = IntegerField("Amount", validators=[Optional()])
     # price_per_piece_pattern = r'^(?:\d+|\d*\.\d+)$'
     price_per_piece = DecimalField("Price per piece",
-                                   places=2,
-                                   number_format='%.2f',
                                    validators=[Optional()])#,
-                                            #  Regexp(price_per_piece_pattern, message="Enter a valid number or decimal number.")])
     comment = StringField("Comment")
     purchase_date = DateField("Purchase date*",
                               validators=[DataRequired()],
