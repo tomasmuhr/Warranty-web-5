@@ -2,10 +2,10 @@
 
 {% block app_content %}
     <div class="text-center">
-        <h3>Search Results</h3>
+        <h3>Search Results for '{{ search_query }}'</h3>
         <br>
     </div>
-    
+    <!-- TODO add something if re -->
     <!-- Search results for shops -->
     <div>
         <h4>Shops</h4>
@@ -24,7 +24,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for shop in search_result_shops %}
+                {% for shop, items_count in search_result_shops %}
                     <tr>
                         <td>{{ shop.id }}</td>
                         <td>{{ shop.name }}</td>

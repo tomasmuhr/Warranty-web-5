@@ -1,5 +1,6 @@
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
+from sqlalchemy.orm import aliased
 from app.main import main_bp
 from app.main.forms import ItemForm, ShopForm
 from app.models import Dates, Item, Shop
@@ -134,8 +135,6 @@ def edit_item(item_id: int):
     edit_item_form = ItemForm()
     
     if "item_form" in request.form and edit_item_form.is_submitted():
-        # item_id = request.form["item_id"]
-        # item = Item.query.get(item_id)
         item = Item.query.filter_by(id=item_id).first()
         
         item.name = edit_item_form.name.data
@@ -144,6 +143,7 @@ def edit_item(item_id: int):
         item.price_per_piece = edit_item_form.price_per_piece.data
         item.comment = edit_item_form.comment.data
         item.shop_id = edit_item_form.shop.data
+        # TODO purchase date and w
         
         db.session.update(item)
         db.session.commit()
@@ -177,9 +177,24 @@ def database():
 @main_bp.route("/search", methods=["POST"])
 def search():
     query = request.form.get("query")
-    items = Item.query.filter(Item.name.ilike(f"%{query}%")).all()
-    print(items)
     
-    return render_template("search.html", title="Search", search_result_items=items)
+    item_alias = aliased(Item)
+    items = db.session.query(item_alias, Dates) \
+                    .outerjoin(Dates) \
+                    .filter(item_alias.name.ilike(f"%{query}%")) \
+                    .all()
+    
+    shop_alias = aliased(Shop)
+    shops = db.session.query(shop_alias, func.count(Item.id)) \
+                    .outerjoin(Item) \
+                    .group_by(shop_alias.id) \
+                    .filter(shop_alias.name.ilike(f"%{query}%")) \
+                    .all()
+    
+    return render_template("search.html",
+                           title="Search Results",
+                           search_query=query,
+                           search_result_items=items,
+                           search_result_shops=shops)
 
 
