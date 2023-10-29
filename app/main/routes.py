@@ -28,9 +28,9 @@ def shops():
     
     if "shop_form" in request.form and add_shop_form.validate_on_submit():
         shop = Shop(name=add_shop_form.name.data,
-                    street=add_shop_form.street.data if add_shop_form.street.data else "n/a",
-                    city=add_shop_form.city.data if add_shop_form.city.data else "n/a",
-                    zip_code=add_shop_form.zip_code.data if add_shop_form.zip_code.data else "n/a")
+                    street=add_shop_form.street.data,
+                    city=add_shop_form.city.data,
+                    zip_code=add_shop_form.zip_code.data)
         
         db.session.add(shop)
         db.session.commit()
@@ -176,6 +176,10 @@ def database():
 # SEARCH
 @main_bp.route("/search", methods=["POST"])
 def search():
-    return render_template("search.html", title="Search")
+    query = request.form.get("query")
+    items = Item.query.filter(Item.name.ilike(f"%{query}%")).all()
+    print(items)
+    
+    return render_template("search.html", title="Search", search_result_items=items)
 
 
