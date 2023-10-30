@@ -2,7 +2,7 @@ from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from app.main import main_bp
-from app.main.forms import ItemForm, ShopForm
+from app.main.forms import AddItemForm, ShopForm
 from app.models import Dates, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -63,7 +63,7 @@ def edit_shop(shop_id: int):
             
             db.session.commit()
              
-            flash("The record has been successfully edited.", category="success")
+            flash("The record has been successfully updated.", category="success")
             
             return redirect(url_for("main.shops"))
     
@@ -89,10 +89,10 @@ def items():
     shop_choices = [(int(shop.id), shop.name) for shop in shops]
     shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
-    add_item_form = ItemForm(shop_choices)
+    add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
-        if "add_item_form" in request.form and add_item_form.submit():
+        if "add_item_form" in request.form:
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -115,9 +115,6 @@ def items():
             
             return redirect(url_for("main.items"))
         
-        elif "edit_item_form" in request.form and edit_item_form.submit():
-            pass
-        
         else:
             flash("Something went wrong.", category="danger")
             print(add_item_form.errors)
@@ -130,21 +127,13 @@ def items():
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
-                           item_rows=item_rows)
+                           item_rows=item_rows,
+                           shop_choices=shop_choices)
     
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
     item = Item.query.filter_by(id=item_id).first()
-    print(request.form)
-    
-    # item.name = request.form["name"]
-    # item.receipt_nr = request.form["receipt_nr"]
-    # item.amount = request.form["amount"]
-    # item.price_per_piece = request.form["price_per_piece"]
-    # item.comment = request.form["comment"]
-    # item.shop_id = request.form["shop"]
-    # TODO purchase date and w
     
     # db.session.update(item)
     # db.session.commit()
