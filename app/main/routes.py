@@ -92,7 +92,7 @@ def items():
     add_item_form = ItemForm(shop_choices)
     
     if request.method == "POST":
-        if "item_form" in request.form and add_item_form.submit():
+        if "add_item_form" in request.form and add_item_form.submit():
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -115,6 +115,9 @@ def items():
             
             return redirect(url_for("main.items"))
         
+        elif "edit_item_form" in request.form and edit_item_form.submit():
+            pass
+        
         else:
             flash("Something went wrong.", category="danger")
             print(add_item_form.errors)
@@ -132,25 +135,21 @@ def items():
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
-    edit_item_form = ItemForm()
+    item = Item.query.filter_by(id=item_id).first()
+    print(request.form)
     
-    if "item_form" in request.form and edit_item_form.is_submitted():
-        item = Item.query.filter_by(id=item_id).first()
-        
-        item.name = edit_item_form.name.data
-        item.receipt_nr = edit_item_form.receipt_nr.data
-        item.amount = edit_item_form.amount.data
-        item.price_per_piece = edit_item_form.price_per_piece.data
-        item.comment = edit_item_form.comment.data
-        item.shop_id = edit_item_form.shop.data
-        # TODO purchase date and w
-        
-        db.session.update(item)
-        db.session.commit()
-        
-        flash("The record has been successfully edited.", category="success")
-        
-        return redirect(url_for("main.items"))
+    # item.name = request.form["name"]
+    # item.receipt_nr = request.form["receipt_nr"]
+    # item.amount = request.form["amount"]
+    # item.price_per_piece = request.form["price_per_piece"]
+    # item.comment = request.form["comment"]
+    # item.shop_id = request.form["shop"]
+    # TODO purchase date and w
+    
+    # db.session.update(item)
+    # db.session.commit()
+    
+    flash("The record has been successfully edited.", category="success")
     
     return redirect(url_for("main.items"))
     
