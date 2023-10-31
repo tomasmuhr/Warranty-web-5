@@ -3,111 +3,121 @@
 {% block app_content %}
     <div class="text-center">
         <h3>Search Results for '{{ search_query }}'</h3>
-        <br>
+        <br><br>
     </div>
-    <!-- TODO add something if results are empty -->
+    <!-- TODO Make Shops and Items prettier -->
     <!-- Search results for shops -->
     <div>
         <h4>Shops</h4>
     </div>
-    <div class="table-responsive">
-        <table class="table table-sm table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Street</th>
-                    <th scope="col">City</th>
-                    <th scope="col">Zip code</th>
-                    <th scope="col">Records</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for shop, items_count in search_result_shops %}
+    {% if search_result_shops %}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover">
+                <thead>
                     <tr>
-                        <td>{{ shop.id }}</td>
-                        <td>{{ shop.name }}</td>
-                        <td>{{ shop.street }}</td>
-                        <td>{{ shop.city }}</td>
-                        <td>{{ shop.zip_code }}</td>
-                        <td>{{ items_count if items_count else 0 }}</td>
-                        <td>
-                            <!-- Edit button -->
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
-                                Edit
-                            </button>
-                            
-                            <!-- Delete button -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
-                                Delete
-                            </button>
-
-                            <!-- Modals -->
-                            {% include '_shops_modal_edit.html' %}
-                            {% include '_shops_modal_delete.html' %}
-                        </td>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Street</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Zip code</th>
+                        <th scope="col">Records</th>
+                        <th scope="col">Actions</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for shop, items_count in search_result_shops %}
+                        <tr>
+                            <td>{{ shop.id }}</td>
+                            <td>{{ shop.name }}</td>
+                            <td>{{ shop.street }}</td>
+                            <td>{{ shop.city }}</td>
+                            <td>{{ shop.zip_code }}</td>
+                            <td>{{ items_count if items_count else 0 }}</td>
+                            <td>
+                                <!-- Edit button -->
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
+                                    Edit
+                                </button>
+                                
+                                <!-- Delete button -->
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
+                                    Delete
+                                </button>
+
+                                <!-- Modals -->
+                                {% include '_shops_modal_edit.html' %}
+                                {% include '_shops_modal_delete.html' %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <hr>        
+    {% else %}
+        <h6>Nothing found in shops.</h6>
+        <hr>
+    {% endif %}
+
 
     <!-- Search results for items -->
     <div>
         <h4>Items</h4>
     </div>
-    <div class="table-responsive">
-        <table class="table table-sm table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Shop</th>
-                    <th scope="col">Receipt nr</th>
-                    <th scope="col">Amount</th>
-                    <th scope="col">Price</th>
-                    <th scope="col">Comment</th>
-                    <th scope="col">Purchase Date</th>
-                    <th scope="col">W. Length</th>
-                    <th scope="col">W. Expiration</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item, dates in search_result_items %}
+    {% if search_result_items %}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover">
+                <thead>
                     <tr>
-                        <td>{{ item.id }}</td>
-                        <td>{{ item.name }}</td>
-                        <td>{{ item.shop.name }}</td>
-                        <td>{{ item.receipt_nr }}</td>
-                        <td>{{ item.amount }}</td>
-                        <td>{{ item.price_per_piece }}</td>
-                        <td>{{ item.comment }}</td>
-                        <td>{{ dates.purchase_date }}</td>
-                        <td>{{ dates.warranty_months }}</td>
-                        <td>{{ dates.expiration_date }}</td>
-                        <td>
-                            <!-- Edit button -->
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
-                                Edit
-                            </button>
-                            
-                            <!-- Delete button -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
-                                Delete
-                            </button>
-
-                            <!-- Modals -->
-                            {% include '_items_modal_edit.html' %}
-                            {% include '_items_modal_delete.html' %}
-                        </td>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Shop</th>
+                        <th scope="col">Receipt nr</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Purchase Date</th>
+                        <th scope="col">W. Length</th>
+                        <th scope="col">W. Expiration</th>
+                        <th scope="col">Actions</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    
+                </thead>
+                <tbody>
+                    {% for item, dates in search_result_items %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.shop.name }}</td>
+                            <td>{{ item.receipt_nr }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td>{{ item.price_per_piece }}</td>
+                            <td>{{ item.comment }}</td>
+                            <td>{{ dates.purchase_date }}</td>
+                            <td>{{ dates.warranty_months }}</td>
+                            <td>{{ dates.expiration_date }}</td>
+                            <td>
+                                <!-- Edit button -->
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
+                                    Edit
+                                </button>
+                                
+                                <!-- Delete button -->
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
+                                    Delete
+                                </button>
 
-    </div>
-    
+                                <!-- Modals -->
+                                {% include '_items_modal_edit.html' %}
+                                {% include '_items_modal_delete.html' %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h6>Nothing found in shops.</h6>
+        <hr>
+    {% endif %}
+
 {% endblock app_content %}
