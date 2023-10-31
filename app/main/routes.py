@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
@@ -134,9 +135,32 @@ def items():
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
     item = Item.query.filter_by(id=item_id).first()
+    dates = Dates.query.filter_by(item_id=item_id).first()
     
-    # db.session.update(item)
-    # db.session.commit()
+    # Form returns strings for non-string fields
+    # TODO shop not working, need to find shop_id by shop name
+    item.name = request.form.get("name")
+    item.shop_id = request.form.get("shop")
+    item.receipt_nr = request.form.get("receipt_nr")
+    item.amount = request.form.get("amount")
+    item.price_per_piece = request.form.get("price_per_piece")
+    item.comment = request.form.get("comment")
+    print(f"Name:       {type(request.form.get('name'))}")
+    print(f"Shop:       {type(request.form.get('shop'))}")
+    print(f"Receipt_nr: {type(request.form.get('receipt_nr'))}")
+    print(f"Amount:     {type(request.form.get('name'))}")
+    print(f"Price pp:   {type(request.form.get('name'))}")
+    print(f"Comment:    {type(request.form.get('name'))}")
+    
+    dates.warranty_months = request.form.get("warranty_months")
+    purchase_date_str = request.form.get("purchase_date")
+    dates.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
+    dates.expiration_date = dates.purchase_date + \
+        relativedelta(months=int(dates.warranty_months))
+    print(f"Months:     {type(request.form.get('warranty_months'))}")
+    print(f"Pur date:   {type(request.form.get('purchase_date'))}")
+    
+    db.session.commit()
     
     flash("The record has been successfully edited.", category="success")
     
