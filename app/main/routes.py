@@ -137,14 +137,28 @@ def edit_item(item_id: int):
     item = Item.query.filter_by(id=item_id).first()
     dates = Dates.query.filter_by(item_id=item_id).first()
     
-    # Form returns strings for non-string fields
-    # TODO shop not working, need to find shop_id by shop name
+    # Form returns strings for all fields - need conversion
     item.name = request.form.get("name")
-    item.shop_id = request.form.get("shop")
     item.receipt_nr = request.form.get("receipt_nr")
-    item.amount = request.form.get("amount")
-    item.price_per_piece = request.form.get("price_per_piece")
     item.comment = request.form.get("comment")
+    
+    # Get shop_id by shop name
+    shop = Shop.query.filter_by(name=request.form.get("shop")).first()
+    item.shop_id = shop.id
+    
+    # Check amount
+    amount = request.form.get("amount")
+    if amount:
+        item.amount = request.form.get("amount")
+    else: item.amount = None
+    
+    # Check float value in price_per_piece
+    price_per_piece = request.form.get("price_per_piece")
+    if price_per_piece:
+        item.price_per_piece = price_per_piece
+    else:
+        item.price_per_piece = None
+    
     print(f"Name:       {type(request.form.get('name'))}")
     print(f"Shop:       {type(request.form.get('shop'))}")
     print(f"Receipt_nr: {type(request.form.get('receipt_nr'))}")
@@ -153,6 +167,9 @@ def edit_item(item_id: int):
     print(f"Comment:    {type(request.form.get('name'))}")
     
     dates.warranty_months = request.form.get("warranty_months")
+    # Convert purchase_date to datetime - to be able to create
+    # a new datetime object by relativedelta
+
     purchase_date_str = request.form.get("purchase_date")
     dates.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
     dates.expiration_date = dates.purchase_date + \

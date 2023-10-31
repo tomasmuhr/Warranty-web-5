@@ -31,12 +31,12 @@
                     <br>
                     <div class="form-group">
                         <label for="amount">Amount</label>
-                        <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}">
+                        <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}" min="0">
                     </div>
                     <br>
                     <div class="form-group">
                         <label for="price_per_piece">Price per piece</label>
-                        <input type="float" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}">
+                        <input type="number" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}" step="0.01">
                     </div>
                     <br>
                     <div class="form-group">
@@ -54,7 +54,6 @@
                         <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ dates.warranty_months }}" required>
                     </div>
                     <br>
-                    # TODO add float check in JS for price per piece
                     <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
                 </form>
                 <br>
