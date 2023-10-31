@@ -90,6 +90,7 @@ def items():
     shop_choices = [(int(shop.id), shop.name) for shop in shops]
     shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
+    # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
@@ -206,6 +207,9 @@ def database():
 @main_bp.route("/search", methods=["POST"])
 def search():
     query = request.form.get("query")
+    shops = Shop.query.all()
+    shop_choices = [(int(shop.id), shop.name) for shop in shops]
+    shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
     item_alias = aliased(Item)
     items = db.session.query(item_alias, Dates) \
@@ -223,6 +227,7 @@ def search():
     return render_template("search.html",
                            title="Search Results",
                            search_query=query,
+                           shop_choices=shop_choices,
                            search_result_items=items,
                            search_result_shops=shops)
 

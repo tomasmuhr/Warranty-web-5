@@ -18,7 +18,6 @@ class ItemForm(FlaskForm):
     receipt_nr = StringField("Receipt Nr")
     amount = IntegerField("Amount", validators=[Optional(),
                                                 NumberRange(min=1,)])
-    # price_per_piece_pattern = r'^(?:\d+|\d*\.\d+)$'
     price_per_piece = DecimalField("Price per piece",
                                    validators=[Optional(),
                                                NumberRange(min=0,)])
