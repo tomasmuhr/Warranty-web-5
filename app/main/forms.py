@@ -15,9 +15,6 @@ class ShopForm(FlaskForm):
 class ItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     shop = SelectField("Shop*", validators=[DataRequired()])#,
-                        # choices=[(1, "Tempus Mauris Erat Incorporated"),
-                                #  (2, "A Magna Ltd")],
-                        # coerce=int)
     receipt_nr = StringField("Receipt Nr")
     amount = IntegerField("Amount", validators=[Optional(),
                                                 NumberRange(min=1,)])
@@ -32,10 +29,19 @@ class ItemForm(FlaskForm):
     warranty_months = IntegerField("Warranty length (months)*",
                                    validators=[DataRequired(), NumberRange(min=1,)],
                                    default=12)
-    submit = SubmitField("Add item", name="item_form")
     
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
         self.shop.choices = shop_choices
         self.shop.coerce = int
+
+
+class AddItemForm(ItemForm):
+    submit = SubmitField("Add item", name="add_item_form")
+    
+    
+class EditItemForm(ItemForm):
+    submit = SubmitField("Update Record", name="edit_item_form")
+    
+
         

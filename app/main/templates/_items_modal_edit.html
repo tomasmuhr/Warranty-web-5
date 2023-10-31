@@ -7,13 +7,62 @@
 
             </div>
             <div class="modal-body">
-                <!-- TODO render_form to form fields to make shops with scrollbar -->
-                {{ render_form(edit_item_form,
-                               button_size="sm") }}
+                <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+                    <!-- Include form fields with data pre-filled -->
+                    <div class="form-group">
+                        <label for="name">Name*</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ item.name }}" required>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="name">Shop*</label>
+                        <select type="text" class="form-control" id="shop" name="shop" required>
+                            <option value=""></option>
+                            {% for s in shop_choices %}
+                                <option value="{{ s[1] }}" {% if s[1] == item.shop.name %}selected{% endif %}>{{ s[1] }}</option>
+                            {% endfor %}
+                        </select>
+
+                    <br>
+                    <div class="form-group">
+                        <label for="receipt_nr">Receipt nr</label>
+                        <input type="text" class="form-control" id="receipt_nr" name="receipt_nr" value="{{ item.receipt_nr }}">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}" min="0">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="price_per_piece">Price per piece</label>
+                        <input type="number" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}" step="0.01">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="comment">Comment</label>
+                        <input type="text" class="form-control" id="comment" name="comment" value="{{ item.comment }}">
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="purchase_date">Purchase date*</label>
+                        <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ dates.purchase_date }}" required>
+                    </div>
+                    <br>
+                    <div class="form-group">
+                        <label for="warranty_months">Warranty length (months)*</label>
+                        <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ dates.warranty_months }}" required>
+                    </div>
+                    <br>
+                    <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
+                </form>
+                <br>
+                <div class="text-danger">
+                    * values are required
+                </div>
             </div>
-            <br>
-            <div class="text-danger">
-                * values are required
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

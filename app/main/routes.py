@@ -1,8 +1,9 @@
+from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
 from app.main import main_bp
-from app.main.forms import ItemForm, ShopForm
+from app.main.forms import AddItemForm, ShopForm
 from app.models import Dates, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -63,7 +64,7 @@ def edit_shop(shop_id: int):
             
             db.session.commit()
              
-            flash("The record has been successfully edited.", category="success")
+            flash("The record has been successfully updated.", category="success")
             
             return redirect(url_for("main.shops"))
     
@@ -89,10 +90,10 @@ def items():
     shop_choices = [(int(shop.id), shop.name) for shop in shops]
     shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
-    add_item_form = ItemForm(shop_choices)
+    add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
-        if "add_item_form" in request.form and add_item_form.submit():
+        if "add_item_form" in request.form:
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -115,9 +116,6 @@ def items():
             
             return redirect(url_for("main.items"))
         
-        elif "edit_item_form" in request.form and edit_item_form.submit():
-            pass
-        
         else:
             flash("Something went wrong.", category="danger")
             print(add_item_form.errors)
@@ -130,24 +128,56 @@ def items():
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
-                           item_rows=item_rows)
+                           item_rows=item_rows,
+                           shop_choices=shop_choices)
     
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
     item = Item.query.filter_by(id=item_id).first()
-    print(request.form)
+    dates = Dates.query.filter_by(item_id=item_id).first()
     
-    # item.name = request.form["name"]
-    # item.receipt_nr = request.form["receipt_nr"]
-    # item.amount = request.form["amount"]
-    # item.price_per_piece = request.form["price_per_piece"]
-    # item.comment = request.form["comment"]
-    # item.shop_id = request.form["shop"]
-    # TODO purchase date and w
+    # Form returns strings for all fields - need conversion
+    item.name = request.form.get("name")
+    item.receipt_nr = request.form.get("receipt_nr")
+    item.comment = request.form.get("comment")
     
-    # db.session.update(item)
-    # db.session.commit()
+    # Get shop_id by shop name
+    shop = Shop.query.filter_by(name=request.form.get("shop")).first()
+    item.shop_id = shop.id
+    
+    # Check amount
+    amount = request.form.get("amount")
+    if amount:
+        item.amount = request.form.get("amount")
+    else: item.amount = None
+    
+    # Check float value in price_per_piece
+    price_per_piece = request.form.get("price_per_piece")
+    if price_per_piece:
+        item.price_per_piece = price_per_piece
+    else:
+        item.price_per_piece = None
+    
+    print(f"Name:       {type(request.form.get('name'))}")
+    print(f"Shop:       {type(request.form.get('shop'))}")
+    print(f"Receipt_nr: {type(request.form.get('receipt_nr'))}")
+    print(f"Amount:     {type(request.form.get('name'))}")
+    print(f"Price pp:   {type(request.form.get('name'))}")
+    print(f"Comment:    {type(request.form.get('name'))}")
+    
+    dates.warranty_months = request.form.get("warranty_months")
+    # Convert purchase_date to datetime - to be able to create
+    # a new datetime object by relativedelta
+
+    purchase_date_str = request.form.get("purchase_date")
+    dates.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
+    dates.expiration_date = dates.purchase_date + \
+        relativedelta(months=int(dates.warranty_months))
+    print(f"Months:     {type(request.form.get('warranty_months'))}")
+    print(f"Pur date:   {type(request.form.get('purchase_date'))}")
+    
+    db.session.commit()
     
     flash("The record has been successfully edited.", category="success")
     
