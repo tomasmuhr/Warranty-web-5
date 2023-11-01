@@ -1,15 +1,29 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, TextAreaField, SubmitField
-from wtforms.validators import DataRequired, Optional, NumberRange
+from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, SubmitField
+from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError
 
+from app.models import Shop
+
+
+def name_validator(form, field):
+    name = field.data
+    if Shop.query.filter_by(name=name).first():
+        raise ValidationError("Shop with this name already exists!")
+        
 
 class ShopForm(FlaskForm):
-    name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
+    name = StringField("Name*", validators=[DataRequired(), name_validator], render_kw={"autofocus": True})
     street = StringField("Street")
     city = StringField("City")
     zip_code = StringField("Zip Code")
     submit = SubmitField("Add shop", name="shop_form")
+    
+    # @staticmethod
+    # def validate_name(form, field):
+    #     name = field.data
+    #     if Shop.query.filter_by(name=name).first():
+    #         raise ValidationError("Shop with this name already exists!")
     
     
 class ItemForm(FlaskForm):
@@ -42,5 +56,3 @@ class AddItemForm(ItemForm):
 class EditItemForm(ItemForm):
     submit = SubmitField("Update Record", name="edit_item_form")
     
-
-        

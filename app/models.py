@@ -1,3 +1,5 @@
+from codecs import unicode_escape_decode
+from enum import unique
 from app import db
 # class User(UserMixin, db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
@@ -69,7 +71,7 @@ class Settings(db.Model):
 
 class Shop(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), unique=True, nullable=False)
     street = db.Column(db.String(150))
     city = db.Column(db.String(64))
     zip_code = db.Column(db.String(10))
@@ -78,7 +80,7 @@ class Shop(db.Model):
 
 class Item(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
+    name = db.Column(db.String(64), nullable=False)
     receipt_nr = db.Column(db.String(20))
     amount = db.Column(db.Integer)
     price_per_piece = db.Column(db.Float)
@@ -89,8 +91,8 @@ class Item(db.Model):
 class Dates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey("item.id", name="fk_dates_item_id"))
-    warranty_months = db.Column(db.Integer)
-    purchase_date = db.Column(db.Date())
-    expiration_date = db.Column(db.Date())
+    warranty_months = db.Column(db.Integer, nullable=False)
+    purchase_date = db.Column(db.Date(), nullable=False)
+    expiration_date = db.Column(db.Date(), nullable=False)
 
         

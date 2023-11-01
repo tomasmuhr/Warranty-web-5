@@ -28,19 +28,24 @@ def about():
 def shops():
     add_shop_form = ShopForm()
     
-    if "shop_form" in request.form and add_shop_form.validate_on_submit():
-        shop = Shop(name=add_shop_form.name.data,
-                    street=add_shop_form.street.data,
-                    city=add_shop_form.city.data,
-                    zip_code=add_shop_form.zip_code.data)
+    if request.method == "POST":
+        if "shop_form" in request.form and add_shop_form.validate_on_submit():
+            # TODO check for same shop name
+            shop = Shop(name=add_shop_form.name.data,
+                        street=add_shop_form.street.data,
+                        city=add_shop_form.city.data,
+                        zip_code=add_shop_form.zip_code.data)
+            
+            db.session.add(shop)
+            db.session.commit()
+            
+            flash("The record has been successfully added!", category="success")
+            
+            return redirect(url_for("main.shops"))
         
-        db.session.add(shop)
-        db.session.commit()
-        
-        flash("The record has been successfully added!", category="success")
-        
-        return redirect(url_for("main.shops"))
-    
+        else:
+            flash("Something went wrong. The shop name probably already exists. Please try again.", category="danger")
+            
     shop_rows = db.session \
         .query(Shop, func.count(Item.id)) \
         .outerjoin(Item) \
@@ -67,6 +72,9 @@ def edit_shop(shop_id: int):
             flash("The record has been successfully updated.", category="success")
             
             return redirect(url_for("main.shops"))
+        
+        else:
+            flash("Something went wrong. Please try again.", category="danger")
     
     return redirect(url_for("main.shops"))
     
@@ -160,23 +168,13 @@ def edit_item(item_id: int):
     else:
         item.price_per_piece = None
     
-    print(f"Name:       {type(request.form.get('name'))}")
-    print(f"Shop:       {type(request.form.get('shop'))}")
-    print(f"Receipt_nr: {type(request.form.get('receipt_nr'))}")
-    print(f"Amount:     {type(request.form.get('name'))}")
-    print(f"Price pp:   {type(request.form.get('name'))}")
-    print(f"Comment:    {type(request.form.get('name'))}")
-    
     dates.warranty_months = request.form.get("warranty_months")
     # Convert purchase_date to datetime - to be able to create
     # a new datetime object by relativedelta
-
     purchase_date_str = request.form.get("purchase_date")
     dates.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
     dates.expiration_date = dates.purchase_date + \
         relativedelta(months=int(dates.warranty_months))
-    print(f"Months:     {type(request.form.get('warranty_months'))}")
-    print(f"Pur date:   {type(request.form.get('purchase_date'))}")
     
     db.session.commit()
     
