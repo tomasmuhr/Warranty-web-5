@@ -6,29 +6,22 @@ from wtforms.validators import DataRequired, Optional, NumberRange, ValidationEr
 from app.models import Shop
 
 
-def name_validator(form, field):
-    name = field.data
-    if Shop.query.filter_by(name=name).first():
-        raise ValidationError("Shop with this name already exists!")
-        
-
 class ShopForm(FlaskForm):
-    name = StringField("Name*", validators=[DataRequired(), name_validator], render_kw={"autofocus": True})
+    name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     street = StringField("Street")
     city = StringField("City")
     zip_code = StringField("Zip Code")
     submit = SubmitField("Add shop", name="shop_form")
     
-    # @staticmethod
-    # def validate_name(form, field):
-    #     name = field.data
-    #     if Shop.query.filter_by(name=name).first():
-    #         raise ValidationError("Shop with this name already exists!")
+    def validate_name(form, field):
+        name = field.data
+        if Shop.query.filter_by(name=name).first():
+            raise ValidationError("Shop with this name already exists!")
     
     
 class ItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
-    shop = SelectField("Shop*", validators=[DataRequired()])#,
+    shop = SelectField("Shop*", validators=[DataRequired()])
     receipt_nr = StringField("Receipt Nr")
     amount = IntegerField("Amount", validators=[Optional(),
                                                 NumberRange(min=1,)])
@@ -46,7 +39,7 @@ class ItemForm(FlaskForm):
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
         self.shop.choices = shop_choices
-        self.shop.coerce = int
+        # self.shop.coerce = int
 
 
 class AddItemForm(ItemForm):

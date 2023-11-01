@@ -44,7 +44,8 @@ def shops():
             return redirect(url_for("main.shops"))
         
         else:
-            flash("Something went wrong. The shop name probably already exists. Please try again.", category="danger")
+            flash("Something went wrong. The shop name probably already exists. Please try again.",
+                  category="danger")
             
     shop_rows = db.session \
         .query(Shop, func.count(Item.id)) \
@@ -64,7 +65,7 @@ def edit_shop(shop_id: int):
     edit_shop_form = ShopForm()
     
     if request.method == "POST":
-        if "shop_form" in request.form and edit_shop_form.is_submitted():
+        if "shop_form" in request.form and edit_shop_form.validate_on_submit():
             edit_shop_form.populate_obj(shop)
             
             db.session.commit()
@@ -74,7 +75,8 @@ def edit_shop(shop_id: int):
             return redirect(url_for("main.shops"))
         
         else:
-            flash("Something went wrong. Please try again.", category="danger")
+            flash("Something went wrong. The shop name probably already exists. Please try again.",
+                  category="danger")
     
     return redirect(url_for("main.shops"))
     
@@ -102,7 +104,7 @@ def items():
     add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
-        if "add_item_form" in request.form:
+        if "add_item_form" in request.form and add_item_form.validate_on_submit():
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -111,10 +113,10 @@ def items():
                         shop_id=add_item_form.shop.data)
             
             dates = Dates(item_id=item.id,
-                        purchase_date=add_item_form.purchase_date.data,
-                        warranty_months=add_item_form.warranty_months.data,
-                        expiration_date=add_item_form.purchase_date.data + \
-                            relativedelta(months=add_item_form.warranty_months.data))
+                          purchase_date=add_item_form.purchase_date.data,
+                          warranty_months=add_item_form.warranty_months.data,
+                          expiration_date=add_item_form.purchase_date.data + \
+                              relativedelta(months=add_item_form.warranty_months.data))
             
             item.dates.append(dates)
             
@@ -127,7 +129,6 @@ def items():
         
         else:
             flash("Something went wrong.", category="danger")
-            print(add_item_form.errors)
     
     item_rows = db.session \
         .query(Item, Dates) \
