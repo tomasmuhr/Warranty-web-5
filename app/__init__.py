@@ -1,5 +1,5 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
@@ -10,11 +10,16 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 from sqlalchemy import column
+from sqlalchemy.orm import DeclarativeBase
 from app.config import get_config_mode
 from dateutil.relativedelta import relativedelta
 
 
-db = SQLAlchemy()
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 bootstrap = Bootstrap5()
 
