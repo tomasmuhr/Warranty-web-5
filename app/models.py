@@ -86,11 +86,12 @@ class Item(db.Model):
     price_per_piece = db.Column(db.Float)
     comment = db.Column(db.String(255))
     shop_id = db.Column(db.Integer, db.ForeignKey("shop.id", name="fk_item_shop_id"))
+    # image_path = db.Column(db.LargeBinary)
     dates = db.relationship("Dates", backref="item")
 
 class Dates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, db.ForeignKey("item.id", name="fk_dates_item_id"))
+    item_id = db.Column(db.Integer, db.ForeignKey("item.id", name="fk_dates_item_id"), nullable=False)
     warranty_months = db.Column(db.Integer, nullable=False)
     purchase_date = db.Column(db.Date(), nullable=False)
     expiration_date = db.Column(db.Date(), nullable=False)

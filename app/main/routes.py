@@ -94,6 +94,7 @@ def delete_shop(shop_id: int):
 
 
 # --- ITEMS ---
+# TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
     shops = Shop.query.all()

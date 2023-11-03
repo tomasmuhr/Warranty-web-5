@@ -10,10 +10,14 @@
     color: #fff;
 }
 
-/* Move the switch to the right side of the navbar */
+.navbar-light {
+    background-color: hsl(0, 0%, 95%);
+}
+
+/* /* Move the switch to the right side of the navbar
 .dark-mode-switch {
     margin-left: auto;
-}
+} */
 
 /* .navbar-btn {
     margin-left: 5px;
@@ -22,6 +26,10 @@
 
 .text-justified {
     text-align: justify;
+}
+
+.text-small {
+    font-size: smaller;
 }
 
 .table-sm {
