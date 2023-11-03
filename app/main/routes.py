@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import func
 from sqlalchemy.orm import aliased
+from sqlalchemy.sql.operators import as_
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
 from app.models import Dates, Item, Shop
@@ -47,11 +48,18 @@ def shops():
             flash("Something went wrong. The shop name probably already exists. Please try again.",
                   category="danger")
             
-    shop_rows = db.session \
-        .query(Shop, func.count(Item.id)) \
-        .outerjoin(Item) \
-        .group_by(Shop.id) \
-        .all()
+    # shop_rows = db.session \
+        # .query(Shop, func.count(Item.id)) \
+        # .outerjoin(Item) \
+        # .group_by(Shop.id) \
+        # .all()
+        
+    
+    shop_rows = db.session.execute(
+        db.select(Shop, func.count(Item.id).label("items_count"))
+        .outerjoin(Item, Shop.id == Item.shop_id)
+        .group_by(Shop)
+    ).fetchall()
     
     return render_template("shops.html",
                            title="Shops",
