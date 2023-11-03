@@ -29,19 +29,6 @@
                     <th scope="col">W. Expiration</th>
                     <th scope="col">Actions</th>
                 </tr>
-                <!-- <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Filter</th>
-                    <th scope="col">Filter</th>
-                    <th scope="col">Filter</th>
-                    <th scope="col"></th>
-                    <th scope="col"></th>
-                    <th scope="col">Filter</th>
-                    <th scope="col">Filter</th>
-                    <th scope="col">Filter</th>
-                    <th scope="col">Filter</th>
-                    <th scope="col"></th>
-                </tr> -->
             </thead>
             <tbody>
                 {% for item, dates in item_rows %}
@@ -68,8 +55,8 @@
                             </button>
 
                             <!-- Modals -->
-                            {% include '_items_modal_edit.html' %}
                             {% include '_items_modal_delete.html' %}
+                            {% include '_items_modal_edit.html' %}
                         </td>
                     </tr>
                 {% endfor %}
