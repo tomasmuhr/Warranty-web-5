@@ -19,7 +19,7 @@
                         <select type="text" class="form-control" id="shop" name="shop" required>
                             <option value=""></option>
                             {% for s in shop_choices %}
-                                <option value="{{ s[1] }}" {% if s[1] == item.shop.name %}selected{% endif %}>{{ s[1] }}</option>
+                                <option value="{{ s[1] }}" {% if s[1] == item.shop_id.name %}selected{% endif %}>{{ s[1] }}</option>
                             {% endfor %}
                         </select>
 

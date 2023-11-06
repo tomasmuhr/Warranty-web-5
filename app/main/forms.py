@@ -1,6 +1,6 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, SubmitField
+from wtforms import DateField, DecimalField, HiddenField, IntegerField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError
 
 from app.models import Shop

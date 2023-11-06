@@ -35,7 +35,8 @@
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.shop.name }}</td>
+                        <!-- FIXME shop name not working -->
+                        <td>{{ item.shop_id.name }}</td>
                         <td>{{ item.receipt_nr }}</td>
                         <td>{{ item.amount }}</td>
                         <td>{{ item.price_per_piece }}</td>

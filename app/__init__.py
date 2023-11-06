@@ -6,6 +6,7 @@ from flask_bootstrap import Bootstrap5
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 import logging
 from logging.handlers import RotatingFileHandler
 import os
@@ -22,6 +23,7 @@ class Base(DeclarativeBase):
 db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 bootstrap = Bootstrap5()
+csrf = CSRFProtect()
 
 load_dotenv(".env")
 
@@ -43,6 +45,7 @@ def create_app(config_class=config_class):
     db.init_app(app) 
     migrate.init_app(app, db)
     bootstrap.init_app(app)
+    csrf.init_app(app)
     
     register_blueprints(app)
     register_logging(app)

@@ -7,8 +7,8 @@
 
             </div>
             <div class="modal-body">
+                <!-- FIXME edit not working - missing csrf, validation fails -->
                 <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id) }}">
-                    <!-- Include form fields with data pre-filled -->
                     <div class="form-group">
                         <label for="name">Name*</label>
                         <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
@@ -29,7 +29,7 @@
                         <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
                     </div>
                     <br>
-                    <button type="submit" name="shop_form" class="btn btn-sm btn-primary">Update Record</button>
+                    <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update Record</button>
                 </form>
                 <br>
                 <div class="text-danger">
