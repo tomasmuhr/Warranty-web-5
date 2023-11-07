@@ -1,6 +1,6 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, HiddenField, IntegerField, SelectField, StringField, SubmitField
+from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, SubmitField
 from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError
 
 from app.models import Shop
@@ -39,7 +39,6 @@ class ItemForm(FlaskForm):
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
         self.shop.choices = shop_choices
-        # self.shop.coerce = int
 
 
 class AddItemForm(ItemForm):

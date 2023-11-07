@@ -61,6 +61,7 @@ def shops():
 
 @main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
 def edit_shop(shop_id: int):
+    # FIXME missing CSRF token
     shop = db.session.execute(
         db.select(Shop)
         .where(Shop.id == shop_id)
@@ -116,6 +117,7 @@ def items():
         db.select(Shop.id, Shop.name)
         .order_by(Shop.name)
     ).fetchall()
+    print(shop_choices)
     
     # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
@@ -147,9 +149,14 @@ def items():
         else:
             flash("Something went wrong.", category="danger")
     
+    # item_rows = db.session.execute(
+    #     db.select(Item, Dates)
+    #     .outerjoin(Dates)
+    # ).fetchall()
     item_rows = db.session.execute(
-        db.select(Item, Dates)
+        db.select(Item, Dates, Shop.name)
         .outerjoin(Dates)
+        .outerjoin(Shop)
     ).fetchall()
         
     return render_template("items.html",
