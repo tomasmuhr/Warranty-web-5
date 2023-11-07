@@ -113,10 +113,15 @@ def delete_shop(shop_id: int):
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
-    shop_choices = db.session.execute(
-        db.select(Shop.id, Shop.name)
-        .order_by(Shop.name)
+    # shop_choices = db.session.execute(
+    #     db.select(Shop.id, Shop.name)
+    #     .order_by(func.lower(Shop.name))
+    # ).fetchall()
+    shop_choices_temp = db.session.execute(
+        db.select(Shop.name)
+        .order_by(func.lower(Shop.name))
     ).fetchall()
+    shop_choices = [shop[0] for shop in shop_choices_temp]
     print(shop_choices)
     
     # Add shop_choices to form to initialize shop choices
@@ -124,6 +129,7 @@ def items():
     
     if request.method == "POST":
         if "add_item_form" in request.form and add_item_form.validate_on_submit():
+            print(add_item_form.shop.data)
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
