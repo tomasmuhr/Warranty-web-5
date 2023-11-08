@@ -34,7 +34,7 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col">#</th>
                     <th scope="col">Name</th>
                     <th scope="col">Shop</th>
                     <th scope="col">Receipt nr</th>
@@ -56,8 +56,8 @@
                         <!-- <td>{{ item.shop_id.name }}</td> -->
                         <td>{{ shop_name }}</td>
                         <td>{{ item.receipt_nr }}</td>
-                        <td>{{ item.amount }}</td>
-                        <td>{{ item.price_per_piece }}</td>
+                        <td>{% if item.amount %}{{ item.amount }}{% endif %}</td>
+                        <td>{% if item.price_per_piece %}{{ item.price_per_piece }}{% endif %}</td>
                         <td>{{ item.comment }}</td>
                         <td>{{ dates.purchase_date }}</td>
                         <td>{{ dates.warranty_months }}</td>

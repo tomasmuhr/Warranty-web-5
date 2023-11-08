@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List
+from typing import List, Optional
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app import db
@@ -29,16 +29,18 @@ class Item(db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     name: Mapped[str] = mapped_column(db.String(64))
     receipt_nr: Mapped[str] = mapped_column(db.String(20))
-    amount: Mapped[int] = mapped_column(db.Integer) # FIXME not null constraint
-    price_per_piece: Mapped[float] = mapped_column(db.Float)
+    amount: Mapped[Optional[int]] = mapped_column(db.Integer)
+    price_per_piece: Mapped[Optional[float]] = mapped_column(db.Float)
     comment: Mapped[str] = mapped_column(db.String(255))
     shop_id: Mapped[int] = mapped_column(ForeignKey("shop.id"))
-    dates: Mapped[List["Dates"]] = relationship()
+    # FIXME does not delete orphan
+    dates: Mapped[List["Dates"]] = relationship("Dates", backref="item",
+                                                cascade="all", passive_deletes=True)
 
 
 class Dates(db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"))
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id", ondelete="CASCADE"), nullable=False)
     warranty_months: Mapped[int] = mapped_column(db.Integer, nullable=False)
     purchase_date: Mapped[datetime.date] = mapped_column(db.Date(), nullable=False)
     expiration_date: Mapped[datetime.date] = mapped_column(db.Date(), nullable=False)

@@ -134,13 +134,18 @@ def items():
     
     if request.method == "POST":
         if "add_item_form" in request.form and add_item_form.validate_on_submit():
-            print(add_item_form.shop.data)
+            shop_id = db.session.execute(
+                db.select(Shop.id)
+                .where(Shop.name == add_item_form.shop.data)
+            ).fetchone()[0]
+
+            # FIXME orphan dates connect to the appropriate item and this renders multiple times
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
                         price_per_piece=add_item_form.price_per_piece.data,
                         comment=add_item_form.comment.data,
-                        shop_id=add_item_form.shop.data)
+                        shop_id=shop_id)
             
             dates = Dates(item_id=item.id,
                           purchase_date=add_item_form.purchase_date.data,
