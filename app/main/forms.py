@@ -14,7 +14,7 @@ class ShopForm(FlaskForm):
     submit = SubmitField("Add shop", name="shop_form")
     
     def validate_name(form, field):
-        name = field.data
+        name = field.data.lstrip()
         if Shop.query.filter_by(name=name).first():
             raise ValidationError("Shop with this name already exists!")
     
@@ -39,7 +39,6 @@ class ItemForm(FlaskForm):
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
         self.shop.choices = shop_choices
-        # self.shop.coerce = int
 
 
 class AddItemForm(ItemForm):

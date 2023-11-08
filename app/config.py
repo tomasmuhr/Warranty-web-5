@@ -23,7 +23,7 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty.db"
+    SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty.sqlite"
     
     
 class ProductionConfig(Config):

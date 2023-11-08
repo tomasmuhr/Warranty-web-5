@@ -7,8 +7,25 @@
             Add New Shop
         </button>
 
-        <!-- Modal -->
-        {% include '_shops_modal_add.html' %}
+        <div class="modal fade" id="addShop" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shop-details">Shop Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ render_form(add_shop_form,
+                                       button_size="sm") }}
+                    </div>
+                    <br>
+                    <div class="text-danger">
+                        * values are required
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>
@@ -36,19 +53,84 @@
                         <td>{{ shop.zip_code }}</td>
                         <td>{{ items_count if items_count else 0 }}</td>
                         <td>
-                            <!-- Edit button -->
+                            <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
                                 Edit
                             </button>
                             
-                            <!-- Delete button -->
+                            <div class="modal fade" id="shopEdit_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            
+                                        </div>
+
+                                        <div class="modal-body">
+                                            <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id) }}">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <div class="form-group">
+                                                    <label for="name">Name*</label>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="street">Street</label>
+                                                    <input type="text" class="form-control" id="street" name="street" value="{{ shop.street }}">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="city">City</label>
+                                                    <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="zip_code">Zip code</label>
+                                                    <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
+                                                </div>
+                                                <br>
+                                                <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update Record</button>
+                                            </form>
+                                            <br>
+                                            <div class="text-danger">
+                                                * values are required
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Delete button and modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
                                 Delete
                             </button>
 
-                            <!-- Modals -->
-                            {% include '_shops_modal_delete.html' %}
-                            {% include '_shops_modal_edit.html' %}
+                            <div class="modal fade" id="shopDelete_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                <div class="modal-dialog modal-sm" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            
+                                        </div>
+
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
+                                            <br><br>
+                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id) }}">Delete Record</a>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

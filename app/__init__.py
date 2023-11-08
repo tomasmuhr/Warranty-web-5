@@ -1,22 +1,29 @@
 import csv
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 from flask_bootstrap import Bootstrap5
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_wtf import CSRFProtect
 import logging
 from logging.handlers import RotatingFileHandler
 import os
 from sqlalchemy import column
+from sqlalchemy.orm import DeclarativeBase
 from app.config import get_config_mode
 from dateutil.relativedelta import relativedelta
 
 
-db = SQLAlchemy()
+class Base(DeclarativeBase):
+    pass
+
+
+db = SQLAlchemy(model_class=Base)
 migrate = Migrate()
 bootstrap = Bootstrap5()
+csrf = CSRFProtect()
 
 load_dotenv(".env")
 
@@ -38,6 +45,7 @@ def create_app(config_class=config_class):
     db.init_app(app) 
     migrate.init_app(app, db)
     bootstrap.init_app(app)
+    csrf.init_app(app)
     
     register_blueprints(app)
     register_logging(app)

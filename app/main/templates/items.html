@@ -7,8 +7,25 @@
             Add New Item
         </button>
 
-        <!-- Modal -->
-        {% include '_items_modal_add.html' %}
+        <div class="modal fade" id="itemAdd" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="shop-details">Item Details</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ render_form(add_item_form,
+                                       button_size="sm") }}
+                    </div>
+                    <br>
+                    <div class="text-danger">
+                        * values are required
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
     </div>
 
     <hr>
@@ -31,11 +48,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item, dates in item_rows %}
+                {% for item, dates, shop_name in item_rows %}
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <td>{{ item.shop.name }}</td>
+                        <!-- FIXME shop name not working -->
+                        <!-- <td>{{ item.shop_id.name }}</td> -->
+                        <td>{{ shop_name }}</td>
                         <td>{{ item.receipt_nr }}</td>
                         <td>{{ item.amount }}</td>
                         <td>{{ item.price_per_piece }}</td>
@@ -44,19 +63,106 @@
                         <td>{{ dates.warranty_months }}</td>
                         <td>{{ dates.expiration_date }}</td>
                         <td>
-                            <!-- Edit button -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
-                                Edit
+                                <span>Edit</span>
                             </button>
                             
-                            <!-- Delete button -->
+                            <div class="modal fade" id="itemEdit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            
+                                        </div>
+                                        
+                                        <div class="modal-body">
+                                            <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                <div class="form-group">
+                                                    <label for="name">Name*</label>
+                                                    <input type="text" class="form-control" id="name" name="name" value="{{ item.name }}" required>
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="name">Shop*</label>
+                                                    <select type="text" class="form-control" id="shop" name="shop" required>
+                                                        <option value=""></option>
+                                                        {% for s in shop_choices %}
+                                                            <option value="{{ s[1] }}" {% if s[1] == item.shop_id.name %}selected{% endif %}>{{ s[1] }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="receipt_nr">Receipt nr</label>
+                                                    <input type="text" class="form-control" id="receipt_nr" name="receipt_nr" value="{{ item.receipt_nr }}">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="amount">Amount</label>
+                                                    <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}" min="0">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="price_per_piece">Price per piece</label>
+                                                    <input type="number" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}" step="0.01">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="comment">Comment</label>
+                                                    <input type="text" class="form-control" id="comment" name="comment" value="{{ item.comment }}">
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="purchase_date">Purchase date*</label>
+                                                    <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ dates.purchase_date }}" required>
+                                                </div>
+                                                <br>
+                                                <div class="form-group">
+                                                    <label for="warranty_months">Warranty length (months)*</label>
+                                                    <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ dates.warranty_months }}" required>
+                                                </div>
+                                                <br>
+                                                <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
+                                            </form>
+                                            <br>
+                                            <div class="text-danger">
+                                                * values are required
+                                            </div>
+                                        </div>
+
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
                                 Delete
                             </button>
 
-                            <!-- Modals -->
-                            {% include '_items_modal_delete.html' %}
-                            {% include '_items_modal_edit.html' %}
+                            <div class="modal fade" id="itemDelete_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                <div class="modal-dialog modal-sm" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete this record?<br><b>{{ item.name }}</b>
+                                            <br><br>
+                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id) }}">Delete Record</a>
+                            
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}

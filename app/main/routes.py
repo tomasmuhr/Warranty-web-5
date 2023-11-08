@@ -30,8 +30,9 @@ def shops():
     
     if request.method == "POST":
         if "shop_form" in request.form and add_shop_form.validate_on_submit():
-            # TODO check for same shop name
-            shop = Shop(name=add_shop_form.name.data,
+            shop_name_stripped = add_shop_form.name.data.lstrip()
+            
+            shop = Shop(name=shop_name_stripped,
                         street=add_shop_form.street.data,
                         city=add_shop_form.city.data,
                         zip_code=add_shop_form.zip_code.data)
@@ -44,14 +45,21 @@ def shops():
             return redirect(url_for("main.shops"))
         
         else:
-            flash("Something went wrong. The shop name probably already exists. Please try again.",
+            flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
                   category="danger")
             
-    shop_rows = db.session \
-        .query(Shop, func.count(Item.id)) \
-        .outerjoin(Item) \
-        .group_by(Shop.id) \
-        .all()
+            error_messages = []
+            for field, errors in add_shop_form.errors.items():
+                for error in errors:
+                    error_messages.append(f'{field}: {error}')
+            print( ', '.join(error_messages))
+            
+    shop_rows = db.session.execute(
+        db.select(Shop, func.count(Item.id).label("items_count"))
+        .outerjoin(Item, Shop.id == Item.shop_id)
+        .group_by(Shop)
+        .order_by(Shop.id)
+    ).fetchall()
     
     return render_template("shops.html",
                            title="Shops",
@@ -61,31 +69,48 @@ def shops():
 
 @main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
 def edit_shop(shop_id: int):
-    shop = Shop.query.filter_by(id=shop_id).first()
+    # FIXME missing CSRF token
+    shop = db.session.execute(
+        db.select(Shop)
+        .where(Shop.id == shop_id)
+    ).fetchone()[0]
+
     edit_shop_form = ShopForm()
     
     if request.method == "POST":
-        if "shop_form" in request.form and edit_shop_form.validate_on_submit():
-            edit_shop_form.populate_obj(shop)
+        if "edit_shop_form" in request.form:
+            if any([edit_shop_form.name.data.lstrip() == shop.name and edit_shop_form.is_submitted(),
+                    edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
+                
+                edit_shop_form.populate_obj(shop)
             
-            db.session.commit()
-             
-            flash("The record has been successfully updated.", category="success")
+                db.session.commit()
+                
+                flash("The record has been successfully updated.", category="success")
+                
+            else:
+                flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
+                      category="danger")
+                
+                error_messages = []
+                for field, errors in edit_shop_form.errors.items():
+                    for error in errors:
+                        error_messages.append(f'{field}: {error}')
+                print( ', '.join(error_messages))
             
-            return redirect(url_for("main.shops"))
-        
-        else:
-            flash("Something went wrong. The shop name probably already exists. Please try again.",
-                  category="danger")
-    
+        return redirect(url_for("main.shops"))
+
+    # just for case when the form is not submitted
     return redirect(url_for("main.shops"))
     
+            
 
 @main_bp.route("/delete_shop/<int:shop_id>", methods=['GET'])
 def delete_shop(shop_id: int):
-    shop = Shop.query.filter_by(id=shop_id).first()
-    
-    db.session.delete(shop)
+    db.session.execute(
+        db.delete(Shop)
+        .where(Shop.id == shop_id)
+    )
     db.session.commit()
     
     flash("The record has been successfully deleted.", category="success")
@@ -97,15 +122,19 @@ def delete_shop(shop_id: int):
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
-    shops = Shop.query.all()
-    shop_choices = [(int(shop.id), shop.name) for shop in shops]
-    shop_choices = sorted(shop_choices, key=lambda x: x[1])
+    shop_choices_temp = db.session.execute(
+        db.select(Shop.name)
+        .order_by(func.lower(Shop.name))
+    ).fetchall()
+    
+    shop_choices = [shop[0] for shop in shop_choices_temp]
     
     # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
         if "add_item_form" in request.form and add_item_form.validate_on_submit():
+            print(add_item_form.shop.data)
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -131,10 +160,11 @@ def items():
         else:
             flash("Something went wrong.", category="danger")
     
-    item_rows = db.session \
-        .query(Item, Dates) \
-        .outerjoin(Dates) \
-        .all()
+    item_rows = db.session.execute(
+        db.select(Item, Dates, Shop.name)
+        .outerjoin(Dates)
+        .outerjoin(Shop)
+    ).fetchall()
         
     return render_template("items.html",
                            title="Items",
@@ -145,6 +175,7 @@ def items():
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
+    # FIXME all items logic
     item = Item.query.filter_by(id=item_id).first()
     dates = Dates.query.filter_by(item_id=item_id).first()
     
@@ -187,9 +218,10 @@ def edit_item(item_id: int):
 
 @main_bp.route("/delete_item/<int:item_id>", methods=['GET'])
 def delete_item(item_id: int):
-    item = Item.query.filter_by(id=item_id).first()
-    
-    db.session.delete(item)
+    db.session.execute(
+        db.delete(Item)
+        .where(Item.id == item_id)
+    )
     db.session.commit()
     
     flash("The record has been successfully deleted.", category="success")
@@ -206,6 +238,7 @@ def database():
 # SEARCH
 @main_bp.route("/search", methods=["POST"])
 def search():
+    # TODO
     query = request.form.get("query")
     shops = Shop.query.all()
     shop_choices = [(int(shop.id), shop.name) for shop in shops]
