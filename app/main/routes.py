@@ -30,7 +30,9 @@ def shops():
     
     if request.method == "POST":
         if "shop_form" in request.form and add_shop_form.validate_on_submit():
-            shop = Shop(name=add_shop_form.name.data,
+            shop_name_stripped = add_shop_form.name.data.lstrip()
+            
+            shop = Shop(name=shop_name_stripped,
                         street=add_shop_form.street.data,
                         city=add_shop_form.city.data,
                         zip_code=add_shop_form.zip_code.data)
@@ -43,8 +45,14 @@ def shops():
             return redirect(url_for("main.shops"))
         
         else:
-            flash("Something went wrong. The shop name probably already exists. Please try again.",
+            flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
                   category="danger")
+            
+            error_messages = []
+            for field, errors in add_shop_form.errors.items():
+                for error in errors:
+                    error_messages.append(f'{field}: {error}')
+            print( ', '.join(error_messages))
             
     shop_rows = db.session.execute(
         db.select(Shop, func.count(Item.id).label("items_count"))
@@ -71,8 +79,8 @@ def edit_shop(shop_id: int):
     
     if request.method == "POST":
         if "edit_shop_form" in request.form:
-            if any([edit_shop_form.name.data == shop.name and edit_shop_form.is_submitted(),
-                    edit_shop_form.name.data != shop.name and edit_shop_form.validate_on_submit()]):
+            if any([edit_shop_form.name.data.lstrip() == shop.name and edit_shop_form.is_submitted(),
+                    edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
                 
                 edit_shop_form.populate_obj(shop)
             
@@ -81,8 +89,9 @@ def edit_shop(shop_id: int):
                 flash("The record has been successfully updated.", category="success")
                 
             else:
-                flash("Something went wrong. The shop name probably already exists. Please try again.",
+                flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
                       category="danger")
+                
                 error_messages = []
                 for field, errors in edit_shop_form.errors.items():
                     for error in errors:
@@ -113,16 +122,12 @@ def delete_shop(shop_id: int):
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
-    # shop_choices = db.session.execute(
-    #     db.select(Shop.id, Shop.name)
-    #     .order_by(func.lower(Shop.name))
-    # ).fetchall()
     shop_choices_temp = db.session.execute(
         db.select(Shop.name)
         .order_by(func.lower(Shop.name))
     ).fetchall()
+    
     shop_choices = [shop[0] for shop in shop_choices_temp]
-    print(shop_choices)
     
     # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
@@ -155,10 +160,6 @@ def items():
         else:
             flash("Something went wrong.", category="danger")
     
-    # item_rows = db.session.execute(
-    #     db.select(Item, Dates)
-    #     .outerjoin(Dates)
-    # ).fetchall()
     item_rows = db.session.execute(
         db.select(Item, Dates, Shop.name)
         .outerjoin(Dates)

@@ -14,7 +14,7 @@ class ShopForm(FlaskForm):
     submit = SubmitField("Add shop", name="shop_form")
     
     def validate_name(form, field):
-        name = field.data
+        name = field.data.lstrip()
         if Shop.query.filter_by(name=name).first():
             raise ValidationError("Shop with this name already exists!")
     
