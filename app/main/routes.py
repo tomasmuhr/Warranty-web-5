@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
-from sqlalchemy import func
+from sqlalchemy import distinct, func
 from sqlalchemy.orm import aliased
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
@@ -69,7 +69,6 @@ def shops():
 
 @main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
 def edit_shop(shop_id: int):
-    # FIXME missing CSRF token
     shop = db.session.execute(
         db.select(Shop)
         .where(Shop.id == shop_id)
@@ -139,7 +138,7 @@ def items():
                 .where(Shop.name == add_item_form.shop.data)
             ).fetchone()[0]
 
-            # FIXME orphan dates connect to the appropriate item and this renders multiple times
+            # FIXME orphans - dates connect to the appropriate item and this renders multiple times
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -180,7 +179,7 @@ def items():
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
-    # FIXME all items logic
+    # FIXME queries
     item = Item.query.filter_by(id=item_id).first()
     dates = Dates.query.filter_by(item_id=item_id).first()
     
@@ -227,7 +226,21 @@ def delete_item(item_id: int):
         db.delete(Item)
         .where(Item.id == item_id)
     )
+    
+    # # workaround for cascade delete
+    # db.session.execute(
+    #     db.delete(Dates)
+    #     .where(Dates.item_id == item_id)
+    # )
+    
     db.session.commit()
+
+    # TEMP count items and dates
+    items_dates_count = db.session.execute(
+        db.select(func.count(distinct(Item.id)), func.count(distinct(Dates.id)))
+    ).fetchone()
+    print(f"Items: {items_dates_count[0]}, Dates: {items_dates_count[1]}")
+    # /TEMP
     
     flash("The record has been successfully deleted.", category="success")
     
@@ -243,7 +256,7 @@ def database():
 # SEARCH
 @main_bp.route("/search", methods=["POST"])
 def search():
-    # TODO
+    # TODO queries
     query = request.form.get("query")
     shops = Shop.query.all()
     shop_choices = [(int(shop.id), shop.name) for shop in shops]

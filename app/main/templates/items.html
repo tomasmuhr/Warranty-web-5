@@ -52,9 +52,7 @@
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <!-- FIXME shop name not working -->
-                        <!-- <td>{{ item.shop_id.name }}</td> -->
-                        <td>{{ shop_name }}</td>
+                        <td>{% if shop_name %}{{ shop_name }}{% endif %}</td>
                         <td>{{ item.receipt_nr }}</td>
                         <td>{% if item.amount %}{{ item.amount }}{% endif %}</td>
                         <td>{% if item.price_per_piece %}{{ item.price_per_piece }}{% endif %}</td>
@@ -63,6 +61,7 @@
                         <td>{{ dates.warranty_months }}</td>
                         <td>{{ dates.expiration_date }}</td>
                         <td>
+                            <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
                                 <span>Edit</span>
                             </button>
@@ -139,6 +138,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Delete button and modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
                                 Delete
                             </button>

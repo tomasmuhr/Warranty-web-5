@@ -121,6 +121,7 @@
 
                                         <div class="modal-body">
                                             Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
+                                            <!-- TODO delete also linked items -->
                                             <br><br>
                                             <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id) }}">Delete Record</a>
                                         </div>

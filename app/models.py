@@ -33,9 +33,10 @@ class Item(db.Model):
     price_per_piece: Mapped[Optional[float]] = mapped_column(db.Float)
     comment: Mapped[str] = mapped_column(db.String(255))
     shop_id: Mapped[int] = mapped_column(ForeignKey("shop.id"))
-    # FIXME does not delete orphan
-    dates: Mapped[List["Dates"]] = relationship("Dates", backref="item",
-                                                cascade="all", passive_deletes=True)
+    # FIXME orphans - does not delete orphan
+    # dates: Mapped[List["Dates"]] = relationship("Dates", backref="item",
+    #                                             cascade="all", passive_deletes=True)
+    dates: Mapped[List["Dates"]] = relationship("Dates", backref="item")
 
 
 class Dates(db.Model):

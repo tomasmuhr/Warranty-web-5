@@ -55,12 +55,12 @@ def create_app(config_class=config_class):
 
 
 def register_blueprints(app):
-    from app.errors import errors_bp
-    app.register_blueprint(errors_bp)
-
     from app.main import main_bp
     app.register_blueprint(main_bp)
     
+    # from app.errors import errors_bp
+    # app.register_blueprint(errors_bp)
+
 
 def register_logging(app):
     logs_path = Path("logs")
@@ -119,8 +119,8 @@ def configure_database(app):
                             db.session.commit()
                             
                         # delete abundant shops
-                        db.session.query(Shop).filter(Shop.id > 20).delete()
-                        db.session.commit()
+                        # db.session.query(Shop).filter(Shop.id > 20).delete()
+                        # db.session.commit()
                         app.logger.info("Fake shops filled.")
                 else:
                     app.logger.info("Fake shops in database already filled.")
@@ -149,8 +149,8 @@ def configure_database(app):
                             db.session.commit()
                             
                         # delete abundant items
-                        db.session.query(Item).filter(Item.id > 46).delete()
-                        db.session.commit()
+                        # db.session.query(Item).filter(Item.id > 46).delete()
+                        # db.session.commit()
                         app.logger.info("Fake items filled.")
                         
                 else:
@@ -180,8 +180,8 @@ def configure_database(app):
                             db.session.commit()
                         
                         # delete abundant dates
-                        db.session.query(Dates).filter(Dates.id > 46).delete()
-                        db.session.commit()
+                        # db.session.query(Dates).filter(Dates.id > 46).delete()
+                        # db.session.commit()
                         app.logger.info("Fake dates filled.")
                         
                 else:
