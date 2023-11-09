@@ -166,9 +166,9 @@ def items():
             shop_id = db.session.execute(
                 db.select(Shop.id)
                 .where(Shop.name == add_item_form.shop.data)
-            ).fetchone()[0]
+            ).scalar()
 
-            # FIXME orphans - dates connect to the appropriate item and this renders multiple times
+            # ! orphans - dates connect to the appropriate item and this renders multiple times
             item = Item(name=add_item_form.name.data,
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
@@ -176,13 +176,13 @@ def items():
                         comment=add_item_form.comment.data,
                         shop_id=shop_id)
             
-            dates = Date(item_id=item.id,
-                          purchase_date=add_item_form.purchase_date.data,
-                          warranty_months=add_item_form.warranty_months.data,
-                          expiration_date=add_item_form.purchase_date.data + \
-                              relativedelta(months=add_item_form.warranty_months.data))
+            date = Date(item_id=item.id,
+                        purchase_date=add_item_form.purchase_date.data,
+                        warranty_months=add_item_form.warranty_months.data,
+                        expiration_date=add_item_form.purchase_date.data + \
+                            relativedelta(months=add_item_form.warranty_months.data))
             
-            item.dates.append(dates)
+            item.date.append(date)
             
             db.session.add(item)
             db.session.commit()
@@ -214,8 +214,17 @@ def items():
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
     # FIXME queries
-    item = Item.query.filter_by(id=item_id).first()
-    dates = Date.query.filter_by(item_id=item_id).first()
+    # item = Item.query.filter_by(id=item_id).first()
+    # dates = Date.query.filter_by(item_id=item_id).first()
+    item = db.session.execute(
+        db.select(Item)
+        .where(Item.id == item_id)
+    ).fetchone()[0]
+    
+    date = db.session.execute(
+        db.select(Date)
+        .where(Date.item_id == item_id)
+    ).fetchone()[0]
     
     # Form returns strings for all fields - need conversion
     item.name = request.form.get("name")
@@ -223,14 +232,20 @@ def edit_item(item_id: int):
     item.comment = request.form.get("comment")
     
     # Get shop_id by shop name
-    shop = Shop.query.filter_by(name=request.form.get("shop")).first()
-    item.shop_id = shop.id
+    # shop = Shop.query.filter_by(name=request.form.get("shop")).first()
+    shop_id = db.session.execute(
+        db.select(Shop.id)
+        .where(Shop.name == request.form.get("shop"))
+    ).scalar()
+    
+    item.shop_id = shop_id
     
     # Check amount
     amount = request.form.get("amount")
     if amount:
         item.amount = request.form.get("amount")
-    else: item.amount = None
+    else:
+        item.amount = None
     
     # Check float value in price_per_piece
     price_per_piece = request.form.get("price_per_piece")
@@ -239,13 +254,13 @@ def edit_item(item_id: int):
     else:
         item.price_per_piece = None
     
-    dates.warranty_months = request.form.get("warranty_months")
+    date.warranty_months = request.form.get("warranty_months")
     # Convert purchase_date to datetime - to be able to create
     # a new datetime object by relativedelta
     purchase_date_str = request.form.get("purchase_date")
-    dates.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
-    dates.expiration_date = dates.purchase_date + \
-        relativedelta(months=int(dates.warranty_months))
+    date.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
+    date.expiration_date = date.purchase_date + \
+        relativedelta(months=int(date.warranty_months))
     
     db.session.commit()
     
@@ -270,18 +285,14 @@ def delete_item(item_id: int):
     db.session.commit()
 
     # TEMP count items and dates
-    items_dates_count = db.session.execute(
-        db.select(func.count(distinct(Item.id)), func.count(distinct(Date.id)))
-    ).fetchone()
-    items_count = db.execute(
+    items_count = db.session.execute(
         db.select(func.count(Item.id))
     ).scalar()
     
-    dates_count = db.execute(
+    dates_count = db.session.execute(
         db.select(func.count(Date.id))
     ).scalar()
     
-    # print(f"Items: {items_dates_count[0]}, Date: {items_dates_count[1]}")
     print(f"Items: {items_count}, Date: {dates_count}")
     # /TEMP
     

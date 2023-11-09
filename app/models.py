@@ -39,7 +39,7 @@ class Item(db.Model):
     # FIXME orphans - does not delete orphan
     # dates: Mapped[List["Date"]] = relationship("Date", backref="item",
     #                                             cascade="all", passive_deletes=True)
-    dates: Mapped[List["Date"]] = relationship("Date", backref="item")
+    date: Mapped[List["Date"]] = relationship("Date", backref="item")
 
     def __repr__(self):
         return "Item"
