@@ -157,7 +157,7 @@ def configure_database(app):
                     app.logger.info("Fake items in database already filled.")
                         
                 # FAKE DATES
-                db_dates_count = db.session.query(column("Dates")).count()
+                db_dates_count = db.session.query(column("Date")).count()
                 app.logger.info(f"Fake dates count: {db_dates_count}")
                 
                 if db_dates_count <= 1:
@@ -170,7 +170,7 @@ def configure_database(app):
                             for row in csv_reader:
                                 p_date = datetime.strptime(row["purchase_date"], "%Y-%m-%d")
                                 
-                                new_dates = Dates(item_id=row["item_id"],
+                                new_dates = Date(item_id=row["item_id"],
                                                 warranty_months=row["warranty_months"],
                                                 purchase_date = p_date,
                                                 expiration_date=p_date + relativedelta(months=int(row["warranty_months"])))
@@ -180,7 +180,7 @@ def configure_database(app):
                             db.session.commit()
                         
                         # delete abundant dates
-                        # db.session.query(Dates).filter(Dates.id > 46).delete()
+                        # db.session.query(Date).filter(Date.id > 46).delete()
                         # db.session.commit()
                         app.logger.info("Fake dates filled.")
                         
@@ -196,4 +196,4 @@ def configure_database(app):
         db.session.remove()
 
 
-from app.models import Dates, Item, Shop
+from app.models import Date, Item, Shop

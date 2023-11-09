@@ -21,6 +21,9 @@ class Shop(db.Model):
     city: Mapped[str] = mapped_column(db.String(64))
     zip_code: Mapped[str] = mapped_column(db.String(10))
     items: Mapped[List["Item"]] = db.relationship()
+    
+    def __repr__(self):
+        return "Shop"
 
 
 class Item(db.Model):
@@ -34,15 +37,23 @@ class Item(db.Model):
     comment: Mapped[str] = mapped_column(db.String(255))
     shop_id: Mapped[int] = mapped_column(ForeignKey("shop.id"))
     # FIXME orphans - does not delete orphan
-    # dates: Mapped[List["Dates"]] = relationship("Dates", backref="item",
+    # dates: Mapped[List["Date"]] = relationship("Date", backref="item",
     #                                             cascade="all", passive_deletes=True)
-    dates: Mapped[List["Dates"]] = relationship("Dates", backref="item")
+    dates: Mapped[List["Date"]] = relationship("Date", backref="item")
+
+    def __repr__(self):
+        return "Item"
 
 
-class Dates(db.Model):
+class Date(db.Model):
+    __tablename__ = "dates"
+    
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    item_id: Mapped[int] = mapped_column(ForeignKey("item.id", ondelete="CASCADE"), nullable=False)
+    # item_id: Mapped[int] = mapped_column(ForeignKey("item.id", ondelete="CASCADE"), nullable=False)
+    item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), nullable=False)
     warranty_months: Mapped[int] = mapped_column(db.Integer, nullable=False)
     purchase_date: Mapped[datetime.date] = mapped_column(db.Date(), nullable=False)
     expiration_date: Mapped[datetime.date] = mapped_column(db.Date(), nullable=False)
     
+    def __repr__(self):
+        return "Date"

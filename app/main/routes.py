@@ -4,7 +4,7 @@ from sqlalchemy import distinct, func
 from sqlalchemy.orm import aliased
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
-from app.models import Dates, Item, Shop
+from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
 
@@ -40,6 +40,8 @@ def shops():
             db.session.add(shop)
             db.session.commit()
             
+            get_record_count(Shop)
+            
             flash("The record has been successfully added!", category="success")
             
             return redirect(url_for("main.shops"))
@@ -48,12 +50,8 @@ def shops():
             flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
                   category="danger")
             
-            error_messages = []
-            for field, errors in add_shop_form.errors.items():
-                for error in errors:
-                    error_messages.append(f'{field}: {error}')
-            print( ', '.join(error_messages))
-            
+            print_error_messages(add_shop_form)
+
     shop_rows = db.session.execute(
         db.select(Shop, func.count(Item.id).label("items_count"))
         .outerjoin(Item, Shop.id == Item.shop_id)
@@ -78,25 +76,55 @@ def edit_shop(shop_id: int):
     
     if request.method == "POST":
         if "edit_shop_form" in request.form:
-            if any([edit_shop_form.name.data.lstrip() == shop.name and edit_shop_form.is_submitted(),
-                    edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
-                
+            # if any([edit_shop_form.name.data.lstrip() == shop.name and edit_shop_form.is_submitted(),
+                    # edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
+            
+            # Remove leading spaces
+            edit_shop_form.name.data = edit_shop_form.name.data.lstrip()
+            new_name = edit_shop_form.name.data
+            
+            # A if the name is the same - proceed
+            if new_name == shop.name:
+                # print(new_name)
+                # print("The name is the same")
                 edit_shop_form.populate_obj(shop)
             
                 db.session.commit()
                 
                 flash("The record has been successfully updated.", category="success")
+            
+            # B if the name is not the same - check if a shop with the same name exists
+            elif new_name != shop.name:
+                # print(new_name)
+                
+                check_result = db.session.execute(
+                    db.select(Shop.name)
+                    .where(Shop.name == new_name)
+                ).scalar()
+                # print(check_result)
+                
+                if not check_result:
+                    # print("The shop name is not in use, ok")
+                    edit_shop_form.populate_obj(shop)
+                    
+                    db.session.commit()
+                    
+                    flash("The record has been successfully updated.", category="success")
+                    
+                else:
+                    # print("The shop name probably already exists or is empty")
+                    flash("The shop name probably already exists or is empty. Please try again.",
+                          category="danger")
+                    
+                    print_error_messages(edit_shop_form)
                 
             else:
                 flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
-                      category="danger")
+                        category="danger")
                 
-                error_messages = []
-                for field, errors in edit_shop_form.errors.items():
-                    for error in errors:
-                        error_messages.append(f'{field}: {error}')
-                print( ', '.join(error_messages))
-            
+                print_error_messages(edit_shop_form)
+        
+        
         return redirect(url_for("main.shops"))
 
     # just for case when the form is not submitted
@@ -112,6 +140,8 @@ def delete_shop(shop_id: int):
     )
     db.session.commit()
     
+    get_record_count(Shop)
+
     flash("The record has been successfully deleted.", category="success")
     
     return redirect(url_for("main.shops"))
@@ -146,7 +176,7 @@ def items():
                         comment=add_item_form.comment.data,
                         shop_id=shop_id)
             
-            dates = Dates(item_id=item.id,
+            dates = Date(item_id=item.id,
                           purchase_date=add_item_form.purchase_date.data,
                           warranty_months=add_item_form.warranty_months.data,
                           expiration_date=add_item_form.purchase_date.data + \
@@ -157,16 +187,20 @@ def items():
             db.session.add(item)
             db.session.commit()
             
+            get_record_count(Item, Date)
+            
             flash("The record has been successfully added.", category="success")
             
             return redirect(url_for("main.items"))
         
         else:
             flash("Something went wrong.", category="danger")
+            
+            print_error_messages(add_item_form)
     
     item_rows = db.session.execute(
-        db.select(Item, Dates, Shop.name)
-        .outerjoin(Dates)
+        db.select(Item, Date, Shop.name)
+        .outerjoin(Date)
         .outerjoin(Shop)
     ).fetchall()
         
@@ -181,7 +215,7 @@ def items():
 def edit_item(item_id: int):
     # FIXME queries
     item = Item.query.filter_by(id=item_id).first()
-    dates = Dates.query.filter_by(item_id=item_id).first()
+    dates = Date.query.filter_by(item_id=item_id).first()
     
     # Form returns strings for all fields - need conversion
     item.name = request.form.get("name")
@@ -227,19 +261,28 @@ def delete_item(item_id: int):
         .where(Item.id == item_id)
     )
     
-    # # workaround for cascade delete
-    # db.session.execute(
-    #     db.delete(Dates)
-    #     .where(Dates.item_id == item_id)
-    # )
+    # ! workaround for cascade delete
+    db.session.execute(
+        db.delete(Date)
+        .where(Date.item_id == item_id)
+    )
     
     db.session.commit()
 
     # TEMP count items and dates
     items_dates_count = db.session.execute(
-        db.select(func.count(distinct(Item.id)), func.count(distinct(Dates.id)))
+        db.select(func.count(distinct(Item.id)), func.count(distinct(Date.id)))
     ).fetchone()
-    print(f"Items: {items_dates_count[0]}, Dates: {items_dates_count[1]}")
+    items_count = db.execute(
+        db.select(func.count(Item.id))
+    ).scalar()
+    
+    dates_count = db.execute(
+        db.select(func.count(Date.id))
+    ).scalar()
+    
+    # print(f"Items: {items_dates_count[0]}, Date: {items_dates_count[1]}")
+    print(f"Items: {items_count}, Date: {dates_count}")
     # /TEMP
     
     flash("The record has been successfully deleted.", category="success")
@@ -263,8 +306,8 @@ def search():
     shop_choices = sorted(shop_choices, key=lambda x: x[1])
     
     item_alias = aliased(Item)
-    items = db.session.query(item_alias, Dates) \
-                    .outerjoin(Dates) \
+    items = db.session.query(item_alias, Date) \
+                    .outerjoin(Date) \
                     .filter(item_alias.name.ilike(f"%{query}%")) \
                     .all()
     
@@ -283,3 +326,24 @@ def search():
                            search_result_shops=shops)
 
 
+# UTILITIES
+def get_record_count(*args):
+    results_dict = {}
+    
+    for a in args:
+        rslt = db.session.execute(
+            db.select(func.count(a.id))
+        ).scalar()
+        
+        results_dict[a] = rslt
+    
+    for key, value in results_dict.items():
+        print(f"{key.__name__}: {value} records")
+        
+        
+def print_error_messages(form):
+    error_messages = []
+    for field, errors in form.errors.items():
+        for error in errors:
+            error_messages.append(f'{field}: {error}')
+    print( ', '.join(error_messages))
