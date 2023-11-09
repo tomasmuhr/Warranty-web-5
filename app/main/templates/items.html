@@ -34,9 +34,10 @@
         <table class="table table-sm table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col">#</th>
                     <th scope="col">Name</th>
                     <th scope="col">Shop</th>
+                    <!-- TODO add shop info modal -->
                     <th scope="col">Receipt nr</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Price</th>
@@ -48,21 +49,20 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item, dates, shop_name in item_rows %}
+                {% for item, date, shop_name in item_rows %}
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <!-- FIXME shop name not working -->
-                        <!-- <td>{{ item.shop_id.name }}</td> -->
-                        <td>{{ shop_name }}</td>
+                        <td>{% if shop_name %}{{ shop_name }}{% endif %}</td>
                         <td>{{ item.receipt_nr }}</td>
-                        <td>{{ item.amount }}</td>
-                        <td>{{ item.price_per_piece }}</td>
+                        <td>{% if item.amount %}{{ item.amount }}{% endif %}</td>
+                        <td>{% if item.price_per_piece %}{{ item.price_per_piece }}{% endif %}</td>
                         <td>{{ item.comment }}</td>
-                        <td>{{ dates.purchase_date }}</td>
-                        <td>{{ dates.warranty_months }}</td>
-                        <td>{{ dates.expiration_date }}</td>
+                        <td>{{ date.purchase_date }}</td>
+                        <td>{{ date.warranty_months }}</td>
+                        <td>{{ date.expiration_date }}</td>
                         <td>
+                            <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
                                 <span>Edit</span>
                             </button>
@@ -89,7 +89,7 @@
                                                     <select type="text" class="form-control" id="shop" name="shop" required>
                                                         <option value=""></option>
                                                         {% for s in shop_choices %}
-                                                            <option value="{{ s[1] }}" {% if s[1] == item.shop_id.name %}selected{% endif %}>{{ s[1] }}</option>
+                                                            <option value="{{ s }}" {% if s == shop_name %}selected{% endif %}>{{ s }}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
@@ -116,12 +116,12 @@
                                                 <br>
                                                 <div class="form-group">
                                                     <label for="purchase_date">Purchase date*</label>
-                                                    <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ dates.purchase_date }}" required>
+                                                    <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ date.purchase_date }}" required>
                                                 </div>
                                                 <br>
                                                 <div class="form-group">
                                                     <label for="warranty_months">Warranty length (months)*</label>
-                                                    <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ dates.warranty_months }}" required>
+                                                    <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ date.warranty_months }}" required>
                                                 </div>
                                                 <br>
                                                 <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
@@ -139,6 +139,7 @@
                                 </div>
                             </div>
                             
+                            <!-- Delete button and modal -->
                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
                                 Delete
                             </button>

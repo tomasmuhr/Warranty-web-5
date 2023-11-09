@@ -55,12 +55,12 @@ def create_app(config_class=config_class):
 
 
 def register_blueprints(app):
-    from app.errors import errors_bp
-    app.register_blueprint(errors_bp)
-
     from app.main import main_bp
     app.register_blueprint(main_bp)
     
+    # from app.errors import errors_bp
+    # app.register_blueprint(errors_bp)
+
 
 def register_logging(app):
     logs_path = Path("logs")
@@ -119,8 +119,8 @@ def configure_database(app):
                             db.session.commit()
                             
                         # delete abundant shops
-                        db.session.query(Shop).filter(Shop.id > 20).delete()
-                        db.session.commit()
+                        # db.session.query(Shop).filter(Shop.id > 20).delete()
+                        # db.session.commit()
                         app.logger.info("Fake shops filled.")
                 else:
                     app.logger.info("Fake shops in database already filled.")
@@ -149,19 +149,19 @@ def configure_database(app):
                             db.session.commit()
                             
                         # delete abundant items
-                        db.session.query(Item).filter(Item.id > 46).delete()
-                        db.session.commit()
+                        # db.session.query(Item).filter(Item.id > 46).delete()
+                        # db.session.commit()
                         app.logger.info("Fake items filled.")
                         
                 else:
                     app.logger.info("Fake items in database already filled.")
                         
                 # FAKE DATES
-                db_dates_count = db.session.query(column("Dates")).count()
+                db_dates_count = db.session.query(column("Date")).count()
                 app.logger.info(f"Fake dates count: {db_dates_count}")
                 
                 if db_dates_count <= 1:
-                    csv_path = Path("app/data/fake_dates.csv")
+                    csv_path = Path("app/data/fake_date.csv")
                     
                     if csv_path.exists():
                         with open(csv_path, "r", encoding="utf-8") as f:
@@ -170,7 +170,7 @@ def configure_database(app):
                             for row in csv_reader:
                                 p_date = datetime.strptime(row["purchase_date"], "%Y-%m-%d")
                                 
-                                new_dates = Dates(item_id=row["item_id"],
+                                new_dates = Date(item_id=row["item_id"],
                                                 warranty_months=row["warranty_months"],
                                                 purchase_date = p_date,
                                                 expiration_date=p_date + relativedelta(months=int(row["warranty_months"])))
@@ -180,8 +180,8 @@ def configure_database(app):
                             db.session.commit()
                         
                         # delete abundant dates
-                        db.session.query(Dates).filter(Dates.id > 46).delete()
-                        db.session.commit()
+                        # db.session.query(Date).filter(Date.id > 46).delete()
+                        # db.session.commit()
                         app.logger.info("Fake dates filled.")
                         
                 else:
@@ -196,4 +196,4 @@ def configure_database(app):
         db.session.remove()
 
 
-from app.models import Dates, Item, Shop
+from app.models import Date, Item, Shop
