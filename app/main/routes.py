@@ -129,7 +129,6 @@ def edit_shop(shop_id: int):
 
     # just for case when the form is not submitted
     return redirect(url_for("main.shops"))
-    
             
 
 @main_bp.route("/delete_shop/<int:shop_id>", methods=['GET'])
@@ -151,12 +150,15 @@ def delete_shop(shop_id: int):
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
-    shop_choices_temp = db.session.execute(
-        db.select(Shop.name)
-        .order_by(func.lower(Shop.name))
-    ).fetchall()
+    # shop_choices_temp = db.session.execute(
+    #     db.select(Shop.name)
+    #     .order_by(func.lower(Shop.name))
+    # ).fetchall()
     
-    shop_choices = [shop[0] for shop in shop_choices_temp]
+    # shop_choices = [shop[0] for shop in shop_choices_temp]
+    
+    # Get shop choices for select shop field
+    shop_choices = get_shop_choices()
     
     # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
@@ -213,9 +215,6 @@ def items():
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
 def edit_item(item_id: int):
-    # FIXME queries
-    # item = Item.query.filter_by(id=item_id).first()
-    # dates = Date.query.filter_by(item_id=item_id).first()
     item = db.session.execute(
         db.select(Item)
         .where(Item.id == item_id)
@@ -232,7 +231,6 @@ def edit_item(item_id: int):
     item.comment = request.form.get("comment")
     
     # Get shop_id by shop name
-    # shop = Shop.query.filter_by(name=request.form.get("shop")).first()
     shop_id = db.session.execute(
         db.select(Shop.id)
         .where(Shop.name == request.form.get("shop"))
@@ -312,9 +310,14 @@ def database():
 def search():
     # TODO queries
     query = request.form.get("query")
-    shops = Shop.query.all()
-    shop_choices = [(int(shop.id), shop.name) for shop in shops]
-    shop_choices = sorted(shop_choices, key=lambda x: x[1])
+    # shops = Shop.query.all()
+    # shops = db.session.execute(
+    #     db.select(Shop)
+    # )
+    # shop_choices = [(int(shop.id), shop.name) for shop in shops]
+    # shop_choices = sorted(shop_choices, key=lambda x: x[1])
+    
+    shop_choices = get_shop_choices()
     
     item_alias = aliased(Item)
     items = db.session.query(item_alias, Date) \
@@ -358,3 +361,14 @@ def print_error_messages(form):
         for error in errors:
             error_messages.append(f'{field}: {error}')
     print( ', '.join(error_messages))
+
+    
+def get_shop_choices():
+    shop_choices_temp = db.session.execute(
+        db.select(Shop.name)
+        .order_by(func.lower(Shop.name))
+    ).fetchall()
+    
+    shop_choices = [shop[0] for shop in shop_choices_temp]
+    
+    return shop_choices
