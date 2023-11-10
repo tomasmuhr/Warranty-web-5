@@ -32,7 +32,8 @@ class Item(db.Model):
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     name: Mapped[str] = mapped_column(db.String(64))
     receipt_nr: Mapped[str] = mapped_column(db.String(20))
-    amount: Mapped[Optional[int]] = mapped_column(db.Integer)
+    # amount: Mapped[Optional[int]] = mapped_column(db.Integer) # TODO make float
+    amount: Mapped[Optional[float]] = mapped_column(db.Float)
     price_per_piece: Mapped[Optional[float]] = mapped_column(db.Float)
     comment: Mapped[str] = mapped_column(db.String(255))
     shop_id: Mapped[int] = mapped_column(ForeignKey("shop.id"))
@@ -46,7 +47,7 @@ class Item(db.Model):
 
 
 class Date(db.Model):
-    __tablename__ = "dates"
+    __tablename__ = "date"
     
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
     # item_id: Mapped[int] = mapped_column(ForeignKey("item.id", ondelete="CASCADE"), nullable=False)

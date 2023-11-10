@@ -161,7 +161,7 @@ def configure_database(app):
                 app.logger.info(f"Fake dates count: {db_dates_count}")
                 
                 if db_dates_count <= 1:
-                    csv_path = Path("app/data/fake_date.csv")
+                    csv_path = Path("app/data/fake_dates.csv")
                     
                     if csv_path.exists():
                         with open(csv_path, "r", encoding="utf-8") as f:

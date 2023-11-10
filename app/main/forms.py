@@ -23,18 +23,12 @@ class ItemForm(FlaskForm):
     name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     shop = SelectField("Shop*", validators=[DataRequired()])
     receipt_nr = StringField("Receipt Nr")
-    amount = IntegerField("Amount", validators=[Optional(),
-                                                NumberRange(min=1,)])
-    price_per_piece = DecimalField("Price per piece",
-                                   validators=[Optional(),
-                                               NumberRange(min=0,)])
+    amount = DecimalField("Amount", validators=[Optional(), NumberRange(min=0,)])
+    price_per_piece = DecimalField("Price per piece", validators=[Optional(), NumberRange(min=0,)])
     comment = StringField("Comment")
-    purchase_date = DateField("Purchase date*",
-                              validators=[DataRequired()],
-                              default=date.today())
+    purchase_date = DateField("Purchase date*", validators=[DataRequired()], default=date.today())
     warranty_months = IntegerField("Warranty length (months)*",
-                                   validators=[DataRequired(), NumberRange(min=1,)],
-                                   default=12)
+                                   validators=[DataRequired(), NumberRange(min=1,)], default=12)
     
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()

@@ -51,7 +51,8 @@
                         <td>{{ shop.street }}</td>
                         <td>{{ shop.city }}</td>
                         <td>{{ shop.zip_code }}</td>
-                        <td>{{ items_count if items_count else 0 }}</td>
+                        <!-- TODO button for records -->
+                        <td>{{ items_count if items_count else 0 }}</td> 
                         <td>
                             <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
