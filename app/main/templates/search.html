@@ -5,7 +5,155 @@
         <h3>Search Results for '{{ search_query }}'</h3>
         <br><br>
     </div>
+
+    <!-- Search results for items -->
+    <div>
+        <h4>Items</h4>
+    </div>
+    {% if search_result_items %}
+        <div class="table-responsive">
+            <table class="table table-sm table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Shop</th>
+                        <th scope="col">Receipt nr</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col">Purchase Date</th>
+                        <th scope="col">W. Length</th>
+                        <th scope="col">W. Expiration</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item, date, shop_name in search_result_items %}
+                        <tr>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ shop_name }}</td>
+                            <td>{{ item.receipt_nr }}</td>
+                            <td>{{ item.amount }}</td>
+                            <td>{{ item.price_per_piece }}</td>
+                            <td>{{ item.comment }}</td>
+                            <td>{{ date.purchase_date }}</td>
+                            <td>{{ date.warranty_months }}</td>
+                            <td>{{ date.expiration_date }}</td>
+                            <td>
+                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
+                                    Edit
+                                </button>
+                                
+                                <div class="modal fade" id="itemEdit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                
+                                            </div>
+                                            
+                                            <div class="modal-body">
+                                                <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <div class="form-group">
+                                                        <label for="name">Name*</label>
+                                                        <input type="text" class="form-control" id="name" name="name" value="{{ item.name }}" required>
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="name">Shop*</label>
+                                                        <select type="text" class="form-control" id="shop" name="shop" required>
+                                                            <option value=""></option>
+                                                            {% for s in shop_choices %}
+                                                                <option value="{{ s }}" {% if s == shop_name %}selected{% endif %}>{{ s }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="receipt_nr">Receipt nr</label>
+                                                        <input type="text" class="form-control" id="receipt_nr" name="receipt_nr" value="{{ item.receipt_nr }}">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="amount">Amount</label>
+                                                        <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}" min="0">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="price_per_piece">Price per piece</label>
+                                                        <input type="number" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}" step="0.01">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="comment">Comment</label>
+                                                        <input type="text" class="form-control" id="comment" name="comment" value="{{ item.comment }}">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="purchase_date">Purchase date*</label>
+                                                        <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ date.purchase_date }}" required>
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="warranty_months">Warranty length (months)*</label>
+                                                        <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ date.warranty_months }}" required>
+                                                    </div>
+                                                    <br>
+                                                    <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
+                                                </form>
+                                                <br>
+                                                <div class="text-danger">
+                                                    * values are required
+                                                </div>
+                                            </div>
     
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
+                                    Delete
+                                </button>
+
+                                <div class="modal fade" id="itemDelete_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                
+                                            </div>
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this record?<br><b>{{ item.name }}</b>
+                                                <br><br>
+                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id) }}">Delete Record</a>
+                                
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <h6>Nothing found in items.</h6>
+    {% endif %}
+
+    <hr>
+
     <!-- Search results for shops -->
     <div>
         <h4>Shops</h4>
@@ -34,80 +182,83 @@
                             <td>{{ shop.zip_code }}</td>
                             <td>{{ items_count if items_count else 0 }}</td>
                             <td>
-                                <!-- Edit button -->
                                 <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
                                     Edit
                                 </button>
+                                                                
+                                <div class="modal fade" id="shopEdit_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 
-                                <!-- Delete button -->
+                                            </div>
+    
+                                            <div class="modal-body">
+                                                <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id) }}">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                                    <div class="form-group">
+                                                        <label for="name">Name*</label>
+                                                        <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="street">Street</label>
+                                                        <input type="text" class="form-control" id="street" name="street" value="{{ shop.street }}">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="city">City</label>
+                                                        <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}">
+                                                    </div>
+                                                    <br>
+                                                    <div class="form-group">
+                                                        <label for="zip_code">Zip code</label>
+                                                        <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
+                                                    </div>
+                                                    <br>
+                                                    <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update Record</button>
+                                                </form>
+                                                <br>
+                                                <div class="text-danger">
+                                                    * values are required
+                                                </div>
+                                            </div>
+                                            
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
                                     Delete
                                 </button>
-
-                                <!-- Modals -->
-                                {% include '_shops_modal_edit.html' %}
-                                {% include '_shops_modal_delete.html' %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <hr>        
-    {% else %}
-        <h6>Nothing found in shops.</h6>
-        <hr>
-    {% endif %}
-
-    <!-- Search results for items -->
-    <div>
-        <h4>Items</h4>
-    </div>
-    {% if search_result_items %}
-        <div class="table-responsive">
-            <table class="table table-sm table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th scope="col">ID</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Shop</th>
-                        <th scope="col">Receipt nr</th>
-                        <th scope="col">Amount</th>
-                        <th scope="col">Price</th>
-                        <th scope="col">Comment</th>
-                        <th scope="col">Purchase Date</th>
-                        <th scope="col">W. Length</th>
-                        <th scope="col">W. Expiration</th>
-                        <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item, dates in search_result_items %}
-                        <tr>
-                            <td>{{ item.id }}</td>
-                            <td>{{ item.name }}</td>
-                            <td>{{ item.shop.name }}</td>
-                            <td>{{ item.receipt_nr }}</td>
-                            <td>{{ item.amount }}</td>
-                            <td>{{ item.price_per_piece }}</td>
-                            <td>{{ item.comment }}</td>
-                            <td>{{ date.purchase_date }}</td>
-                            <td>{{ date.warranty_months }}</td>
-                            <td>{{ date.expiration_date }}</td>
-                            <td>
-                                <!-- Edit button -->
-                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
-                                    Edit
-                                </button>
                                 
-                                <!-- Delete button -->
-                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
-                                    Delete
-                                </button>
+                                <div class="modal fade" id="shopDelete_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                    <div class="modal-dialog modal-sm" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                
+                                            </div>
 
-                                <!-- Modals -->
-                                {% include '_items_modal_edit.html' %}
-                                {% include '_items_modal_delete.html' %}
+                                            <div class="modal-body">
+                                                Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
+                                                <!-- TODO delete also linked items -->
+                                                <br><br>
+                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id) }}">Delete Record</a>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     {% endfor %}

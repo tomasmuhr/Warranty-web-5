@@ -1,6 +1,6 @@
 from datetime import datetime
 from flask import flash, redirect, render_template, request, url_for
-from sqlalchemy import distinct, func
+from sqlalchemy import distinct, func, or_
 from sqlalchemy.orm import aliased
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
@@ -282,18 +282,6 @@ def delete_item(item_id: int):
     
     db.session.commit()
 
-    # TEMP count items and dates
-    items_count = db.session.execute(
-        db.select(func.count(Item.id))
-    ).scalar()
-    
-    dates_count = db.session.execute(
-        db.select(func.count(Date.id))
-    ).scalar()
-    
-    print(f"Items: {items_count}, Date: {dates_count}")
-    # /TEMP
-    
     flash("The record has been successfully deleted.", category="success")
     
     return redirect(url_for("main.items"))
@@ -308,29 +296,26 @@ def database():
 # SEARCH
 @main_bp.route("/search", methods=["POST"])
 def search():
-    # TODO queries
     query = request.form.get("query")
-    # shops = Shop.query.all()
-    # shops = db.session.execute(
-    #     db.select(Shop)
-    # )
-    # shop_choices = [(int(shop.id), shop.name) for shop in shops]
-    # shop_choices = sorted(shop_choices, key=lambda x: x[1])
-    
+                    
     shop_choices = get_shop_choices()
+                    
+    items = db.session.execute(
+        db.select(Item, Date, Shop.name)
+        .outerjoin(Date)
+        .outerjoin(Shop)
+        .where(or_(Item.name.ilike(f"%{query}%"),
+                   Item.comment.ilike(f"%{query}%")))
+        .order_by(Item.name)
+    ).fetchall()
     
-    item_alias = aliased(Item)
-    items = db.session.query(item_alias, Date) \
-                    .outerjoin(Date) \
-                    .filter(item_alias.name.ilike(f"%{query}%")) \
-                    .all()
-    
-    shop_alias = aliased(Shop)
-    shops = db.session.query(shop_alias, func.count(Item.id)) \
-                    .outerjoin(Item) \
-                    .group_by(shop_alias.id) \
-                    .filter(shop_alias.name.ilike(f"%{query}%")) \
-                    .all()
+    shops = db.session.execute(
+        db.select(Shop, func.count(Item.id).label("items_count"))
+        .outerjoin(Item, Shop.id == Item.shop_id)
+        .where(Shop.name.ilike(f"%{query}%"))
+        .group_by(Shop)
+        .order_by(Shop.name)
+    ).fetchall()
     
     return render_template("search.html",
                            title="Search Results",

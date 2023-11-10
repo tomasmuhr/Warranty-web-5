@@ -42,6 +42,7 @@
                     </div>
                     <!-- <div class="container-fluid"> -->
                         <form class="d-flex" method="POST", action="{{ url_for('main.search') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                             <input class="form-control form-control-sm" name="query" type="search" placeholder="Search" aria-label="Search" required>
                             <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
                         </form>
