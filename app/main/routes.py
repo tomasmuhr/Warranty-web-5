@@ -150,15 +150,18 @@ def delete_shop(shop_id: int):
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
-    # shop_choices_temp = db.session.execute(
-    #     db.select(Shop.name)
-    #     .order_by(func.lower(Shop.name))
-    # ).fetchall()
-    
-    # shop_choices = [shop[0] for shop in shop_choices_temp]
-    
     # Get shop choices for select shop field
     shop_choices = get_shop_choices()
+    
+    # Get shop info for shop view modal
+    items_shops_dict = {}
+    items_shops = db.session.execute(
+        db.select(Item.id, Shop)
+        .outerjoin(Shop)
+    ).fetchall()
+    
+    for item_shop in items_shops:
+        items_shops_dict[item_shop[0]] = item_shop[1]
     
     # Add shop_choices to form to initialize shop choices
     add_item_form = AddItemForm(shop_choices)
@@ -210,7 +213,8 @@ def items():
                            title="Items",
                            add_item_form=add_item_form,
                            item_rows=item_rows,
-                           shop_choices=shop_choices)
+                           shop_choices=shop_choices,
+                           items_shops = items_shops_dict)
     
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])

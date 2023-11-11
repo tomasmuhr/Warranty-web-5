@@ -37,7 +37,6 @@
                     <th scope="col">#</th>
                     <th scope="col">Item Name</th>
                     <th scope="col">Shop</th>
-                    <!-- TODO add shop info modal -->
                     <th scope="col">Receipt nr</th>
                     <th scope="col">Amount</th>
                     <th scope="col">Price</th>
@@ -53,7 +52,52 @@
                     <tr>
                         <td>{{ item.id }}</td>
                         <td>{{ item.name }}</td>
-                        <td>{% if shop_name %}{{ shop_name }}{% endif %}</td>
+                        <td>
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopView_{{ item.id }}">
+                                {{ shop_name }}
+                            </button>
+
+                            <div class="modal fade" id="shopView_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                <div class="modal-dialog modal-md" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">Shop Details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                            
+                                        <div class="modal-body">
+                                            <h5>{{ shop_name }}</h5>
+                                            <br>
+
+                                            <table class="table table-striped table-hover">
+                                                <tbody>
+                                                        <tr>
+                                                            <td>Street</td>
+                                                            <td>{{ items_shops[item.id].street }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>City</td>
+                                                            <td>{{ items_shops[item.id].city }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Zip code</td>
+                                                            <td>{{ items_shops[item.id].zip_code }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Linked Warranties</td>
+                                                            <td>TODO items count</td>
+                                                        </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                  
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
                         <td>{{ item.receipt_nr }}</td>
                         <td>{% if item.amount %}{{ item.amount }}{% endif %}</td>
                         <td>{% if item.price_per_piece %}{{ item.price_per_piece }}{% endif %}</td>
@@ -64,14 +108,14 @@
                         <td>
                             <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
-                                <span>Edit</span>
+                                Edit
                             </button>
                             
-                            <div class="modal fade" id="itemEdit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal fade" id="itemEdit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalEdit_{{ item.id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-md" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                            <h5 class="modal-title">Record Update</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             
                                         </div>
@@ -144,11 +188,11 @@
                                 Delete
                             </button>
 
-                            <div class="modal fade" id="itemDelete_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal fade" id="itemDelete_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDelete_{{ item.id }}" aria-hidden="true">
                                 <div class="modal-dialog modal-sm" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                            <h5 class="modal-title">Confirm Deletion</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             
                                         </div>
