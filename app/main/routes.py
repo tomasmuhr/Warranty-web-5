@@ -149,8 +149,6 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
     
     db.session.commit()
     
-    # get_record_count(Shop)
-
     flash(flash_message, category="success")
     
     if search_results:
@@ -168,9 +166,6 @@ def items():
     
     # Get shop info for shop view modal
     items_shops_dict = get_shops_by_items()
-    
-    # Get linked items for shop view modal
-    # shops_items_dict = get_items_by_shops() # DISABLED
     
     # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
@@ -281,8 +276,8 @@ def edit_item(item_id: int):
     return redirect(url_for("main.items"))
     
 
-@main_bp.route("/delete_item/<int:item_id>", methods=['GET'])
-def delete_item(item_id: int):
+@main_bp.route("/delete_item/<int:item_id>_<redirect_to>", methods=['GET'])
+def delete_item(item_id: int, redirect_to: str):
     db.session.execute(
         db.delete(Item)
         .where(Item.id == item_id)
@@ -295,10 +290,11 @@ def delete_item(item_id: int):
     )
     
     db.session.commit()
-
+    
     flash("The record has been successfully deleted.", category="success")
     
-    return redirect(url_for("main.items"))
+    # return redirect(url_for("main.items"))
+    return redirect(url_for(redirect_to))
 
 
 # DATABASE
@@ -391,16 +387,3 @@ def get_shops_by_items():
     return items_shops_dict
 
 
-# def get_items_by_shops():
-#     shops_items_dict = {}
-    
-#     shops_items = db.session.execute(
-#         db.select(Shop.id, Item)
-#         .select_from(Shop.__table__.join(Item.__table__))
-#     ).fetchall()
-    
-#     for shop_item in shops_items:
-#         shops_items_dict
-    
-#     print(shops_items)
-    
