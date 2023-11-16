@@ -137,15 +137,33 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
         db.delete(Shop)
         .where(Shop.id == shop_id)
     )
-    flash_message = "The record has been successfully deleted."
     
     if linked_items:
+        # delete linked items
         db.session.execute(
             db.delete(Item)
             .where(Item.shop_id == shop_id)
         )
+        
         # TODO delete linked dates
+        # delete linked items´s dates
+        db.session.execute(
+            db.delete(Date)
+        .where(Date.item_id.shop_id == shop_id) # ? will work?
+        )
+        
         flash_message = "The record and linked items have been successfully deleted."
+        
+    else:
+        # TODO delete shop_id value from linked items
+        # clear shop_id
+        db.session.execute(
+            db.update(Item)
+            .where(Item.shop_id == shop_id)
+            .values(shop_id=None)
+        )
+    
+        flash_message = "The record has been successfully deleted."
     
     db.session.commit()
     
