@@ -137,6 +137,8 @@ def delete_shop(shop_id: int):
         db.delete(Shop)
         .where(Shop.id == shop_id)
     )
+    # TODO delete linked items?
+    
     db.session.commit()
     
     get_record_count(Shop)
@@ -208,6 +210,8 @@ def items():
         .outerjoin(Date)
         .outerjoin(Shop)
     ).fetchall()
+    
+    print(item_rows)
         
     return render_template("items.html",
                            title="Items",
