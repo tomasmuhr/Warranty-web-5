@@ -139,24 +139,30 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
     )
     
     if linked_items:
-        # delete linked items
+        # delete linked items´s dates first
+        items = db.session.execute(
+            db.select(Item.id)
+            .where(Item.shop_id == shop_id)
+        ).fetchall()
+        
+        item_ids = [item[0] for item in items]
+        print(f"Item_ids: {item_ids}")
+        
+        db.session.execute(
+            db.delete(Date)
+            .where(Date.item_id.in_(item_ids))
+        )
+        
+        # then delete linked items
         db.session.execute(
             db.delete(Item)
             .where(Item.shop_id == shop_id)
         )
         
-        # TODO delete linked dates
-        # delete linked items´s dates
-        db.session.execute(
-            db.delete(Date)
-        .where(Date.item_id.shop_id == shop_id) # ? will work?
-        )
-        
         flash_message = "The record and linked items have been successfully deleted."
         
     else:
-        # TODO delete shop_id value from linked items
-        # clear shop_id
+        # clear shop_id in related items
         db.session.execute(
             db.update(Item)
             .where(Item.shop_id == shop_id)
