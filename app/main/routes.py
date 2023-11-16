@@ -156,16 +156,12 @@ def items():
     shop_choices = get_shop_choices()
     
     # Get shop info for shop view modal
-    items_shops_dict = {}
-    items_shops = db.session.execute(
-        db.select(Item.id, Shop)
-        .outerjoin(Shop)
-    ).fetchall()
+    items_shops_dict = get_shops_by_items()
     
-    for item_shop in items_shops:
-        items_shops_dict[item_shop[0]] = item_shop[1]
+    # Get linked items for shop view modal
+    # shops_items_dict = get_items_by_shops() # DISABLED
     
-    # Add shop_choices to form to initialize shop choices
+    # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
     
     if request.method == "POST":
@@ -206,19 +202,18 @@ def items():
             print_error_messages(add_item_form)
     
     item_rows = db.session.execute(
-        db.select(Item, Date, Shop.name)
+        db.select(Item, Date, Shop)
         .outerjoin(Date)
         .outerjoin(Shop)
     ).fetchall()
     
-    print(item_rows)
-        
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
                            item_rows=item_rows,
                            shop_choices=shop_choices,
                            items_shops = items_shops_dict)
+                        #    shops_items=shops_items_dict)
     
     
 @main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
@@ -320,7 +315,9 @@ def search():
     shops = db.session.execute(
         db.select(Shop, func.count(Item.id).label("items_count"))
         .outerjoin(Item, Shop.id == Item.shop_id)
-        .where(Shop.name.ilike(f"%{query}%"))
+        .where(or_(Shop.name.ilike(f"%{query}%"),
+                   Shop.street.ilike(f"%{query}%"),
+                    Shop.city.ilike(f"%{query}%")))
         .group_by(Shop)
         .order_by(Shop.name)
     ).fetchall()
@@ -365,3 +362,32 @@ def get_shop_choices():
     shop_choices = [shop[0] for shop in shop_choices_temp]
     
     return shop_choices
+
+
+def get_shops_by_items():
+    items_shops_dict = {}
+    
+    items_shops = db.session.execute(
+        db.select(Item.id, Shop)
+        .outerjoin(Shop)
+    ).fetchall()
+    
+    for item_shop in items_shops:
+        items_shops_dict[item_shop[0]] = item_shop[1]
+        
+    return items_shops_dict
+
+
+# def get_items_by_shops():
+#     shops_items_dict = {}
+    
+#     shops_items = db.session.execute(
+#         db.select(Shop.id, Item)
+#         .select_from(Shop.__table__.join(Item.__table__))
+#     ).fetchall()
+    
+#     for shop_item in shops_items:
+#         shops_items_dict
+    
+#     print(shops_items)
+    
