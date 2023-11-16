@@ -131,21 +131,32 @@ def edit_shop(shop_id: int):
     return redirect(url_for("main.shops"))
             
 
-@main_bp.route("/delete_shop/<int:shop_id>", methods=['GET'])
-def delete_shop(shop_id: int):
+@main_bp.route("/delete_shop/<int:shop_id>_<int:linked_items>_<int:search_results>", methods=['GET'])
+def delete_shop(shop_id: int, linked_items: int, search_results: int):
     db.session.execute(
         db.delete(Shop)
         .where(Shop.id == shop_id)
     )
-    # TODO delete linked items?
+    flash_message = "The record has been successfully deleted."
+    
+    if linked_items:
+        db.session.execute(
+            db.delete(Item)
+            .where(Item.shop_id == shop_id)
+        )
+        # TODO delete linked dates
+        flash_message = "The record and linked items have been successfully deleted."
     
     db.session.commit()
     
-    get_record_count(Shop)
+    # get_record_count(Shop)
 
-    flash("The record has been successfully deleted.", category="success")
+    flash(flash_message, category="success")
     
-    return redirect(url_for("main.shops"))
+    if search_results:
+        return redirect(url_for("main.search"))
+    else:
+        return redirect(url_for("main.shops"))
 
 
 # --- ITEMS ---
@@ -308,7 +319,8 @@ def search():
         .outerjoin(Date)
         .outerjoin(Shop)
         .where(or_(Item.name.ilike(f"%{query}%"),
-                   Item.comment.ilike(f"%{query}%")))
+                   Item.comment.ilike(f"%{query}%"))
+               )
         .order_by(Item.name)
     ).fetchall()
     
@@ -317,7 +329,8 @@ def search():
         .outerjoin(Item, Shop.id == Item.shop_id)
         .where(or_(Shop.name.ilike(f"%{query}%"),
                    Shop.street.ilike(f"%{query}%"),
-                    Shop.city.ilike(f"%{query}%")))
+                   Shop.city.ilike(f"%{query}%"))
+               )
         .group_by(Shop)
         .order_by(Shop.name)
     ).fetchall()

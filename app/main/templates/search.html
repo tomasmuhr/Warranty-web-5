@@ -15,7 +15,7 @@
             <table class="table table-sm table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
+                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Shop</th>
                         <th scope="col">Receipt nr</th>
@@ -163,7 +163,7 @@
             <table class="table table-sm table-striped table-hover">
                 <thead>
                     <tr>
-                        <th scope="col">ID</th>
+                        <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Street</th>
                         <th scope="col">City</th>
@@ -248,9 +248,10 @@
 
                                             <div class="modal-body">
                                                 Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
-                                                <!-- TODO delete also linked items -->
                                                 <br><br>
-                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id) }}">Delete Record</a>
+                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=0, search_results=1) }}">Delete record</a>
+                                                <br><br>
+                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=1, search_results=1) }}">Delete record + linked warranties</a>
                                             </div>
 
                                             <div class="modal-footer">
