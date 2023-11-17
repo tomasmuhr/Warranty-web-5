@@ -393,6 +393,7 @@ def get_shop_choices():
     ).fetchall()
     
     shop_choices = [shop[0] for shop in shop_choices_temp]
+    shop_choices.insert(0, "")
     
     return shop_choices
 

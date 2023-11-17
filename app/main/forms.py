@@ -21,7 +21,7 @@ class ShopForm(FlaskForm):
     
 class ItemForm(FlaskForm):
     name = StringField("Item Name*", validators=[DataRequired()], render_kw={"autofocus": True})
-    shop = SelectField("Shop*", validators=[DataRequired()])
+    shop = SelectField("Shop")
     receipt_nr = StringField("Receipt Nr")
     amount = DecimalField("Amount", validators=[Optional(), NumberRange(min=0,)])
     price_per_piece = DecimalField("Price per piece", validators=[Optional(), NumberRange(min=0,)])

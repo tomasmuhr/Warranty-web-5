@@ -163,7 +163,7 @@
                                                     <select type="text" class="form-control" id="shop" name="shop" required>
                                                         <option value=""></option>
                                                         {% for s in shop_choices %}
-                                                            <option value="{{ s }}" {% if s == shop_name %}selected{% endif %}>{{ s }}</option>
+                                                            <option value="{{ s }}" {% if s == shop.name %}selected{% endif %}>{{ s }}</option>
                                                         {% endfor %}
                                                     </select>
                                                 </div>
