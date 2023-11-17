@@ -1,7 +1,8 @@
 from datetime import datetime
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, g, redirect, render_template, request, url_for
 from sqlalchemy import distinct, func, or_
 from sqlalchemy.orm import aliased
+from sqlalchemy.util import ellipses_string
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
 from app.models import Date, Item, Shop
@@ -237,6 +238,7 @@ def items():
         .outerjoin(Shop)
     ).fetchall()
     
+    # FIXME shop choice has empty option in add but none in edit
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
@@ -246,8 +248,8 @@ def items():
                         #    shops_items=shops_items_dict)
     
     
-@main_bp.route("/edit_item/<int:item_id>", methods=['GET', 'POST'])
-def edit_item(item_id: int):
+@main_bp.route("/edit_item/<int:item_id>_<redirect_to>_<query>", methods=['GET', 'POST'])
+def edit_item(item_id: int, redirect_to: str, query: str):
     item = db.session.execute(
         db.select(Item)
         .where(Item.id == item_id)
@@ -297,11 +299,14 @@ def edit_item(item_id: int):
     
     flash("The record has been successfully edited.", category="success")
     
-    return redirect(url_for("main.items"))
+    if redirect_to == "main.search":
+        return redirect(url_for(redirect_to, query=query))
+    else:
+        return redirect(url_for(redirect_to))
     
 
-@main_bp.route("/delete_item/<int:item_id>_<redirect_to>", methods=['GET'])
-def delete_item(item_id: int, redirect_to: str):
+@main_bp.route("/delete_item/<int:item_id>_<redirect_to>_<query>", methods=['GET'])
+def delete_item(item_id: int, redirect_to: str, query: str):
     db.session.execute(
         db.delete(Item)
         .where(Item.id == item_id)
@@ -317,8 +322,10 @@ def delete_item(item_id: int, redirect_to: str):
     
     flash("The record has been successfully deleted.", category="success")
     
-    # return redirect(url_for("main.items"))
-    return redirect(url_for(redirect_to))
+    if redirect_to == "main.search":
+        return redirect(url_for(redirect_to, query=query))
+    else:
+        return redirect(url_for(redirect_to))
 
 
 # DATABASE
@@ -328,14 +335,17 @@ def database():
 
 
 # SEARCH
-@main_bp.route("/search", methods=["POST"])
+@main_bp.route("/search", methods=["GET", "POST"])
 def search():
-    query = request.form.get("query")
+    if request.method == "GET":
+        query = request.args.get("query")
+    else:
+        query = request.form.get("query")
                     
     shop_choices = get_shop_choices()
                     
     items = db.session.execute(
-        db.select(Item, Date, Shop.name)
+        db.select(Item, Date, Shop)
         .outerjoin(Date)
         .outerjoin(Shop)
         .where(or_(Item.name.ilike(f"%{query}%"),
@@ -393,7 +403,6 @@ def get_shop_choices():
     ).fetchall()
     
     shop_choices = [shop[0] for shop in shop_choices_temp]
-    shop_choices.insert(0, "")
     
     return shop_choices
 

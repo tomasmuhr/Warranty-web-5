@@ -29,11 +29,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for item, date, shop_name in search_result_items %}
+                    {% for item, date, shop in search_result_items %}
                         <tr>
                             <td>{{ item.id }}</td>
                             <td>{{ item.name }}</td>
-                            <td>{{ shop_name }}</td>
+                            <td>{{ shop.name }}</td>
                             <td>{{ item.receipt_nr }}</td>
                             <td>{{ item.amount }}</td>
                             <td>{{ item.price_per_piece }}</td>
@@ -50,13 +50,14 @@
                                     <div class="modal-dialog modal-md" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTitleId">Record Update</h5>
+                                                <h5 class="modal-title" id="modalTitleId">Record update</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 
                                             </div>
                                             
                                             <div class="modal-body">
-                                                <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+                                                <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id, redirect_to='main.search', query=search_query) }}">
+
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <div class="form-group">
                                                         <label for="name">Name*</label>
@@ -64,11 +65,11 @@
                                                     </div>
                                                     <br>
                                                     <div class="form-group">
-                                                        <label for="name">Shop*</label>
-                                                        <select type="text" class="form-control" id="shop" name="shop" required>
+                                                        <label for="name">Shop</label>
+                                                        <select type="text" class="form-control" id="shop" name="shop">
                                                             <option value=""></option>
                                                             {% for s in shop_choices %}
-                                                                <option value="{{ s }}" {% if s == shop_name %}selected{% endif %}>{{ s }}</option>
+                                                                <option value="{{ s }}" {% if s == shop.name %}selected{% endif %}>{{ s }}</option>
                                                             {% endfor %}
                                                         </select>
                                                     </div>
@@ -103,7 +104,7 @@
                                                         <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ date.warranty_months }}" required>
                                                     </div>
                                                     <br>
-                                                    <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update Record</button>
+                                                    <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update record</button>
                                                 </form>
                                                 <br>
                                                 <div class="text-danger">
@@ -126,14 +127,14 @@
                                     <div class="modal-dialog modal-sm" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                                <h5 class="modal-title" id="modalTitleId">Confirm deletion</h5>
                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 
                                             </div>
                                             <div class="modal-body">
                                                 Are you sure you want to delete this record?<br><b>{{ item.name }}</b>
                                                 <br><br>
-                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id, redirect_to='main.search') }}">Delete Record</a>
+                                                <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id, redirect_to='main.search', query=search_query) }}">Delete record</a>
                                 
                                             </div>
                                             <div class="modal-footer">
