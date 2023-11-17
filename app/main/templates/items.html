@@ -151,7 +151,8 @@
                                         </div>
                                         
                                         <div class="modal-body">
-                                            <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id) }}">
+                                            <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id, redirect_to='main.items', query='-') }}">
+
                                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                 <div class="form-group">
                                                     <label for="name">Name*</label>
@@ -159,8 +160,8 @@
                                                 </div>
                                                 <br>
                                                 <div class="form-group">
-                                                    <label for="name">Shop*</label>
-                                                    <select type="text" class="form-control" id="shop" name="shop" required>
+                                                    <label for="name">Shop</label>
+                                                    <select type="text" class="form-control" id="shop" name="shop">
                                                         <option value=""></option>
                                                         {% for s in shop_choices %}
                                                             <option value="{{ s }}" {% if s == shop.name %}selected{% endif %}>{{ s }}</option>
@@ -229,7 +230,7 @@
                                         <div class="modal-body">
                                             Are you sure you want to delete this record?<br><b>{{ item.name }}</b>
                                             <br><br>
-                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id, redirect_to='main.items') }}">Delete record</a>
+                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id, redirect_to='main.items', query='-') }}">Delete record</a>
                             
                                         </div>
                                         <div class="modal-footer">
