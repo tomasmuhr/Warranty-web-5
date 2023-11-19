@@ -162,7 +162,6 @@
                                                 <div class="form-group">
                                                     <label for="name">Shop</label>
                                                     <select type="text" class="form-control" id="shop" name="shop">
-                                                        <option value=""></option>
                                                         {% for s in shop_choices %}
                                                             <option value="{{ s }}" {% if s == shop.name %}selected{% endif %}>{{ s }}</option>
                                                         {% endfor %}

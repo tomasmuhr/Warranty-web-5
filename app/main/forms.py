@@ -33,6 +33,7 @@ class ItemForm(FlaskForm):
     def __init__(self, shop_choices):
         super(ItemForm, self).__init__()
         self.shop.choices = shop_choices
+        self.shop.choices.insert(0,"")
 
 
 class AddItemForm(ItemForm):

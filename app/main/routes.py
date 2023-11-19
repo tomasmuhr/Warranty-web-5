@@ -238,7 +238,6 @@ def items():
         .outerjoin(Shop)
     ).fetchall()
     
-    # FIXME shop choice has empty option in add but none in edit
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
