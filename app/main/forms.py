@@ -14,13 +14,13 @@ class ShopForm(FlaskForm):
     submit = SubmitField("Add shop", name="shop_form")
     
     def validate_name(form, field):
-        name = field.data.lstrip()
+        name = field.data.strip()
         if Shop.query.filter_by(name=name).first():
             raise ValidationError("Shop with this name already exists!")
     
     
 class ItemForm(FlaskForm):
-    name = StringField("Item Name*", validators=[DataRequired()], render_kw={"autofocus": True})
+    name = StringField("Name*", validators=[DataRequired()], render_kw={"autofocus": True})
     shop = SelectField("Shop")
     receipt_nr = StringField("Receipt Nr")
     amount = DecimalField("Amount", validators=[Optional(), NumberRange(min=0,)])
@@ -35,6 +35,11 @@ class ItemForm(FlaskForm):
         self.shop.choices = shop_choices
         self.shop.choices.insert(0,"")
 
+    def validate_name(form, field):
+        name = field.data.strip()
+        if not name:
+            raise ValidationError("The name is empty!")
+        
 
 class AddItemForm(ItemForm):
     submit = SubmitField("Add item", name="add_item_form")

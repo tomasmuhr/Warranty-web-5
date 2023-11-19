@@ -31,7 +31,7 @@ def shops():
     
     if request.method == "POST":
         if "shop_form" in request.form and add_shop_form.validate_on_submit():
-            shop_name_stripped = add_shop_form.name.data.lstrip()
+            shop_name_stripped = add_shop_form.name.data.strip()
             
             shop = Shop(name=shop_name_stripped,
                         street=add_shop_form.street.data,
@@ -81,11 +81,10 @@ def edit_shop(shop_id: int):
                     # edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
             
             # Remove leading spaces
-            edit_shop_form.name.data = edit_shop_form.name.data.lstrip()
-            new_name = edit_shop_form.name.data
+            name_cleaned = edit_shop_form.name.data.strip()
             
             # A if the name is the same - proceed
-            if new_name == shop.name:
+            if name_cleaned == shop.name:
                 # print(new_name)
                 # print("The name is the same")
                 edit_shop_form.populate_obj(shop)
@@ -95,12 +94,12 @@ def edit_shop(shop_id: int):
                 flash("The record has been successfully updated.", category="success")
             
             # B if the name is not the same - check if a shop with the same name exists
-            elif new_name != shop.name:
+            elif name_cleaned != shop.name:
                 # print(new_name)
                 
                 check_result = db.session.execute(
                     db.select(Shop.name)
-                    .where(Shop.name == new_name)
+                    .where(Shop.name == name_cleaned)
                 ).scalar()
                 # print(check_result)
                 
@@ -203,7 +202,7 @@ def items():
             ).scalar()
 
             # ! orphans - dates connect to the appropriate item and this renders multiple times
-            item = Item(name=add_item_form.name.data,
+            item = Item(name=add_item_form.name.data.strip(),
                         receipt_nr=add_item_form.receipt_nr.data,
                         amount=add_item_form.amount.data,
                         price_per_piece=add_item_form.price_per_piece.data,
@@ -228,7 +227,8 @@ def items():
             return redirect(url_for("main.items"))
         
         else:
-            flash("Something went wrong.", category="danger")
+            flash("Something went wrong. The item name is probably empty. Please try again.",
+                  category="danger")
             
             print_error_messages(add_item_form)
     
@@ -260,43 +260,51 @@ def edit_item(item_id: int, redirect_to: str, query: str):
     ).fetchone()[0]
     
     # Form returns strings for all fields - need conversion
-    item.name = request.form.get("name")
-    item.receipt_nr = request.form.get("receipt_nr")
-    item.comment = request.form.get("comment")
-    
-    # Get shop_id by shop name
-    shop_id = db.session.execute(
-        db.select(Shop.id)
-        .where(Shop.name == request.form.get("shop"))
-    ).scalar()
-    
-    item.shop_id = shop_id
-    
-    # Check amount
-    amount = request.form.get("amount")
-    if amount:
-        item.amount = request.form.get("amount")
+    # FIXME name accepts empty strings!
+    name_from_input = request.form.get("name")
+    name_from_input_clean = name_from_input.strip()
+    if not name_from_input_clean:
+        flash("Something went wrong. The item name is probably empty. Please try again.",
+              category="danger")
+        
     else:
-        item.amount = None
-    
-    # Check float value in price_per_piece
-    price_per_piece = request.form.get("price_per_piece")
-    if price_per_piece:
-        item.price_per_piece = price_per_piece
-    else:
-        item.price_per_piece = None
-    
-    date.warranty_months = request.form.get("warranty_months")
-    # Convert purchase_date to datetime - to be able to create
-    # a new datetime object by relativedelta
-    purchase_date_str = request.form.get("purchase_date")
-    date.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
-    date.expiration_date = date.purchase_date + \
-        relativedelta(months=int(date.warranty_months))
-    
-    db.session.commit()
-    
-    flash("The record has been successfully edited.", category="success")
+        item.name = request.form.get("name").strip()
+        item.receipt_nr = request.form.get("receipt_nr")
+        item.comment = request.form.get("comment")
+        
+        # Get shop_id by shop name
+        shop_id = db.session.execute(
+            db.select(Shop.id)
+            .where(Shop.name == request.form.get("shop"))
+        ).scalar()
+        
+        item.shop_id = shop_id
+        
+        # Check amount
+        amount = request.form.get("amount")
+        if amount:
+            item.amount = request.form.get("amount")
+        else:
+            item.amount = None
+        
+        # Check float value in price_per_piece
+        price_per_piece = request.form.get("price_per_piece")
+        if price_per_piece:
+            item.price_per_piece = price_per_piece
+        else:
+            item.price_per_piece = None
+        
+        date.warranty_months = request.form.get("warranty_months")
+        # Convert purchase_date to datetime - to be able to create
+        # a new datetime object by relativedelta
+        purchase_date_str = request.form.get("purchase_date")
+        date.purchase_date = datetime.strptime(purchase_date_str, "%Y-%m-%d")
+        date.expiration_date = date.purchase_date + \
+            relativedelta(months=int(date.warranty_months))
+        
+        db.session.commit()
+        
+        flash("The record has been successfully edited.", category="success")
     
     if redirect_to == "main.search":
         return redirect(url_for(redirect_to, query=query))
