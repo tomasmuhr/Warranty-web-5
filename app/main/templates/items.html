@@ -2,6 +2,11 @@
 {% from 'bootstrap5/form.html' import render_form %}
 
 {% block app_content %}
+    <!-- <div class="alert alert-danger alert-dismissible fade hide" role="alert">
+        <strong>Holy guacamole!</strong> You should check in on some of those fields below.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> -->
+
     <div class="text-center">
         <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#itemAdd">
             Add new item
@@ -16,7 +21,8 @@
                     </div>
                     <div class="modal-body">
                         {{ render_form(add_item_form,
-                                       button_size="sm") }}
+                                       button_size="sm",
+                                       id='add_item_form') }}
                     </div>
                     <br>
                     <div class="text-danger">
@@ -246,3 +252,10 @@
     </div>
     
 {% endblock app_content %}
+
+<!-- {-% block scripts %-}
+    {-{ super() }-}
+
+    <script src="../main/js/items.js"></script>
+
+{-% endblock scripts %-} -->

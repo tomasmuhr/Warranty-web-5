@@ -66,70 +66,70 @@ def shops():
                            shop_rows=shop_rows)
 
 
-@main_bp.route("/edit_shop/<int:shop_id>", methods=['GET', 'POST'])
-def edit_shop(shop_id: int):
+@main_bp.route("/edit_shop/<int:shop_id>_<redirect_to>_<query>", methods=['GET', 'POST'])
+def edit_shop(shop_id: int, redirect_to: str, query: str):
     shop = db.session.execute(
         db.select(Shop)
         .where(Shop.id == shop_id)
     ).fetchone()[0]
 
+    # shop form to populate_obj(shop) at once
     edit_shop_form = ShopForm()
     
     if request.method == "POST":
         if "edit_shop_form" in request.form:
-            # if any([edit_shop_form.name.data.lstrip() == shop.name and edit_shop_form.is_submitted(),
-                    # edit_shop_form.name.data.lstrip() != shop.name and edit_shop_form.validate_on_submit()]):
+            # Remove trailing spaces
+            shop_name_stripped = edit_shop_form.name.data.strip()
             
-            # Remove leading spaces
-            name_cleaned = edit_shop_form.name.data.strip()
-            
-            # A if the name is the same - proceed
-            if name_cleaned == shop.name:
-                # print(new_name)
-                # print("The name is the same")
-                edit_shop_form.populate_obj(shop)
-            
-                db.session.commit()
+            if not shop_name_stripped:
+                flash("Something went wrong. The shop name is probably empty. Please try again.",
+                      category="danger")
                 
-                flash("The record has been successfully updated.", category="success")
-            
-            # B if the name is not the same - check if a shop with the same name exists
-            elif name_cleaned != shop.name:
-                # print(new_name)
-                
-                check_result = db.session.execute(
-                    db.select(Shop.name)
-                    .where(Shop.name == name_cleaned)
-                ).scalar()
-                # print(check_result)
-                
-                if not check_result:
-                    # print("The shop name is not in use, ok")
-                    edit_shop_form.populate_obj(shop)
+            else:
+                # A) if the name is the same - proceed
+                if shop_name_stripped == shop.name:
+                    edit_shop_form.name.data = shop_name_stripped
                     
+                    edit_shop_form.populate_obj(shop)
+                
                     db.session.commit()
                     
                     flash("The record has been successfully updated.", category="success")
+                
+                # B) if the name is not the same - check if a shop with the same name exists
+                elif shop_name_stripped != shop.name:
+                    
+                    check_result = db.session.execute(
+                        db.select(Shop.name)
+                        .where(Shop.name == shop_name_stripped)
+                    ).scalar()
+                    
+                    if not check_result:
+                        edit_shop_form.name.data = shop_name_stripped
+                        
+                        edit_shop_form.populate_obj(shop)
+                        
+                        db.session.commit()
+                        
+                        flash("The record has been successfully updated.", category="success")
+                        
+                    else:
+                        flash("The shop name probably already exists or is empty. Please try again.",
+                            category="danger")
+                        
+                        print_error_messages(edit_shop_form)
                     
                 else:
-                    # print("The shop name probably already exists or is empty")
-                    flash("The shop name probably already exists or is empty. Please try again.",
-                          category="danger")
+                    flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
+                            category="danger")
                     
                     print_error_messages(edit_shop_form)
-                
-            else:
-                flash("Something went wrong. The shop name probably already exists or is empty. Please try again.",
-                        category="danger")
-                
-                print_error_messages(edit_shop_form)
         
-        
-        return redirect(url_for("main.shops"))
+    if redirect_to == "main.search":
+        return redirect(url_for(redirect_to, query=query))
+    else:
+        return redirect(url_for(redirect_to))
 
-    # just for case when the form is not submitted
-    return redirect(url_for("main.shops"))
-            
 
 @main_bp.route("/delete_shop/<int:shop_id>_<int:linked_items>_<int:search_results>", methods=['GET'])
 def delete_shop(shop_id: int, linked_items: int, search_results: int):
@@ -259,11 +259,10 @@ def edit_item(item_id: int, redirect_to: str, query: str):
         .where(Date.item_id == item_id)
     ).fetchone()[0]
     
-    # Form returns strings for all fields - need conversion
-    # FIXME name accepts empty strings!
-    name_from_input = request.form.get("name")
-    name_from_input_clean = name_from_input.strip()
-    if not name_from_input_clean:
+    # Form returns strings for all fields - needs conversions!
+    item_name = request.form.get("name")
+    item_name_stripped = item_name.strip()
+    if not item_name_stripped:
         flash("Something went wrong. The item name is probably empty. Please try again.",
               category="danger")
         

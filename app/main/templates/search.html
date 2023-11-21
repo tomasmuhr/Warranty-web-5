@@ -197,7 +197,7 @@
                                             </div>
     
                                             <div class="modal-body">
-                                                <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id) }}">
+                                                <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id, redirect_to='main.search', query=search_query) }}">
                                                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                                     <div class="form-group">
                                                         <label for="name">Name*</label>
