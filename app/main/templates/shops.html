@@ -51,8 +51,18 @@
                         <td>{{ shop.street }}</td>
                         <td>{{ shop.city }}</td>
                         <td>{{ shop.zip_code }}</td>
-                        <!-- TODO button for records -->
-                        <td>{{ items_count if items_count else 0 }}</td> 
+                        <td>
+                            {% if items_count %}
+                                <!-- TODO modal for records -->
+                                <button type="button" class="btn btn-outline-primary btn-sm">
+                                    {{ items_count}}
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-outline-primary btn-sm disabled">
+                                    0
+                                </button>
+                            {% endif %}
+                        </td> 
                         <td>
                             <!-- Edit button and modal -->
                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
