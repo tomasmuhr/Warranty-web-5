@@ -13,7 +13,17 @@ from dateutil.relativedelta import relativedelta
 @main_bp.route("/", methods=['GET'])
 @main_bp.route("/index", methods=['GET'])
 def index():
-    return render_template("index.html", title="Home")
+    items_count = db.session.execute(
+        db.select(func.count(Item.id))
+    ).scalar()
+    
+    shops_count = db.session.execute(
+        db.select(func.count(Shop.id))
+    ).scalar()
+
+    return render_template("index.html", title="Home",
+                           items_count=items_count,
+                           shops_count=shops_count)
     
 
 @main_bp.route("/about")
@@ -381,6 +391,10 @@ def search():
 
 # UTILITIES
 def get_record_count(*args):
+    """
+    For debugging purposes only.
+    Prints out the number of records in the database for each model.
+    """
     results_dict = {}
     
     for a in args:

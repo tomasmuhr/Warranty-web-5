@@ -17,7 +17,16 @@
                       <a href="{{ url_for('main.items') }}" class="btn btn-primary">Items</a>
                     </div>
                     <div class="card-footer">
-                      <small class="text-muted">-ITEMS COUNT-</small>
+                      <small class="text-muted">
+                        {% if items_count == 0 %}
+                            No warranty items
+                        {% elif items_count == 1 %}
+                            1 warranty item
+                        {% else %}
+                            {{ items_count }} warranty items
+                        {% endif %}
+                        in the database
+                      </small>
                     </div>
                   </div>
                 </div>
@@ -30,7 +39,16 @@
                     <a href="{{ url_for('main.shops') }}" class="btn btn-primary">Shops</a>
                     </div>
                     <div class="card-footer">
-                      <small class="text-muted">-SHOPS COUNT-</small>
+                      <small class="text-muted">
+                        {% if shops_count == 0 %}
+                           No shops
+                        {% elif shops_count == 1 %}
+                            1 shop
+                        {% else %}
+                            {{ shops_count }} shops
+                        {% endif %}
+                        in the database
+                      </small>
                     </div>
                   </div>
                 </div>
