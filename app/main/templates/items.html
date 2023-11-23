@@ -253,9 +253,9 @@
     
 {% endblock app_content %}
 
-<!-- {-% block scripts %-}
-    {-{ super() }-}
+{% block scripts %}
+    {{ super() }}
 
     <script src="../main/js/items.js"></script>
 
-{-% endblock scripts %-} -->
+{% endblock scripts %}
