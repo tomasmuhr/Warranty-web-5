@@ -10,11 +10,14 @@
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <div class="col">
                   <div class="card h-100">
-                    <img src="../main/pictures/warranty.png" class="card-img-top w-50 h-50 mx-auto" alt="Warranties">
+                    <a href="{{ url_for('main.items') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/warranty.png" class="card-img-top" alt="Warranties">
+                    </a>
+                    <br>
                     <div class="card-body">
                       <h5 class="card-title">Warranties</h5>
                       <p class="card-text">Go to the items page with all your warranties.</p>
-                      <a href="{{ url_for('main.items') }}" class="btn btn-primary">Items</a>
+                      <!-- <a href="{{ url_for('main.items') }}" class="btn btn-primary">Items</a> -->
                     </div>
                     <div class="card-footer">
                       <small class="text-muted">
@@ -32,11 +35,14 @@
                 </div>
                 <div class="col">
                   <div class="card h-100">
-                    <img src="../main/pictures/shops.png" class="card-img-top w-50 h-50 mx-auto" alt="Shops">
+                    <a href="{{ url_for('main.shops') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/shops.png" class="card-img-top" alt="Shops">
+                    </a>
+                    <br>
                     <div class="card-body">
                       <h5 class="card-title">Shops</h5>
                     <p class="card-text">Go to the shops page with all your shops.</p>
-                    <a href="{{ url_for('main.shops') }}" class="btn btn-primary">Shops</a>
+                    <!-- <a href="{{ url_for('main.shops') }}" class="btn btn-primary">Shops</a> -->
                     </div>
                     <div class="card-footer">
                       <small class="text-muted">
@@ -54,11 +60,14 @@
                 </div>
                 <div class="col">
                   <div class="card h-100">
-                    <img src="../main/pictures/database.png" class="card-img-top w-50 h-50 mx-auto" alt="Database">
+                    <a href="{{ url_for('main.database') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Database">
+                    </a>
+                    <br>
                     <div class="card-body">
                       <h5 class="card-title">Database</h5>
                     <p class="card-text">Go to the database page where you can manage your database.</p>
-                    <a href="{{ url_for('main.database') }}" class="btn btn-primary">Database</a>
+                    <!-- <a href="{{ url_for('main.database') }}" class="btn btn-primary">Database</a> -->
                     </div>
                     <div class="card-footer">
                       <small class="text-muted">-COUNT actions available-</small>
