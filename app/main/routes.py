@@ -197,9 +197,10 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
 def items():
     # Get shop choices for select shop field
     shop_choices = get_shop_choices()
-    
     # Get shop info for shop view modal
     items_shops_dict = get_shops_by_items()
+    # Get record count for shop view modal
+    shops_items_count_dict = get_items_count_by_shops()
     
     # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
@@ -253,8 +254,8 @@ def items():
                            add_item_form=add_item_form,
                            item_rows=item_rows,
                            shop_choices=shop_choices,
-                           items_shops = items_shops_dict)
-                        #    shops_items=shops_items_dict)
+                           items_shops = items_shops_dict,
+                           items_count_for_shops = shops_items_count_dict)
     
     
 @main_bp.route("/edit_item/<int:item_id>_<redirect_to>_<query>", methods=['GET', 'POST'])
@@ -435,9 +436,23 @@ def get_shops_by_items():
         .outerjoin(Shop)
     ).fetchall()
     
-    for item_shop in items_shops:
-        items_shops_dict[item_shop[0]] = item_shop[1]
+    for item in items_shops:
+        items_shops_dict[item[0]] = item[1]
         
     return items_shops_dict
 
+
+def get_items_count_by_shops():
+    shops_items_count_dict = {}
+    
+    shops_items_count = db.session.execute(
+        db.select(Shop, func.count(Item.id).label("items_count"))
+        .outerjoin(Item, Shop.id == Item.shop_id)
+        .group_by(Shop)
+    ).fetchall()
+    
+    for shop in shops_items_count:
+        shops_items_count_dict[shop[0].id] = shop[1]
+        
+    return shops_items_count_dict
 
