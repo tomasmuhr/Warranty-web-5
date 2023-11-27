@@ -351,6 +351,24 @@ def database():
     return render_template("database.html", title="Database")
 
 
+@main_bp.route("/db_export")
+def db_export():
+    print("db_export")
+    return render_template("database.html", title="Database")
+
+
+@main_bp.route("/db_purge_items")
+def db_purge_items():
+    print("db_purge_items")
+    return render_template("database.html", title="Database")
+    
+
+@main_bp.route("/db_purge_shops")
+def db_purge_shops():
+    print("db_purge_shops")
+    return render_template("database.html", title="Database")
+    
+
 # SEARCH
 @main_bp.route("/search", methods=["GET", "POST"])
 def search():

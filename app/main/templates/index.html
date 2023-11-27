@@ -9,72 +9,69 @@
             <!-- TODO add cards for items and shops -->
             <div class="row row-cols-1 row-cols-md-3 g-4">
                 <div class="col">
-                  <div class="card h-100">
-                    <a href="{{ url_for('main.items') }}" class="w-50 h-50 mx-auto stretched-link">
-                        <img src="../main/pictures/warranty.png" class="card-img-top" alt="Warranties">
-                    </a>
-                    <br>
-                    <div class="card-body">
-                      <h5 class="card-title">Warranties</h5>
-                      <p class="card-text">Go to the items page with all your warranties.</p>
-                      <!-- <a href="{{ url_for('main.items') }}" class="btn btn-primary">Items</a> -->
+                    <div class="card h-100">
+                        <a href="{{ url_for('main.items') }}" class="w-50 h-50 mx-auto stretched-link">
+                            <img src="../main/pictures/warranty.png" class="card-img-top" alt="Warranties">
+                        </a>
+                        <br>
+                        <div class="card-body">
+                            <h5 class="card-title">Warranties</h5>
+                            <p class="card-text">Go to the items page with all your warranties.</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                {% if items_count == 0 %}
+                                    No warranties
+                                {% elif items_count == 1 %}
+                                    1 warranty
+                                {% else %}
+                                    {{ items_count }} warranties
+                                {% endif %}
+                                in the database
+                            </small>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                      <small class="text-muted">
-                        {% if items_count == 0 %}
-                            No warranty items
-                        {% elif items_count == 1 %}
-                            1 warranty item
-                        {% else %}
-                            {{ items_count }} warranty items
-                        {% endif %}
-                        in the database
-                      </small>
-                    </div>
-                  </div>
                 </div>
                 <div class="col">
-                  <div class="card h-100">
-                    <a href="{{ url_for('main.shops') }}" class="w-50 h-50 mx-auto stretched-link">
-                        <img src="../main/pictures/shops.png" class="card-img-top" alt="Shops">
-                    </a>
-                    <br>
-                    <div class="card-body">
-                      <h5 class="card-title">Shops</h5>
-                    <p class="card-text">Go to the shops page with all your shops.</p>
-                    <!-- <a href="{{ url_for('main.shops') }}" class="btn btn-primary">Shops</a> -->
+                    <div class="card h-100">
+                        <a href="{{ url_for('main.shops') }}" class="w-50 h-50 mx-auto stretched-link">
+                            <img src="../main/pictures/shops.png" class="card-img-top" alt="Shops">
+                        </a>
+                        <br>
+                        <div class="card-body">
+                            <h5 class="card-title">Shops</h5>
+                            <p class="card-text">Go to the shops page with all your shops.</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">
+                                {% if shops_count == 0 %}
+                                No shops
+                                {% elif shops_count == 1 %}
+                                    1 shop
+                                {% else %}
+                                    {{ shops_count }} shops
+                                {% endif %}
+                                in the database
+                            </small>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                      <small class="text-muted">
-                        {% if shops_count == 0 %}
-                           No shops
-                        {% elif shops_count == 1 %}
-                            1 shop
-                        {% else %}
-                            {{ shops_count }} shops
-                        {% endif %}
-                        in the database
-                      </small>
-                    </div>
-                  </div>
                 </div>
                 <div class="col">
-                  <div class="card h-100">
-                    <a href="{{ url_for('main.database') }}" class="w-50 h-50 mx-auto stretched-link">
-                        <img src="../main/pictures/database.png" class="card-img-top" alt="Database">
-                    </a>
-                    <br>
-                    <div class="card-body">
-                      <h5 class="card-title">Database</h5>
-                    <p class="card-text">Go to the database page where you can manage your database.</p>
-                    <!-- <a href="{{ url_for('main.database') }}" class="btn btn-primary">Database</a> -->
+                    <div class="card h-100">
+                        <a href="{{ url_for('main.database') }}" class="w-50 h-50 mx-auto stretched-link">
+                            <img src="../main/pictures/database.png" class="card-img-top" alt="Database">
+                        </a>
+                        <br>
+                        <div class="card-body">
+                            <h5 class="card-title">Database</h5>
+                            <p class="card-text">Go to the database page where you can manage your database.</p>
+                        </div>
+                        <div class="card-footer">
+                            <small class="text-muted">3 actions available</small>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                      <small class="text-muted">-COUNT actions available-</small>
-                    </div>
-                  </div>
                 </div>
-              </div>
+            </div>
         <!-- </div> -->
     </div>
 {% endblock app_content %}

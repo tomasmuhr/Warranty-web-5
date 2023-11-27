@@ -3,8 +3,74 @@
 {% block app_content %}
     <div class="text-center">
         <h3>Database</h3>
-        <!-- TODO card - box export database -->
-        <!-- TODO card - delete items not linked to shop -->
-        <!-- TODO card - delete shops with no linked items -->
+        <br><br>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col">
+                <div class="card h-100">
+                    <a href="{{ url_for('main.db_export') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Export DB">
+                    </a>
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Backup</h5>
+                        <p class="card-text">Backup your database into an .sql file.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <!-- TODO -->
+                            DB backup
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <a href="{{ url_for('main.db_purge_items') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Purge warranties">
+                    </a>
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Purge warranties</h5>
+                        <p class="card-text">Delete all warranties with no linked shops.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <!-- TODO -->
+                            {% if shops_count == 0 %}
+                            Nothing to purge
+                            {% elif shops_count == 1 %}
+                                Purge 1 warranty
+                            {% else %}
+                                Purge {{ shops_count }} warranties
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card h-100">
+                    <a href="{{ url_for('main.db_purge_shops') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Purge shops">
+                    </a>
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Purge shops</h5>
+                        <p class="card-text">Delete all shops with no linked warranties.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            <!-- TODO -->
+                            {% if shops_count == 0 %}
+                                Nothing to purge
+                            {% elif shops_count == 1 %}
+                                Purge 1 shop
+                            {% else %}
+                                Purge {{ shops_count }} shops
+                            {% endif %}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock app_content %}
