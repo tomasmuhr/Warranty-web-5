@@ -39,7 +39,7 @@
                     <th scope="col">Street</th>
                     <th scope="col">City</th>
                     <th scope="col">Zip code</th>
-                    <th scope="col">Records</th>
+                    <th scope="col">Warranties</th>
                     <th scope="col">Actions</th>
                 </tr>
             </thead>
@@ -54,13 +54,55 @@
                         <td>
                             {% if items_count %}
                                 <!-- TODO modal for records -->
-                                <button type="button" class="btn btn-outline-primary btn-sm">
+                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ shop.id }}">
                                     {{ items_count}}
                                 </button>
+
+                                <div class="modal fade" id="shopItems_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                                    <div class="modal-dialog modal-md" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="modalTitleId">{{ shop.name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+    
+                                            <div class="modal-body">
+                                                <h6>
+                                                    Linked warranties
+                                                </h6>
+
+                                                <table class="table table-striped table-hover">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Street</td>
+                                                            <td>--something--</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>City</td>
+                                                            <td>--something--</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Zip code</td>
+                                                            <td>--something--</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Linked warranties</td>
+                                                            <td>--something--</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </div>
+                                            
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
                             {% else %}
-                                <button type="button" class="btn btn-outline-primary btn-sm disabled">
-                                    0
-                                </button>
+                                0
                             {% endif %}
                         </td> 
                         <td>
