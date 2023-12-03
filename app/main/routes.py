@@ -368,6 +368,19 @@ def db_purge_shops():
     print("db_purge_shops")
     return render_template("database.html", title="Database")
     
+    
+# MODALS
+@main_bp.route("/shop_view_modal/<modal_id>")
+def shop_view_modal(modal_id: str):
+    item_id = modal_id.split("_")[1]
+    item = db.session.execute(
+        db.select(Item.name)
+        .where(Item.id == item_id)
+    ).fetchone()
+    print(f"Item_id: {item_id}")
+    print(f"Returns: {item[0]}")
+    return item[0]
+
 
 # SEARCH
 @main_bp.route("/search", methods=["GET", "POST"])
