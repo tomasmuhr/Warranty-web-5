@@ -94,65 +94,17 @@
                                         
                                         <br><br>
 
-                                        <h6>
-                                            Under warranty
-                                        </h6>
-
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Expiry date</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                <!-- TODO linked warranties -->
-                                                <tr>
-                                                    <td id="items"></td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>--something--</td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>--something--</td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h6>Under warranty</h6>
+                                        <div id="under-warranty-{{ shop.id }}">
+                                            <!-- table content inserted by js -->
+                                        </div>
 
                                         <br><br>
 
-                                        <h6>
-                                            Out of warranty
-                                        </h6>
-
-                                        <table class="table table-striped table-hover">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Name</th>
-                                                    <th scope="col">Expiry date</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                <!-- TODO linked warranties -->
-                                                <tr>
-                                                    <td>--something--</td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>--something--</td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>--something--</td>
-                                                    <td>--something--</td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        <h6>Out of warranty</h6>
+                                        <div id="out-of-warranty-{{ shop.id }}">
+                                            <!-- table content inserted by js -->
+                                        </div>
 
                                     </div>
                             
@@ -340,3 +292,10 @@
     </table>
     
 {% endblock app_content %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script src="../main/js/shops.js"></script>
+
+{% endblock scripts %}
