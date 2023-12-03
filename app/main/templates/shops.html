@@ -30,157 +30,215 @@
 
     <hr>
     <!-- TODO add pagination -->
-    <div class="table-responsive">
-        <table class="table table-sm table-striped table-hover">
-            <thead>
+    <table class="table table-sm table-striped table-hover table-responsive">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Street</th>
+                <th scope="col">City</th>
+                <th scope="col">Zip code</th>
+                <th scope="col">Warranties</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for shop, items_count in shop_rows %}
                 <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Street</th>
-                    <th scope="col">City</th>
-                    <th scope="col">Zip code</th>
-                    <th scope="col">Warranties</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for shop, items_count in shop_rows %}
-                    <tr>
-                        <td>{{ shop.id }}</td>
-                        <td>{{ shop.name }}</td>
-                        <td>{{ shop.street }}</td>
-                        <td>{{ shop.city }}</td>
-                        <td>{{ shop.zip_code }}</td>
-                        <td>
-                            {% if items_count %}
-                                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ shop.id }}">
-                                    {{ items_count}}
-                                </button>
+                    <td>{{ shop.id }}</td>
+                    <td>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopView_{{ shop.id }}">
+                            {{ shop.name }}
+                        </button>
 
-                                <div class="modal fade" id="shopItems_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-                                    <div class="modal-dialog modal-md" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="modalTitleId">{{ shop.name }}</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-    
-                                            <div class="modal-body">
-                                                <h6>
-                                                    Under warranty
-                                                </h6>
+                        <div class="modal fade" id="shopView_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">Shop details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                        
+                                    <div class="modal-body">
+                                        <h5>{{ shop.name }}</h5>
+                                        <br>
 
-                                                <table class="table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Expiry date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- TODO linked warranties -->
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                        <table class="table table-striped table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Street</td>
+                                                    <td>{{ shop.street }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>City</td>
+                                                    <td>{{ shop.city }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Zip code</td>
+                                                    <td>{{ shop.zip_code }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Linked warranties</td>
+                                                    <td>{{ items_count }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Under warranty</td>
+                                                    <td># TODO {{ items_count }}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Out of warranty</td>
+                                                    <td># TODO {{ items_count }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        
+                                        <br><br>
 
-                                                <br><br>
+                                        <h6>
+                                            Under warranty
+                                        </h6>
 
-                                                <h6>
-                                                    Out of warranty
-                                                </h6>
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Expiry date</th>
+                                                </tr>
+                                            </thead>
 
-                                                <table class="table table-striped table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th scope="col">Name</th>
-                                                            <th scope="col">Expiry date</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <!-- TODO linked warranties -->
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>--something--</td>
-                                                            <td>--something--</td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
+                                            <tbody>
+                                                <!-- TODO linked warranties -->
+                                                <tr>
+                                                    <td id="items"></td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>--something--</td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>--something--</td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
 
-                                            </div>
-                                            
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                                            </div>
-                                        </div>
+                                        <br><br>
+
+                                        <h6>
+                                            Out of warranty
+                                        </h6>
+
+                                        <table class="table table-striped table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Name</th>
+                                                    <th scope="col">Expiry date</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                <!-- TODO linked warranties -->
+                                                <tr>
+                                                    <td>--something--</td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>--something--</td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>--something--</td>
+                                                    <td>--something--</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                            
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
-
-                            {% else %}
-                                0
-                            {% endif %}
-                        </td> 
-                        <td>
-                            <!-- Edit button and modal -->
-                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
-                                Edit
+                            </div>
+                        </div>   
+                    </td>
+                    <td>{{ shop.street }}</td>
+                    <td>{{ shop.city }}</td>
+                    <td>{{ shop.zip_code }}</td>
+                    <td>
+                        {% if items_count %}
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ shop.id }}">
+                                {{ items_count}}
                             </button>
-                            
-                            <div class="modal fade" id="shopEdit_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+
+                            <div class="modal fade" id="shopItems_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                                 <div class="modal-dialog modal-md" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalTitleId">Record update</h5>
+                                            <h5 class="modal-title" id="modalTitleId">{{ shop.name }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            
                                         </div>
 
                                         <div class="modal-body">
-                                            <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id, redirect_to='main.shops', query='-') }}">
-                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                                <div class="form-group">
-                                                    <label for="name">Name*</label>
-                                                    <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
-                                                </div>
-                                                <br>
-                                                <div class="form-group">
-                                                    <label for="street">Street</label>
-                                                    <input type="text" class="form-control" id="street" name="street" value="{{ shop.street }}">
-                                                </div>
-                                                <br>
-                                                <div class="form-group">
-                                                    <label for="city">City</label>
-                                                    <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}">
-                                                </div>
-                                                <br>
-                                                <div class="form-group">
-                                                    <label for="zip_code">Zip code</label>
-                                                    <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
-                                                </div>
-                                                <br>
-                                                <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update record</button>
-                                            </form>
-                                            <br>
-                                            <div class="text-danger">
-                                                * required field
-                                            </div>
+                                            <h6>
+                                                Under warranty
+                                            </h6>
+
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Expiry date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- TODO linked warranties -->
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <br><br>
+
+                                            <h6>
+                                                Out of warranty
+                                            </h6>
+
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Name</th>
+                                                        <th scope="col">Expiry date</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <!-- TODO linked warranties -->
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>--something--</td>
+                                                        <td>--something--</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
                                         </div>
                                         
                                         <div class="modal-footer">
@@ -189,40 +247,96 @@
                                     </div>
                                 </div>
                             </div>
-                            
-                            <!-- Delete button and modal -->
-                            <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
-                                Delete
-                            </button>
 
-                            <div class="modal fade" id="shopDelete_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
-                                <div class="modal-dialog modal-sm" role="document">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            
-                                        </div>
+                        {% else %}
+                            0
+                        {% endif %}
+                    </td> 
+                    <td>
+                        <!-- Edit button and modal -->
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
+                            Edit
+                        </button>
+                        
+                        <div class="modal fade" id="shopEdit_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal-dialog modal-md" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalTitleId">Record update</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        
+                                    </div>
 
-                                        <div class="modal-body">
-                                            Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
-                                            <br><br>
-                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=0, search_results=0) }}">Delete record</a>
-                                            <br><br>
-                                            <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=1, search_results=0) }}">Delete record + linked warranties</a>
+                                    <div class="modal-body">
+                                        <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id, redirect_to='main.shops', query='-') }}">
+                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                            <div class="form-group">
+                                                <label for="name">Name*</label>
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="street">Street</label>
+                                                <input type="text" class="form-control" id="street" name="street" value="{{ shop.street }}">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="city">City</label>
+                                                <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}">
+                                            </div>
+                                            <br>
+                                            <div class="form-group">
+                                                <label for="zip_code">Zip code</label>
+                                                <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
+                                            </div>
+                                            <br>
+                                            <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update record</button>
+                                        </form>
+                                        <br>
+                                        <div class="text-danger">
+                                            * required field
                                         </div>
-
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        </div>
+                                    </div>
+                                    
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
                                     </div>
                                 </div>
                             </div>
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </div>
+                        
+                        <!-- Delete button and modal -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
+                            Delete
+                        </button>
+
+                        <div class="modal fade" id="shopDelete_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal-dialog modal-sm" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="modalTitleId">Confirm Deletion</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        
+                                    </div>
+
+                                    <div class="modal-body">
+                                        Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
+                                        <br><br>
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=0, search_results=0) }}">Delete record</a>
+                                        <br><br>
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=1, search_results=0) }}">Delete record + linked warranties</a>
+                                    </div>
+
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     
 {% endblock app_content %}
