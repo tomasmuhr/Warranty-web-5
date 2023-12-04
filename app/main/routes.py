@@ -194,17 +194,19 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
 @main_bp.route("/shop_view_modal/<shop_id>")
 def shop_view_modal(shop_id: str):
     items_expired = db.session.execute(
-        db.select(Item.name, Date.expiration_date)
+        db.select(Item.name, Date.purchase_date, Date.expiration_date)
         .where(Item.shop_id == shop_id)
         .join(Date, Item.id == Date.item_id)
         .where(Date.expiration_date < datetime.now())
+        .order_by(Date.expiration_date.desc())
     ).fetchall()
     
     items_not_expired = db.session.execute(
-        db.select(Item.name, Date.expiration_date)
+        db.select(Item.name, Date.purchase_date, Date.expiration_date)
         .where(Item.shop_id == shop_id)
         .join(Date, Item.id == Date.item_id)
         .where(Date.expiration_date >= datetime.now())
+        .order_by(Date.expiration_date.desc())
     ).fetchall()
 
     print(f"Shop_id: {shop_id}")
