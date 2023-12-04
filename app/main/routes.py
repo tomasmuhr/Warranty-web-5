@@ -191,19 +191,29 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
         return redirect(url_for("main.shops"))
 
 
-@main_bp.route("/shop_view_modal/<modal_id>")
-def shop_view_modal(modal_id: str):
-    shop_id = modal_id.split("_")[1]
-    items = db.session.execute(
+@main_bp.route("/shop_view_modal/<shop_id>")
+def shop_view_modal(shop_id: str):
+    items_expired = db.session.execute(
         db.select(Item.name, Date.expiration_date)
         .where(Item.shop_id == shop_id)
         .join(Date, Item.id == Date.item_id)
-        .where(Date.expiration_date < datetime.now()) # TODO
+        .where(Date.expiration_date < datetime.now())
+    ).fetchall()
+    
+    items_not_expired = db.session.execute(
+        db.select(Item.name, Date.expiration_date)
+        .where(Item.shop_id == shop_id)
+        .join(Date, Item.id == Date.item_id)
+        .where(Date.expiration_date >= datetime.now())
     ).fetchall()
 
     print(f"Shop_id: {shop_id}")
-    print(f"Returns: {items}")
-    return items
+    print(f"Returns expired:     {items_expired}")
+    print(f"Returns not expired: {items_not_expired}")
+    
+    return render_template("_tables_warranty_items.html",
+                           items_expired=items_expired,
+                           items_not_expired=items_not_expired)
 
 
 # --- ITEMS ---
