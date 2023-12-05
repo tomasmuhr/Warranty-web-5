@@ -1,6 +1,6 @@
 // Load shop items into modal
 document.addEventListener("DOMContentLoaded", function() {
-    const shopViewModals = document.querySelectorAll('[id^="shopView_"]');
+    const shopViewModals = document.querySelectorAll('[id^="shopItems_"]');
 
     shopViewModals.forEach(function(shopViewModal) {
         shopViewModal.addEventListener("shown.bs.modal", function() {
