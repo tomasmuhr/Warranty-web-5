@@ -191,6 +191,33 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
         return redirect(url_for("main.shops"))
 
 
+@main_bp.route("/shop_view_modal/<shop_id>")
+def shop_view_modal(shop_id: str):
+    items_expired = db.session.execute(
+        db.select(Item.name, Date.purchase_date, Date.expiration_date)
+        .where(Item.shop_id == shop_id)
+        .join(Date, Item.id == Date.item_id)
+        .where(Date.expiration_date < datetime.now())
+        .order_by(Date.expiration_date.desc())
+    ).fetchall()
+    
+    items_not_expired = db.session.execute(
+        db.select(Item.name, Date.purchase_date, Date.expiration_date)
+        .where(Item.shop_id == shop_id)
+        .join(Date, Item.id == Date.item_id)
+        .where(Date.expiration_date >= datetime.now())
+        .order_by(Date.expiration_date.desc())
+    ).fetchall()
+
+    print(f"Shop_id: {shop_id}")
+    print(f"Returns expired:     {items_expired}")
+    print(f"Returns not expired: {items_not_expired}")
+    
+    return render_template("_tables_warranty_items.html",
+                           items_expired=items_expired,
+                           items_not_expired=items_not_expired)
+
+
 # --- ITEMS ---
 # TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
@@ -367,19 +394,6 @@ def db_purge_items():
 def db_purge_shops():
     print("db_purge_shops")
     return render_template("database.html", title="Database")
-    
-    
-# MODALS
-@main_bp.route("/shop_view_modal/<modal_id>")
-def shop_view_modal(modal_id: str):
-    item_id = modal_id.split("_")[1]
-    item = db.session.execute(
-        db.select(Item.name)
-        .where(Item.id == item_id)
-    ).fetchone()
-    print(f"Item_id: {item_id}")
-    print(f"Returns: {item[0]}")
-    return item[0]
 
 
 # SEARCH

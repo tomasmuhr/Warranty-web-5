@@ -1,0 +1,50 @@
+<h6>Under warranty</h6>
+{% if not items_not_expired %}
+    <span>None.</span>
+{% else %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Purchase date</th>
+                <th scope="col">Expiry date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_not_expired %}
+                <tr>
+                    <td>{{ item[0] }}</td>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[2] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+{% endif %}
+
+<br><br>
+
+<h6>Out of warranty</h6>
+{% if not items_expired %}
+    <span>None.</span>
+{% else %}
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Purchase date</th>
+                <th scope="col">Expiry date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items_expired %}
+                <tr>
+                    <td>{{ item[0] }}</td>
+                    <td>{{ item[1] }}</td>
+                    <td>{{ item[2] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+{% endif %}
+
