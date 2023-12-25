@@ -1,5 +1,9 @@
 from datetime import datetime
-from flask import flash, g, redirect, render_template, request, url_for
+from pathlib import Path
+import shutil
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+from flask import flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
 from sqlalchemy import distinct, func, or_
 from sqlalchemy.orm import aliased
 from sqlalchemy.util import ellipses_string
@@ -375,13 +379,20 @@ def delete_item(item_id: int, redirect_to: str, query: str):
 # DATABASE
 @main_bp.route("/database")
 def database():
-    return render_template("database.html", title="Database")
+    db_file = db.engine.url.database
+    
+    return render_template("database.html", title="Database", db_file=db_file)
 
 
 @main_bp.route("/db_export")
 def db_export():
-    print("db_export")
-    return render_template("database.html", title="Database")
+    db_path = Path(db.engine.url.database)
+    backup_path = db_path.with_suffix(".sqlite.bkp")
+    
+    # Create backup of the database file
+    shutil.copyfile(db_path, backup_path)
+
+    return send_file(backup_path, as_attachment=True)
 
 
 @main_bp.route("/db_purge_items")

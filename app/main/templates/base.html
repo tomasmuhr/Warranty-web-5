@@ -5,6 +5,10 @@
         <!-- meta tags for mobile -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
+        <!-- favicon -->
+        <link rel="shortcut icon" href="{{ url_for('main.static', filename='pictures/favicon.ico') }}">
+
+
         {% block styles %}
             <!-- Bootstrap CSS -->
             {{ bootstrap.load_css() }}

@@ -2,8 +2,25 @@
 
 {% block app_content %}
     <div class="text-center">
-        <h3>Database</h3>
-        <br><br>
+        <!-- <h3>Database</h3> -->
+        <!-- <br><br> -->
+        <!-- <div>
+            <h6>Current database file:</h6>
+            <span class="text-small">{{ db_file }}</span>
+        </div>
+        <br> -->
+        <span>
+            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDB" aria-expanded="false" aria-controls="collapseExample">
+                Database location
+            </button>
+        </span>
+        <div class="collapse" id="collapseDB">
+            <div class="card card-body">
+                {{ db_file }}
+            </div>
+        </div>
+        <br>
+        <br>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <div class="col">
                 <div class="card h-100">
@@ -17,7 +34,6 @@
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">
-                            <!-- TODO -->
                             DB backup
                         </small>
                     </div>
