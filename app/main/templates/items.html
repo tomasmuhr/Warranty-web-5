@@ -52,17 +52,17 @@
             </tr>
         </thead>
         <tbody>
-            {% for item, date, shop in item_rows %}
+            {% for row in item_rows %}
                 <tr>
-                    <td>{{ item.id }}</td>
-                    <td>{{ item.name }}</td>
+                    <td>{{ row.id }}</td>
+                    <td>{{ row.name }}</td>
                     <td>
-                        {% if shop.name %}
-                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopView_{{ item.id }}">
-                                {{ shop.name }}
+                        {% if row.name_1 %}
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopView_{{ row.id }}">
+                                {{ row.name_1 }}
                             </button>
 
-                            <div class="modal fade" id="shopView_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal fade" id="shopView_{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                                 <div class="modal-dialog modal-md" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
@@ -71,26 +71,26 @@
                                         </div>
                             
                                         <div class="modal-body">
-                                            <h5>{{ shop.name }}</h5>
+                                            <h5>{{ row.name_1 }}</h5>
                                             <br>
 
                                             <table class="table table-striped table-hover">
                                                 <tbody>
                                                     <tr>
                                                         <td>Street</td>
-                                                        <td>{{ items_shops[item.id].street }}</td>
+                                                        <td>{{ items_shops[row.id].street }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>City</td>
-                                                        <td>{{ items_shops[item.id].city }}</td>
+                                                        <td>{{ items_shops[row.id].city }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Zip code</td>
-                                                        <td>{{ items_shops[item.id].zip_code }}</td>
+                                                        <td>{{ items_shops[row.id].zip_code }}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Linked warranties</td>
-                                                        <td>{{ items_count_for_shops[shop.id] }}</td>
+                                                        <td>{{ items_count_for_shops[row.id_1] }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -104,116 +104,13 @@
                             </div>    
                         {% endif %}
                     </td>
-                    <td>{{ item.receipt_nr }}</td>
-                    <td>{% if item.amount %}{{ item.amount }}{% endif %}</td>
-                    <td>{% if item.price_per_piece %}{{ item.price_per_piece }}{% endif %}</td>
-                    <td>{{ item.comment }}</td>
-                    <td>{{ date.purchase_date }}</td>
-                    <td>{{ date.warranty_months }}</td>
-                    <td>{{ date.expiration_date }}</td>
-                    <td>
-                        <!-- Edit button and modal -->
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#itemEdit_{{ item.id }}">
-                            Edit
-                        </button>
-                        
-                        <div class="modal fade" id="itemEdit_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalEdit_{{ item.id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-md" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Record update</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    
-                                    <div class="modal-body">
-                                        <form method="POST" action="{{ url_for('main.edit_item', item_id=item.id, redirect_to='main.items', query='-') }}">
-
-                                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                                            <div class="form-group">
-                                                <label for="name">Name*</label>
-                                                <input type="text" class="form-control" id="name" name="name" value="{{ item.name }}" required>
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="name">Shop</label>
-                                                <select type="text" class="form-control" id="shop" name="shop">
-                                                    {% for s in shop_choices %}
-                                                        <option value="{{ s }}" {% if s == shop.name %}selected{% endif %}>{{ s }}</option>
-                                                    {% endfor %}
-                                                </select>
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="receipt_nr">Receipt nr</label>
-                                                <input type="text" class="form-control" id="receipt_nr" name="receipt_nr" value="{{ item.receipt_nr }}">
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="amount">Amount</label>
-                                                <input type="number" class="form-control" id="amount" name="amount" value="{{ item.amount }}" min="0">
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="price_per_piece">Price per piece</label>
-                                                <input type="number" class="form-control" id="price_per_piece" name="price_per_piece" value="{{ item.price_per_piece }}" step="0.01">
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="comment">Comment</label>
-                                                <input type="text" class="form-control" id="comment" name="comment" value="{{ item.comment }}">
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="purchase_date">Purchase date*</label>
-                                                <input type="date" class="form-control" id="purchase_date" name="purchase_date" value="{{ date.purchase_date }}" required>
-                                            </div>
-                                            <br>
-                                            <div class="form-group">
-                                                <label for="warranty_months">Warranty length (months)*</label>
-                                                <input type="number" class="form-control" id="warranty_months" name="warranty_months" value="{{ date.warranty_months }}" required>
-                                            </div>
-                                            <br>
-                                            <button type="submit" name="edit_item" class="btn btn-sm btn-primary">Update record</button>
-                                        </form>
-                                        <br>
-                                        <div class="text-danger">
-                                            * required field
-                                        </div>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Delete button and modal -->
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#itemDelete_{{ item.id }}">
-                            Delete
-                        </button>
-
-                        <div class="modal fade" id="itemDelete_{{ item.id }}" tabindex="-1" role="dialog" aria-labelledby="modalDelete_{{ item.id }}" aria-hidden="true">
-                            <div class="modal-dialog modal-sm" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Confirm deletion</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        
-                                    </div>
-                                    <div class="modal-body">
-                                        Are you sure you want to delete this record?<br><b>{{ item.name }}</b>
-                                        <br><br>
-                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_item', item_id=item.id, redirect_to='main.items', query='-') }}">Delete record</a>
-                        
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
+                    <td>{{ row.receipt_nr }}</td>
+                    <td>{% if row.amount %}{{ row.amount }}{% endif %}</td>
+                    <td>{% if row.price_per_piece %}{{ row.price_per_piece }}{% endif %}</td>
+                    <td>{{ row.comment }}</td>
+                    <td>{{ row.purchase_date }}</td>
+                    <td>{{ row.warranty_months }}</td>
+                    <td>{{ row.expiration_date }}</td>
                 </tr>
             {% endfor %}
         </tbody>

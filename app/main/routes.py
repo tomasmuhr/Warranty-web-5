@@ -274,16 +274,22 @@ def items():
             
             print_error_messages(add_item_form)
     
-    item_rows = db.session.execute(
-        db.select(Item, Date, Shop)
-        .outerjoin(Date)
-        .outerjoin(Shop)
-    ).fetchall()
+    page = request.args.get("page", 1, type=int)
+    item_query = db.select(Item.id, Item.name, Item.receipt_nr, Item.amount, Item.price_per_piece,
+                           Item.comment, Date.purchase_date, Date.warranty_months,
+                           Date.expiration_date, Shop.name) \
+                 .outerjoin(Date) \
+                 .outerjoin(Shop)
+    print(item_query)
+    item_rows = db.paginate(item_query, page=1, per_page=5, error_out=False)
+    print(item_rows)
+    for _ in item_rows:
+        print(_)
     
     return render_template("items.html",
                            title="Items",
                            add_item_form=add_item_form,
-                           item_rows=item_rows,
+                           item_rows=item_rows.items,
                            shop_choices=shop_choices,
                            items_shops = items_shops_dict,
                            items_count_for_shops = shops_items_count_dict)
