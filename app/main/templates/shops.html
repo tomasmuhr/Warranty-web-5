@@ -43,7 +43,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in shop_rows %}
+            {% for row, items_count in shop_rows %}
                 <tr>
                     <td>{{ row.id }}</td>
                     <td>{{ row.name }}</td>
@@ -51,9 +51,9 @@
                     <td>{{ row.city }}</td>
                     <td>{{ row.zip_code }}</td>
                     <td>
-                        {% if row.items_count %}
+                        {% if items_count %}
                             <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ row.id }}">
-                                {{ row.items_count}}
+                                {{ items_count}}
                             </button>
 
                             <div class="modal fade" id="shopItems_{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
