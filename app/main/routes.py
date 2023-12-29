@@ -296,9 +296,7 @@ def items():
     #              .outerjoin(Date) \
     #              .outerjoin(Shop)
     item_query = db.session.query(
-        Item.id, Item.name, Item.receipt_nr, Item.amount, Item.price_per_piece,
-        Item.comment, Date.purchase_date, Date.warranty_months,
-        Date.expiration_date, Shop.name.label("shop_name")) \
+        Item, Date, Shop.name.label("shop_name")) \
             .outerjoin(Date) \
                 .outerjoin(Shop)
     
