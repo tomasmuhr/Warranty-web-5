@@ -43,29 +43,29 @@
             </tr>
         </thead>
         <tbody>
-            {% for row in shop_rows %}
+            {% for shop, items_count in shop_rows %}
                 <tr>
-                    <td>{{ row.id }}</td>
-                    <td>{{ row.name }}</td>
-                    <td>{{ row.street }}</td>
-                    <td>{{ row.city }}</td>
-                    <td>{{ row.zip_code }}</td>
+                    <td>{{ shop.id }}</td>
+                    <td>{{ shop.name }}</td>
+                    <td>{{ shop.street }}</td>
+                    <td>{{ shop.city }}</td>
+                    <td>{{ shop.zip_code }}</td>
                     <td>
-                        {% if row.items_count %}
-                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ row.id }}">
-                                {{ row.items_count}}
+                        {% if items_count %}
+                            <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopItems_{{ shop.id }}">
+                                {{ items_count}}
                             </button>
 
-                            <div class="modal fade" id="shopItems_{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                            <div class="modal fade" id="shopItems_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                                 <div class="modal-dialog modal-md" role="document">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h5 class="modal-title" id="modalTitleId">{{ row.name }}</h5>
+                                            <h5 class="modal-title" id="modalTitleId">{{ shop.name }}</h5>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                         </div>
 
                                         <div class="modal-body">
-                                            <div id="warranty-items-{{ row.id }}">
+                                            <div id="warranty-items-{{ shop.id }}">
                                                 <!-- table content inserted by js -->
                                             </div>
                                         </div>
@@ -80,14 +80,14 @@
                         {% else %}
                             0
                         {% endif %}
-                    </td>
+                    </td> 
                     <td>
                         <!-- Edit button and modal -->
-                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ row.id }}">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#shopEdit_{{ shop.id }}">
                             Edit
                         </button>
                         
-                        <div class="modal fade" id="shopEdit_{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                        <div class="modal fade" id="shopEdit_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                             <div class="modal-dialog modal-md" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -97,26 +97,26 @@
                                     </div>
 
                                     <div class="modal-body">
-                                        <form method="POST" action="{{ url_for('main.edit_shop', shop_id=row.id, redirect_to='main.shops', query='-') }}">
+                                        <form method="POST" action="{{ url_for('main.edit_shop', shop_id=shop.id, redirect_to='main.shops', query='-') }}">
                                             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                             <div class="form-group">
                                                 <label for="name">Name*</label>
-                                                <input type="text" class="form-control" id="name" name="name" value="{{ row.name }}" required>
+                                                <input type="text" class="form-control" id="name" name="name" value="{{ shop.name }}" required>
                                             </div>
                                             <br>
                                             <div class="form-group">
                                                 <label for="street">Street</label>
-                                                <input type="text" class="form-control" id="street" name="street" value="{{ row.street }}">
+                                                <input type="text" class="form-control" id="street" name="street" value="{{ shop.street }}">
                                             </div>
                                             <br>
                                             <div class="form-group">
                                                 <label for="city">City</label>
-                                                <input type="text" class="form-control" id="city" name="city" value="{{ row.city }}">
+                                                <input type="text" class="form-control" id="city" name="city" value="{{ shop.city }}">
                                             </div>
                                             <br>
                                             <div class="form-group">
                                                 <label for="zip_code">Zip code</label>
-                                                <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ row.zip_code }}">
+                                                <input type="text" class="form-control" id="zip_code" name="zip_code" value="{{ shop.zip_code }}">
                                             </div>
                                             <br>
                                             <button type="submit" name="edit_shop_form" class="btn btn-sm btn-primary">Update record</button>
@@ -135,11 +135,11 @@
                         </div>
                         
                         <!-- Delete button and modal -->
-                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ row.id }}">
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#shopDelete_{{ shop.id }}">
                             Delete
                         </button>
 
-                        <div class="modal fade" id="shopDelete_{{ row.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+                        <div class="modal fade" id="shopDelete_{{ shop.id }}" tabindex="-1" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
                             <div class="modal-dialog modal-sm" role="document">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -149,11 +149,11 @@
                                     </div>
 
                                     <div class="modal-body">
-                                        Are you sure you want to delete this record?<br><b>{{ row.name }}</b>
+                                        Are you sure you want to delete this record?<br><b>{{ shop.name }}</b>
                                         <br><br>
-                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=row.id, linked_items=0, search_results=0) }}">Delete record</a>
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=0, search_results=0) }}">Delete record</a>
                                         <br><br>
-                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=row.id, linked_items=1, search_results=0) }}">Delete record + linked warranties</a>
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('main.delete_shop', shop_id=shop.id, linked_items=1, search_results=0) }}">Delete record + linked warranties</a>
                                     </div>
 
                                     <div class="modal-footer">
@@ -162,7 +162,7 @@
                                 </div>
                             </div>
                         </div>
-                    </td> 
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

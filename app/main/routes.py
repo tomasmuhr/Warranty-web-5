@@ -4,7 +4,7 @@ import shutil
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from flask import flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
-from sqlalchemy import distinct, func, or_
+from sqlalchemy import distinct, func, or_, outerjoin
 from sqlalchemy.orm import aliased
 from sqlalchemy.util import ellipses_string
 from app.main import main_bp
@@ -67,12 +67,23 @@ def shops():
             
             print_error_messages(add_shop_form)
 
-    shop_rows = db.session.execute(
-        db.select(Shop, func.count(Item.id).label("items_count"))
-        .outerjoin(Item, Shop.id == Item.shop_id)
-        .group_by(Shop)
-        .order_by(Shop.id)
-    ).fetchall()
+    # shop_rows = db.session.execute(
+    #     db.select(Shop, func.count(Item.id).label("items_count"))
+    #     .outerjoin(Item, Shop.id == Item.shop_id)
+    #     .group_by(Shop)
+    #     .order_by(Shop.id)
+    # ).fetchall()
+    
+    shop_query = db.select(Shop, func.count(Item.id).label("items_count")) \
+    .outerjoin(Item, Shop.id == Item.shop_id) \
+    .group_by(Shop.id) \
+    .order_by(Shop.id)
+    print(shop_query)
+    
+    page = request.args.get("page", 1, type=int)
+    shop_rows = db.paginate(shop_query, page=page, per_page=3)
+    print(db.session.execute(shop_query).fetchall())
+    print(shop_rows.items)
     
     return render_template("shops.html",
                            title="Shops",
