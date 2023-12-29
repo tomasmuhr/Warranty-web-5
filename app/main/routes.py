@@ -248,6 +248,7 @@ def items():
     items_shops_dict = get_shops_by_items()
     # Get record count for shop view modal
     shops_items_count_dict = get_items_count_by_shops()
+    print(f"Shops_items_count_dict: \n{shops_items_count_dict}")
     
     # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
