@@ -43,7 +43,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for row, items_count in shop_rows %}
+            {% for row, items_count in shop_rows.items %}
                 <tr>
                     <td>{{ row.id }}</td>
                     <td>{{ row.name }}</td>
@@ -168,6 +168,38 @@
         </tbody>
     </table>
     
+    <div class="pagination">
+        {% if shop_rows.has_prev %}
+            <span>
+                <a class='page-number' href="{{ url_for('main.shops', page=shop_rows.prev_num) }}">
+                    {{ '<<<' }}
+                </a>
+            </span>
+        {% endif %}
+    
+        {% for number in shop_rows.iter_pages() %}
+            {% if shop_rows.page != number %}
+                <span>
+                        <a class='page-number'
+                            href="{{ url_for('main.shops', page=number) }}">
+                        {{ number }}
+                        </a>
+                </span>
+            {% else %}
+                <span class='current-page-number'>{{ number }}</span>
+            {% endif %}
+        {% endfor %}
+    
+        {% if shop_rows.has_next %}
+            <span>
+                <a class='page-number'
+                    href="{{ url_for('main.shops', page=shop_rows.next_num) }}">
+                    {{ '>>>' }}
+                </a>
+            </span>
+        {% endif %}
+    </div>
+
 {% endblock app_content %}
 
 {% block scripts %}

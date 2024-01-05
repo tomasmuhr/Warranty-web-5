@@ -87,16 +87,21 @@ def shops():
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
     
     page = request.args.get("page", 1, type=int)
-    # shop_rows = db.paginate(shop_query, page=page, per_page=3, error_out=False).items
     shop_rows = shop_query.paginate(page=page, per_page=3, error_out=False)
     print(f"\nShop rows:\n{'-'*10}\n", shop_rows, "\n")
     
-    # shop_pagination = shop_rows.iter_pages()
+    # for _ in shop_rows.iter_pages():
+    #     print(f"PAGE {shop_rows.page} of {shop_rows.pages}")
+    #     print("-")
+    #     for item in shop_rows.items:
+    #         print(item[0].name, f"| items: {item[1]}")
+    #     print("-")
+    #     shop_rows = shop_rows.next()
     
     return render_template("shops.html",
                            title="Shops",
                            add_shop_form=add_shop_form,
-                           shop_rows=shop_rows.items)
+                           shop_rows=shop_rows) 
 
 
 @main_bp.route("/edit_shop/<int:shop_id>_<redirect_to>_<query>", methods=['GET', 'POST'])
