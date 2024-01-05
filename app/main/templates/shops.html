@@ -168,6 +168,7 @@
         </tbody>
     </table>
     
+    <!-- Manual pagination -->
     <div class="pagination">
         {% if shop_rows.has_prev %}
             <span>
@@ -200,6 +201,36 @@
         {% endif %}
     </div>
 
+    <!-- Bootstrap pagination completed -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Bootstrap pagination original -->
+    <!-- <nav aria-label="Page navigation example">
+        <ul class="pagination pagination-sm justify-content-center">
+            <li class="page-item disabled">
+                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
+            <li class="page-item"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav> -->
+    
 {% endblock app_content %}
 
 {% block scripts %}

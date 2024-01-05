@@ -82,13 +82,14 @@ def shops():
         Shop, func.count(Item.id).label("items_count")) \
             .outerjoin(Item) \
                 .group_by(Shop.id)
+
+    page = request.args.get("page", 1, type=int)
+    shop_rows = shop_query.paginate(page=page, per_page=3, error_out=False)
     
     print(f"\nShop query:\n{'-'*11}\n", shop_query)
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
-    
-    page = request.args.get("page", 1, type=int)
-    shop_rows = shop_query.paginate(page=page, per_page=3, error_out=False)
     print(f"\nShop rows:\n{'-'*10}\n", shop_rows, "\n")
+    print(f"Shop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
     
     # for _ in shop_rows.iter_pages():
     #     print(f"PAGE {shop_rows.page} of {shop_rows.pages}")
