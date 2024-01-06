@@ -3,9 +3,9 @@ from pathlib import Path
 import shutil
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-from flask import flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
-from sqlalchemy import distinct, func, or_
-from sqlalchemy.orm import aliased
+from flask import current_app, flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
+from sqlalchemy import distinct, func, or_, outerjoin
+from sqlalchemy.orm import aliased, lazyload
 from sqlalchemy.util import ellipses_string
 from app.main import main_bp
 from app.main.forms import AddItemForm, ShopForm
@@ -67,17 +67,43 @@ def shops():
             
             print_error_messages(add_shop_form)
 
-    shop_rows = db.session.execute(
-        db.select(Shop, func.count(Item.id).label("items_count"))
-        .outerjoin(Item, Shop.id == Item.shop_id)
-        .group_by(Shop)
-        .order_by(Shop.id)
-    ).fetchall()
+    # shop_rows = db.session.execute(
+    #     db.select(Shop, func.count(Item.id).label("items_count"))
+    #     .outerjoin(Item, Shop.id == Item.shop_id)
+    #     .group_by(Shop)
+    #     .order_by(Shop.id)
+    # ).fetchall()
+    
+    # shop_query = db.select(Shop, func.count(Item.id).label("items_count")) \
+    # .outerjoin(Item, Shop.id == Item.shop_id) \
+    # .group_by(Shop.id) \
+    # .order_by(Shop.id)
+    shop_query = db.session.query(
+        Shop, func.count(Item.id).label("items_count")) \
+            .outerjoin(Item) \
+                .group_by(Shop.id)
+
+    page = request.args.get("page", 1, type=int)
+    per_page = current_app.config["RECORDS_PER_PAGE"]
+    shop_rows = shop_query.paginate(page=page, per_page=per_page, error_out=False)
+    
+    print(f"\nShop query:\n{'-'*11}\n", shop_query)
+    print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
+    print(f"\nShop rows:\n{'-'*10}\n", shop_rows)
+    print(f"\nShop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
+    
+    # for _ in shop_rows.iter_pages():
+    #     print(f"PAGE {shop_rows.page} of {shop_rows.pages}")
+    #     print("-")
+    #     for item in shop_rows.items:
+    #         print(item[0].name, f"| items: {item[1]}")
+    #     print("-")
+    #     shop_rows = shop_rows.next()
     
     return render_template("shops.html",
                            title="Shops",
                            add_shop_form=add_shop_form,
-                           shop_rows=shop_rows)
+                           shop_rows=shop_rows) 
 
 
 @main_bp.route("/edit_shop/<int:shop_id>_<redirect_to>_<query>", methods=['GET', 'POST'])
@@ -223,7 +249,6 @@ def shop_view_modal(shop_id: str):
 
 
 # --- ITEMS ---
-# TODO add BLOB for adding user images?
 @main_bp.route("/items", methods=['GET', 'POST'])
 def items():
     # Get shop choices for select shop field
@@ -232,6 +257,7 @@ def items():
     items_shops_dict = get_shops_by_items()
     # Get record count for shop view modal
     shops_items_count_dict = get_items_count_by_shops()
+    print(f"Shops_items_count_dict: \n{shops_items_count_dict}")
     
     # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
@@ -274,11 +300,24 @@ def items():
             
             print_error_messages(add_item_form)
     
-    item_rows = db.session.execute(
-        db.select(Item, Date, Shop)
-        .outerjoin(Date)
-        .outerjoin(Shop)
-    ).fetchall()
+    # item_query = db.select(Item.id, Item.name, Item.receipt_nr, Item.amount, Item.price_per_piece,
+    #                        Item.comment, Date.purchase_date, Date.warranty_months,
+    #                        Date.expiration_date, Shop.name.label("shop_name")) \
+    #              .outerjoin(Date) \
+    #              .outerjoin(Shop)
+    item_query = db.session.query(
+        Item, Date, Shop.name.label("shop_name")) \
+            .outerjoin(Date) \
+                .outerjoin(Shop)
+    
+    page = request.args.get("page", 1, type=int)
+    per_page = current_app.config["RECORDS_PER_PAGE"]
+    item_rows = item_query.paginate(page=page, per_page=per_page, error_out=False)
+
+    print(f"\Item query:\n{'-'*11}\n", item_query)
+    print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(item_query).fetchall())
+    print(f"\nItem rows:\n{'-'*10}\n", item_rows)
+    print(f"\nItem rows.items:\n{'-'*16}\n", item_rows.items, "\n")
     
     return render_template("items.html",
                            title="Items",

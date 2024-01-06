@@ -15,11 +15,15 @@ def get_config_mode():
 
 
 class Config:
+    # Flask configurations
     SECRET_KEY = os.environ.get("SECRET_KEY")
+    
+    # SQLAlchemy configurations
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_RECYCLE = 180
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 180}
+    RECORDS_PER_PAGE = 1
 
 
 class DevelopmentConfig(Config):
