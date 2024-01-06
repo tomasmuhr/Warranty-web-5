@@ -29,25 +29,45 @@
                     </a>
                     <br>
                     <div class="card-body">
-                        <h5 class="card-title">Backup</h5>
+                        <h5 class="card-title">Backup DB</h5>
                         <p class="card-text">Backup your database into an .sql file.</p>
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">
-                            DB backup
+                            Backup DB
                         </small>
                     </div>
                 </div>
             </div>
+
             <div class="col">
                 <div class="card h-100">
-                    <a href="{{ url_for('main.db_purge_items') }}" class="w-50 h-50 mx-auto stretched-link">
-                        <img src="../main/pictures/database.png" class="card-img-top" alt="Purge warranties">
+                    <a href="{{ url_for('main.db_restore') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Import DB">
                     </a>
                     <br>
                     <div class="card-body">
-                        <h5 class="card-title">Purge warranties</h5>
-                        <p class="card-text">Delete all warranties with no linked shops.</p>
+                        <h5 class="card-title">Restore DB</h5>
+                        <p class="card-text">Restore your previously backed up database.</p>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">
+                            Restore DB
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col">
+                <div class="card h-100">
+                    <a href="{{ url_for('main.db_purge') }}" class="w-50 h-50 mx-auto stretched-link">
+                        <img src="../main/pictures/database.png" class="card-img-top" alt="Purge DB">
+                    </a>
+                    <br>
+                    <div class="card-body">
+                        <h5 class="card-title">Purge records</h5>
+                        <p class="card-text">Delete all warranties with no linked shops and/or
+                            all shops with no linked warranties.</p>
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">
@@ -63,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col">
+            <!-- <div class="col">
                 <div class="card h-100">
                     <a href="{{ url_for('main.db_purge_shops') }}" class="w-50 h-50 mx-auto stretched-link">
                         <img src="../main/pictures/database.png" class="card-img-top" alt="Purge shops">
@@ -75,7 +95,6 @@
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">
-                            <!-- TODO -->
                             {% if shops_count == 0 %}
                                 Nothing to purge
                             {% elif shops_count == 1 %}
@@ -86,7 +105,7 @@
                         </small>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 {% endblock app_content %}

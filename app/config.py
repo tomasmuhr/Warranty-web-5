@@ -24,6 +24,7 @@ class Config:
     SQLALCHEMY_POOL_RECYCLE = 180
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 180}
     RECORDS_PER_PAGE = 1
+    ALLOWED_BACKUP_EXTENSIONS = ["sqlite.bkp"]
 
 
 class DevelopmentConfig(Config):

@@ -12,6 +12,7 @@ from app.main.forms import AddItemForm, ShopForm
 from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
+from werkzeug.utils import secure_filename
 
 
 @main_bp.route("/", methods=['GET'])
@@ -426,7 +427,8 @@ def database():
 @main_bp.route("/db_export")
 def db_export():
     db_path = Path(db.engine.url.database)
-    backup_path = db_path.with_suffix(".sqlite.bkp")
+    print(db_path)
+    backup_path = db_path.with_suffix(".sqlite_bkp")
     
     # Create backup of the database file
     shutil.copyfile(db_path, backup_path)
@@ -434,10 +436,32 @@ def db_export():
     return send_file(backup_path, as_attachment=True)
 
 
-@main_bp.route("/db_purge_items")
-def db_purge_items():
-    print("db_purge_items")
-    return render_template("database.html", title="Database")
+@main_bp.route("/db_restore", methods=["GET", "POST"])
+def db_restore():
+    if request.method == "POST":
+        if 'file' not in request.files:
+            flash('No file in request.', category="danger")
+            return redirect(url_for("main.database"))
+    
+        file = request.files['file']
+    
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No file selected.', category="danger")
+            return redirect(url_for("main.database"))
+        
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(Path(db.engine.url.database / filename))
+            
+    
+    return redirect(url_for("main.database"))
+
+@main_bp.route("/db_purge")
+def db_purge():
+    print("db_purge")
+    return redirect(url_for("main.database"))
     
 
 @main_bp.route("/db_purge_shops")
@@ -551,3 +575,11 @@ def get_items_count_by_shops():
         
     return shops_items_count_dict
 
+
+def allowed_file(filename):
+    allowed_ext = current_app.config['ALLOWED_EXTENSIONS']
+    
+    return all('.' in filename,
+               Path(filename).suffix in allowed_ext)
+    
+    
