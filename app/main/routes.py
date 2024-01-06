@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-from flask import flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
+from flask import current_app, flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
 from sqlalchemy import distinct, func, or_, outerjoin
 from sqlalchemy.orm import aliased, lazyload
 from sqlalchemy.util import ellipses_string
@@ -84,7 +84,8 @@ def shops():
                 .group_by(Shop.id)
 
     page = request.args.get("page", 1, type=int)
-    shop_rows = shop_query.paginate(page=page, per_page=3, error_out=False)
+    per_page = current_app.config["RECORDS_PER_PAGE"]
+    shop_rows = shop_query.paginate(page=page, per_page=per_page, error_out=False)
     
     print(f"\nShop query:\n{'-'*11}\n", shop_query)
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
@@ -309,13 +310,14 @@ def items():
             .outerjoin(Date) \
                 .outerjoin(Shop)
     
+    page = request.args.get("page", 1, type=int)
+    per_page = current_app.config["RECORDS_PER_PAGE"]
+    item_rows = item_query.paginate(page=page, per_page=per_page, error_out=False)
+
     print(f"\Item query:\n{'-'*11}\n", item_query)
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(item_query).fetchall())
-    
-    page = request.args.get("page", 1, type=int)
-    item_rows = item_query.paginate(page=page, per_page=3, error_out=False).items
-
     print(f"\nItem rows:\n{'-'*10}\n", item_rows, "\n")
+    print(f"Item rows.items:\n{'-'*16}\n", item_rows.items, "\n")
     
     return render_template("items.html",
                            title="Items",
