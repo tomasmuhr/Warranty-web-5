@@ -35,7 +35,6 @@
 
     <hr>
 
-    <!-- TODO add pagination -->
     <table class="table table-sm table-striped table-hover table-responsive">
         <thead>
             <tr>
@@ -237,7 +236,11 @@
             {% for number in item_rows.iter_pages() %}
                 {% if item_rows.page != number %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('main.items', page=number) }}">{{ number }}</a>
+                        {% if not number %}
+                            <a class="page-link disabled" href="#">...</a>
+                        {% else %}
+                            <a class="page-link" href="{{ url_for('main.items', page=number) }}">{{ number }}</a>
+                        {% endif %}
                     </li>
                 {% else %}
                     <li class="page-item page-link active">{{ number }}</li>

@@ -184,7 +184,11 @@
             {% for number in shop_rows.iter_pages() %}
                 {% if shop_rows.page != number %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('main.shops', page=number) }}">{{ number }}</a>
+                        {% if not number %}
+                            <a class="page-link disabled" href="#">...</a>
+                        {% else %}
+                            <a class="page-link" href="{{ url_for('main.shops', page=number) }}">{{ number }}</a>
+                        {% endif %}
                     </li>
                 {% else %}
                     <li class="page-item page-link active">{{ number }}</li>

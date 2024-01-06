@@ -89,8 +89,8 @@ def shops():
     
     print(f"\nShop query:\n{'-'*11}\n", shop_query)
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
-    print(f"\nShop rows:\n{'-'*10}\n", shop_rows, "\n")
-    print(f"Shop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
+    print(f"\nShop rows:\n{'-'*10}\n", shop_rows)
+    print(f"\nShop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
     
     # for _ in shop_rows.iter_pages():
     #     print(f"PAGE {shop_rows.page} of {shop_rows.pages}")
@@ -316,8 +316,8 @@ def items():
 
     print(f"\Item query:\n{'-'*11}\n", item_query)
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(item_query).fetchall())
-    print(f"\nItem rows:\n{'-'*10}\n", item_rows, "\n")
-    print(f"Item rows.items:\n{'-'*16}\n", item_rows.items, "\n")
+    print(f"\nItem rows:\n{'-'*10}\n", item_rows)
+    print(f"\nItem rows.items:\n{'-'*16}\n", item_rows.items, "\n")
     
     return render_template("items.html",
                            title="Items",
