@@ -8,7 +8,7 @@ from sqlalchemy import distinct, func, or_, outerjoin
 from sqlalchemy.orm import aliased, lazyload
 from sqlalchemy.util import ellipses_string
 from app.main import main_bp
-from app.main.forms import AddItemForm, ShopForm
+from app.main.forms import AddItemForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -417,11 +417,45 @@ def delete_item(item_id: int, redirect_to: str, query: str):
 
 
 # DATABASE
-@main_bp.route("/database")
+@main_bp.route("/database", methods=['GET', 'POST'])
 def database():
     db_file = db.engine.url.database
     
-    return render_template("database.html", title="Database", db_file=db_file)
+    # Restore DB form
+    upload_db_file_form = UploadDBFileForm()
+    
+    if request.method == "POST":
+        if "upload_db_file_form" in request.form  and upload_db_file_form.validate_on_submit():
+            
+            # If file not part of request
+            if 'file' not in request.files:
+                flash('No file in request.', category="danger")
+                return redirect(url_for("main.database"))
+        
+            file = request.files['file']
+        
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename
+            if file.filename == '':
+                flash('No file selected.', category="danger")
+                return redirect(url_for("main.database"))
+            
+            # If file ok
+            if file and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                print(f"Filename OK: {filename}")
+                # file.save(Path(db.engine.url.database / filename))
+                
+                flash("The database has been successfully restored.", category="success")
+                
+                return redirect(url_for("main.database"))
+            
+            # Else
+            flash("Something went wrong. Please try again.", category="danger") 
+            return redirect(url_for("main.database"))
+    
+    return render_template("database.html", title="Database", db_file=db_file,
+                           upload_db_file_form=upload_db_file_form)
 
 
 @main_bp.route("/db_export")
@@ -436,30 +470,13 @@ def db_export():
     return send_file(backup_path, as_attachment=True)
 
 
-@main_bp.route("/db_restore", methods=["GET", "POST"])
-def db_restore():
-    if request.method == "POST":
-        if 'file' not in request.files:
-            flash('No file in request.', category="danger")
-            return redirect(url_for("main.database"))
-    
-        file = request.files['file']
-    
-        # If the user does not select a file, the browser submits an
-        # empty file without a filename.
-        if file.filename == '':
-            flash('No file selected.', category="danger")
-            return redirect(url_for("main.database"))
-        
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(Path(db.engine.url.database / filename))
-            
-    
-    return redirect(url_for("main.database"))
+# @main_bp.route("/db_restore", methods=["GET", "POST"])
+# def db_restore():
+#     return redirect(url_for("main.database"))
 
 @main_bp.route("/db_purge")
 def db_purge():
+    # TODO
     print("db_purge")
     return redirect(url_for("main.database"))
     
@@ -577,9 +594,8 @@ def get_items_count_by_shops():
 
 
 def allowed_file(filename):
-    allowed_ext = current_app.config['ALLOWED_EXTENSIONS']
+    allowed_ext = current_app.config['ALLOWED_BACKUP_EXTENSIONS']
     
-    return all('.' in filename,
-               Path(filename).suffix in allowed_ext)
+    return Path(filename).suffix in allowed_ext
     
     

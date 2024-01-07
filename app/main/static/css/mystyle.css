@@ -37,6 +37,14 @@
     font-size: smaller;
 }
 
+.text-black {
+    color: black;
+}
+
+.text-red {
+    color: red;
+}
+
 .table-sm {
     font-size: smaller;
     vertical-align: middle;

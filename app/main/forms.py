@@ -1,7 +1,7 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError
+from wtforms import DateField, DecimalField, FileField, IntegerField, SelectField, StringField, SubmitField
+from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError, Regexp
 
 from app.models import Shop
 
@@ -48,3 +48,7 @@ class AddItemForm(ItemForm):
 class EditItemForm(ItemForm):
     submit = SubmitField("Update Record", name="edit_item_form")
     
+
+class UploadDBFileForm(FlaskForm):
+    file = FileField("", validators=[DataRequired()])
+    submit = SubmitField("Restore DB", name="upload_db_file_form")
