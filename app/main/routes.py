@@ -443,11 +443,15 @@ def database():
             # If file ok
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
-                print(f"Filename OK: {filename}")
-                # file.save(Path(db.engine.url.database / filename))
+                
+                file.save(Path(db.engine.url.database).parent / filename.replace(".sqlite_bkp", ".sqlite"))
                 
                 flash("The database has been successfully restored.", category="success")
                 
+                return redirect(url_for("main.database"))
+            
+            else:
+                flash("The file must be .sqlite_bkp!", category="danger")
                 return redirect(url_for("main.database"))
             
             # Else
@@ -471,7 +475,7 @@ def db_export():
 
 
 # @main_bp.route("/db_restore", methods=["GET", "POST"])
-# def db_restore():
+# def db_restore(filename):
 #     return redirect(url_for("main.database"))
 
 @main_bp.route("/db_purge")
@@ -596,6 +600,6 @@ def get_items_count_by_shops():
 def allowed_file(filename):
     allowed_ext = current_app.config['ALLOWED_BACKUP_EXTENSIONS']
     
-    return Path(filename).suffix in allowed_ext
+    return "." in filename and Path(filename).suffix in allowed_ext
     
     
