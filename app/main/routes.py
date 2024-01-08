@@ -429,7 +429,7 @@ def database():
     
     if request.method == "POST":
         # RESTORE DB
-        if "upload_db_file_form" in request.form  and upload_db_file_form.validate_on_submit():
+        if "upload_db_file_form" in request.form and upload_db_file_form.validate_on_submit():
             
             # If file not part of request
             if 'file' not in request.files:
@@ -468,6 +468,20 @@ def database():
             return redirect(url_for("main.database"))
     
         # PURGE DB
+        if "purge_db_form" in request.form and purge_db_form.validate_on_submit():
+            purge_option = purge_db_form.purge_radio.data
+
+            if purge_option == "warranties":
+                purge_warranties()
+            elif purge_option == "shops":
+                purge_shops()
+            elif purge_option == "both":
+                purge_warranties()
+                purge_shops()
+                
+            flash("The database has been successfully purged.", category="success")
+            
+            return redirect(url_for("main.database"))
     
     return render_template("database.html", title="Database", db_file=db_file,
                            upload_db_file_form=upload_db_file_form,
@@ -484,24 +498,6 @@ def db_export():
     shutil.copyfile(db_path, backup_path)
 
     return send_file(backup_path, as_attachment=True)
-
-
-# @main_bp.route("/db_restore", methods=["GET", "POST"])
-# def db_restore(filename):
-#     return redirect(url_for("main.database"))
-
-
-# @main_bp.route("/db_purge")
-# def db_purge():
-#     # TODO DB purge
-#     print("db_purge")
-#     return redirect(url_for("main.database"))
-    
-
-# @main_bp.route("/db_purge_shops")
-# def db_purge_shops():
-#     print("db_purge_shops")
-#     return render_template("database.html", title="Database")
 
 
 # SEARCH
@@ -633,3 +629,13 @@ def is_sqlite_database(filename):
         
     except sqlite3.Error:
         return False
+    
+    
+def purge_warranties():
+    # TODO: Purge warranties
+    print("Purging warranties...")
+
+    
+def purge_shops():
+    # TODO: Purge shops
+    print("Purging shops...")
