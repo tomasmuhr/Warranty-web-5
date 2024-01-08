@@ -1,6 +1,7 @@
 from datetime import datetime
 from pathlib import Path
 import shutil
+import sqlite3
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from flask import current_app, flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
@@ -442,12 +443,14 @@ def database():
             
             # If file ok
             if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                
-                file.save(Path(db.engine.url.database).parent / filename.replace(".sqlite_bkp", ".sqlite"))
-                
-                flash("The database has been successfully restored.", category="success")
-                
+                # filename = secure_filename(file.filename)
+                # Check if the file is sqlite3 database
+                if is_sqlite_database(file.filename):
+                    file.save(Path(db.engine.url.database).parent / "warranty.sqlite")
+                    flash("The database has been successfully restored.", category="success")
+                else:
+                    flash("The file is not a Warranty App sqlite3 database!", category="danger")
+                    
                 return redirect(url_for("main.database"))
             
             else:
@@ -480,7 +483,7 @@ def db_export():
 
 @main_bp.route("/db_purge")
 def db_purge():
-    # TODO
+    # TODO DB purge
     print("db_purge")
     return redirect(url_for("main.database"))
     
@@ -602,4 +605,21 @@ def allowed_file(filename):
     
     return "." in filename and Path(filename).suffix in allowed_ext
     
-    
+
+def is_sqlite_database(filename):
+    try:
+        conn = sqlite3.connect(filename)
+        cur = conn.cursor()
+        tables = cur.execute(f"SELECT name FROM sqlite_master WHERE type='table'").fetchall()
+        cur.close()
+        conn.close()
+        
+        table_names = [table[0] for table in tables]
+        needed_names = ("item", "date", "shop", "settings")
+        if all(name in table_names for name in needed_names):
+            return True
+        else:
+            return False
+        
+    except sqlite3.Error:
+        return False

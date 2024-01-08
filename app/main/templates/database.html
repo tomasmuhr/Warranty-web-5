@@ -3,13 +3,6 @@
 
 {% block app_content %}
     <div class="text-center">
-        <!-- <h3>Database</h3> -->
-        <!-- <br><br> -->
-        <!-- <div>
-            <h6>Current database file:</h6>
-            <span class="text-small">{{ db_file }}</span>
-        </div>
-        <br> -->
         <span>
             <!-- TODO remove for production? -->
             <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDB" aria-expanded="false" aria-controls="collapseExample">
@@ -57,6 +50,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
+                                    <p>Restore the database by previously backed up file.</p>
                                     <h5 class="text-red">Warning!</h5>
                                     <p class="text-red">The content of your current database will be overwritten by selected file.</p>
                                     <br>
@@ -93,7 +87,7 @@
                     </div>
                     <div class="card-footer">
                         <small class="text-muted">
-                            <!-- TODO -->
+                            <!-- TODO DB purge-->
                             {% if shops_count == 0 %}
                             Nothing to purge
                             {% elif shops_count == 1 %}
