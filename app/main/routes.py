@@ -8,8 +8,9 @@ from flask import current_app, flash, g, redirect, render_template, request, sen
 from sqlalchemy import distinct, func, or_, outerjoin
 from sqlalchemy.orm import aliased, lazyload
 from sqlalchemy.util import ellipses_string
+import app
 from app.main import main_bp
-from app.main.forms import AddItemForm, ShopForm, UploadDBFileForm
+from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
@@ -424,8 +425,10 @@ def database():
     
     # Restore DB form
     upload_db_file_form = UploadDBFileForm()
+    purge_db_form = PurgeDBForm()
     
     if request.method == "POST":
+        # RESTORE DB
         if "upload_db_file_form" in request.form  and upload_db_file_form.validate_on_submit():
             
             # If file not part of request
@@ -447,13 +450,16 @@ def database():
                 # Check if the file is sqlite3 database
                 if is_sqlite_database(file.filename):
                     file.save(Path(db.engine.url.database).parent / "warranty.sqlite")
+                    current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
                 else:
+                    current_app.logger.warning("Database restoration failed (not a Warranty App .sqlite_bkp file).")
                     flash("The file is not a Warranty App sqlite3 database!", category="danger")
                     
                 return redirect(url_for("main.database"))
             
             else:
+                current_app.logger.warning("Database restoration failed (not a .sqlite_bkp file).")
                 flash("The file must be .sqlite_bkp!", category="danger")
                 return redirect(url_for("main.database"))
             
@@ -461,8 +467,11 @@ def database():
             flash("Something went wrong. Please try again.", category="danger") 
             return redirect(url_for("main.database"))
     
+        # PURGE DB
+    
     return render_template("database.html", title="Database", db_file=db_file,
-                           upload_db_file_form=upload_db_file_form)
+                           upload_db_file_form=upload_db_file_form,
+                           purge_db_form=purge_db_form)
 
 
 @main_bp.route("/db_export")
@@ -481,17 +490,18 @@ def db_export():
 # def db_restore(filename):
 #     return redirect(url_for("main.database"))
 
-@main_bp.route("/db_purge")
-def db_purge():
-    # TODO DB purge
-    print("db_purge")
-    return redirect(url_for("main.database"))
+
+# @main_bp.route("/db_purge")
+# def db_purge():
+#     # TODO DB purge
+#     print("db_purge")
+#     return redirect(url_for("main.database"))
     
 
-@main_bp.route("/db_purge_shops")
-def db_purge_shops():
-    print("db_purge_shops")
-    return render_template("database.html", title="Database")
+# @main_bp.route("/db_purge_shops")
+# def db_purge_shops():
+#     print("db_purge_shops")
+#     return render_template("database.html", title="Database")
 
 
 # SEARCH

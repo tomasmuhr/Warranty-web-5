@@ -54,8 +54,9 @@
                                     <h5 class="text-red">Warning!</h5>
                                     <p class="text-red">The content of your current database will be overwritten by selected file.</p>
                                     <br>
-                                    {{ render_form(upload_db_file_form,
-                                        button_size="sm") }}
+                                    <div>
+                                        {{ render_form(upload_db_file_form, button_size="sm") }}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -76,9 +77,51 @@
 
             <div class="col">
                 <div class="card h-100">
-                    <a href="{{ url_for('main.db_purge') }}" class="w-50 h-50 mx-auto stretched-link">
+                    <a href="#" class="w-50 h-50 mx-auto stretched-link" data-bs-toggle="modal" data-bs-target="#purgeDBModal">
                         <img src="../main/pictures/database.png" class="card-img-top" alt="Purge DB">
                     </a>
+                    <!-- Modal -->
+                    <div class="modal fade" id="purgeDBModal" tabindex="-1" role="dialog" aria-labelledby="purgeDBModal" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content text-black">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="shop-details">Purge DB</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Delete warranties without linked shops and/or shops without linked warranties.</p>
+                                    <h5 class="text-red">Warning!</h5>
+                                    <p class="text-red">Some warning.</p>
+                                    <br>
+                                    <!-- {{ render_form(purge_db_form, button_size="sm")}} -->
+                                    <form action="" method="post" class="form" role="form">
+                                        <input id="csrf_token" name="csrf_token" type="hidden" value="IjQ3ZDAyYTBmMGUxZWFlNTMwNGYzY2MyZTNhYmJiMTg4MDcyYzA2NTki.ZZxYbQ.FiNCuy2XFYJnqKkWYwH9DxItFN4">
+                                        <div class="mb-3 ">
+                                            <div>
+                                                <label class="form-label" for="purge_radio">Select data to purge</label>
+                                            </div>
+                                            <div class="form-check-inline">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="purge_radio-0" name="purge_radio" type="radio" value="warranties">
+                                                    <label class="form-check-label" for="purge_radio-0">warranties</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" id="purge_radio-1" name="purge_radio" type="radio" value="shops">
+                                                    <label class="form-check-label" for="purge_radio-1">shops</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input checked="" class="form-check-input" id="purge_radio-2" name="purge_radio" type="radio" value="both">
+                                                    <label class="form-check-label" for="purge_radio-2">both</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <input class="btn btn-primary btn-sm" id="purge_db_form" name="purge_db_form" type="submit" value="Purge DB">
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <br>
                     <div class="card-body">
                         <h5 class="card-title">Purge DB</h5>
@@ -88,40 +131,11 @@
                     <div class="card-footer">
                         <small class="text-muted">
                             <!-- TODO DB purge-->
-                            {% if shops_count == 0 %}
-                            Nothing to purge
-                            {% elif shops_count == 1 %}
-                                Purge 1 warranty
-                            {% else %}
-                                Purge {{ shops_count }} warranties
-                            {% endif %}
+                            Purge {{ shops_count }} warranties
                         </small>
                     </div>
                 </div>
             </div>
-            <!-- <div class="col">
-                <div class="card h-100">
-                    <a href="{{ url_for('main.db_purge_shops') }}" class="w-50 h-50 mx-auto stretched-link">
-                        <img src="../main/pictures/database.png" class="card-img-top" alt="Purge shops">
-                    </a>
-                    <br>
-                    <div class="card-body">
-                        <h5 class="card-title">Purge shops</h5>
-                        <p class="card-text">Delete all shops with no linked warranties.</p>
-                    </div>
-                    <div class="card-footer">
-                        <small class="text-muted">
-                            {% if shops_count == 0 %}
-                                Nothing to purge
-                            {% elif shops_count == 1 %}
-                                Purge 1 shop
-                            {% else %}
-                                Purge {{ shops_count }} shops
-                            {% endif %}
-                        </small>
-                    </div>
-                </div>
-            </div> -->
         </div>
     </div>
 {% endblock app_content %}
