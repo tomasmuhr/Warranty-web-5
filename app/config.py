@@ -23,11 +23,12 @@ class Config:
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_RECYCLE = 180
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 180}
-    RECORDS_PER_PAGE = 1
+    ALLOWED_BACKUP_EXTENSIONS = [".sqlite_bkp"]
 
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty.sqlite"
+    RECORDS_PER_PAGE = 100
     
     
 class ProductionConfig(Config):
@@ -39,5 +40,6 @@ class ProductionConfig(Config):
         os.environ.get("DB_PORT"       , "5432"),
         os.environ.get("DB_NAME"       , "warranty.db")
     )
+    RECORDS_PER_PAGE = 5
      
      

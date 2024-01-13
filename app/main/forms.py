@@ -1,7 +1,7 @@
 from datetime import date
 from flask_wtf import FlaskForm
-from wtforms import DateField, DecimalField, IntegerField, SelectField, StringField, SubmitField
-from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError
+from wtforms import BooleanField, DateField, DecimalField, FileField, IntegerField, RadioField, SelectField, StringField, SubmitField
+from wtforms.validators import DataRequired, Optional, NumberRange, ValidationError, Regexp
 
 from app.models import Shop
 
@@ -48,3 +48,19 @@ class AddItemForm(ItemForm):
 class EditItemForm(ItemForm):
     submit = SubmitField("Update Record", name="edit_item_form")
     
+
+class UploadDBFileForm(FlaskForm):
+    file = FileField("", validators=[DataRequired()])
+    submit = SubmitField("Restore DB", name="upload_db_file_form")
+    
+    
+class PurgeDBForm(FlaskForm):
+    purge_radio = RadioField(label="Select data to purge",
+                             name="purge_radio",
+                             choices=[
+                                 ("warranties", "warranties"),
+                                 ("shops", "shops"),
+                                 ("both", "warranties and shops")
+                                 ],
+                             default="both")
+    submit = SubmitField("Purge DB", name="purge_db_form")
