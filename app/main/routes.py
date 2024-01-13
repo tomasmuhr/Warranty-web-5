@@ -2,18 +2,13 @@ from datetime import datetime
 from pathlib import Path
 import shutil
 import sqlite3
-from tkinter import Tk
-# from tkinter.filedialog import askopenfilename
-from flask import current_app, flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
-from sqlalchemy import delete, distinct, func, or_, outerjoin
-# from sqlalchemy.orm import aliased, lazyload
-# from sqlalchemy.util import ellipses_string
+from flask import current_app, flash, redirect, render_template, request, send_file, url_for
+from sqlalchemy import func, or_
 from app.main import main_bp
 from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
-# from werkzeug.utils import secure_filename
 
 
 @main_bp.route("/", methods=['GET'])
@@ -69,21 +64,10 @@ def shops():
             
             print_error_messages(add_shop_form)
 
-    # shop_rows = db.session.execute(
-    #     db.select(Shop, func.count(Item.id).label("items_count"))
-    #     .outerjoin(Item, Shop.id == Item.shop_id)
-    #     .group_by(Shop)
-    #     .order_by(Shop.id)
-    # ).fetchall()
-    
-    # shop_query = db.select(Shop, func.count(Item.id).label("items_count")) \
-    # .outerjoin(Item, Shop.id == Item.shop_id) \
-    # .group_by(Shop.id) \
-    # .order_by(Shop.id)
     shop_query = db.session.query(
-        Shop, func.count(Item.id).label("items_count")) \
-            .outerjoin(Item) \
-                .group_by(Shop.id)
+        Shop, func.count(Item.id).label("items_count")
+        ).outerjoin(Item) \
+            .group_by(Shop.id)
 
     page = request.args.get("page", 1, type=int)
     per_page = current_app.config["RECORDS_PER_PAGE"]
@@ -93,14 +77,6 @@ def shops():
     print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
     print(f"\nShop rows:\n{'-'*10}\n", shop_rows)
     print(f"\nShop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
-    
-    # for _ in shop_rows.iter_pages():
-    #     print(f"PAGE {shop_rows.page} of {shop_rows.pages}")
-    #     print("-")
-    #     for item in shop_rows.items:
-    #         print(item[0].name, f"| items: {item[1]}")
-    #     print("-")
-    #     shop_rows = shop_rows.next()
     
     return render_template("shops.html",
                            title="Shops",
@@ -302,11 +278,6 @@ def items():
             
             print_error_messages(add_item_form)
     
-    # item_query = db.select(Item.id, Item.name, Item.receipt_nr, Item.amount, Item.price_per_piece,
-    #                        Item.comment, Date.purchase_date, Date.warranty_months,
-    #                        Date.expiration_date, Shop.name.label("shop_name")) \
-    #              .outerjoin(Date) \
-    #              .outerjoin(Shop)
     item_query = db.session.query(
         Item, Date, Shop.name.label("shop_name")) \
             .outerjoin(Date) \
@@ -401,7 +372,7 @@ def delete_item(item_id: int, redirect_to: str, query: str):
         .where(Item.id == item_id)
     )
     
-    # ! workaround for cascade delete
+    # !workaround for cascade delete
     db.session.execute(
         db.delete(Date)
         .where(Date.item_id == item_id)
@@ -445,7 +416,6 @@ def database():
             
             # If file ok
             if file and allowed_file(file.filename):
-                # filename = secure_filename(file.filename)
                 # Check if the file is sqlite3 database
                 if is_sqlite_database(file.filename):
                     file.save(Path(db.engine.url.database).parent / "warranty.sqlite")
@@ -631,13 +601,39 @@ def is_sqlite_database(filename):
     
     
 def purge_warranties():
-    # TODO: Purge warranties
     print("Purging warranties...")
+    items_without_shop_query = db.session.query(
+        Item.id
+    ).where(
+        Item.shop_id.is_(None)
+    )
+    
+    items_without_shop = db.session.execute(
+        items_without_shop_query
+    ).fetchall()
+    
+    items_without_shop_list = [item[0] for item in items_without_shop]
+
+    db.session.execute(
+        db.delete(
+            Item
+        ).where(
+            Item.id.in_(items_without_shop_list)
+        )
+    )
+    
+    db.session.execute(
+        db.delete(
+            Date
+        ).where(
+            Date.item_id.in_(items_without_shop_list)
+        )
+    )
+    
+    db.session.commit()
 
     
 def purge_shops():
-    # TODO: Purge shops
-    print("Purging shops...")
     empty_shops_query = db.session.query(
         Shop.id, func.count(Item.id).label("items_count")
     ).outerjoin(
@@ -653,16 +649,15 @@ def purge_shops():
     empty_shops_list = [shop[0] for shop in empty_shops if shop[1] == 0]
     
     db.session.execute(
-        delete(
+        db.delete(
             Shop
         ).where(
             Shop.id.in_(empty_shops_list)
         )
     )
-    
+      
     db.session.commit()
     
-    print("OK")
     print(empty_shops_query)
     print(empty_shops)
     print(empty_shops_list)
