@@ -3,18 +3,17 @@ from pathlib import Path
 import shutil
 import sqlite3
 from tkinter import Tk
-from tkinter.filedialog import askopenfilename
+# from tkinter.filedialog import askopenfilename
 from flask import current_app, flash, g, redirect, render_template, request, send_file, send_from_directory, url_for
-from sqlalchemy import distinct, func, or_, outerjoin
-from sqlalchemy.orm import aliased, lazyload
-from sqlalchemy.util import ellipses_string
-import app
+from sqlalchemy import delete, distinct, func, or_, outerjoin
+# from sqlalchemy.orm import aliased, lazyload
+# from sqlalchemy.util import ellipses_string
 from app.main import main_bp
 from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
 from dateutil.relativedelta import relativedelta
-from werkzeug.utils import secure_filename
+# from werkzeug.utils import secure_filename
 
 
 @main_bp.route("/", methods=['GET'])
@@ -639,3 +638,31 @@ def purge_warranties():
 def purge_shops():
     # TODO: Purge shops
     print("Purging shops...")
+    empty_shops_query = db.session.query(
+        Shop.id, func.count(Item.id).label("items_count")
+    ).outerjoin(
+        Item, Shop.id == Item.shop_id
+    ).group_by(
+        Shop.id
+    )
+                    
+    empty_shops = db.session.execute(
+        empty_shops_query
+    ).fetchall()
+
+    empty_shops_list = [shop[0] for shop in empty_shops if shop[1] == 0]
+    
+    db.session.execute(
+        delete(
+            Shop
+        ).where(
+            Shop.id.in_(empty_shops_list)
+        )
+    )
+    
+    db.session.commit()
+    
+    print("OK")
+    print(empty_shops_query)
+    print(empty_shops)
+    print(empty_shops_list)

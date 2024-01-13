@@ -55,13 +55,12 @@ class UploadDBFileForm(FlaskForm):
     
     
 class PurgeDBForm(FlaskForm):
-    purge_radio = RadioField("Select data to purge",
+    purge_radio = RadioField(label="Select data to purge",
                              name="purge_radio",
                              choices=[
                                  ("warranties", "warranties"),
                                  ("shops", "shops"),
                                  ("both", "both")
                                  ],
-                             default="both",
-                             render_kw={"class": "form-check-inline"})
+                             default="both")
     submit = SubmitField("Purge DB", name="purge_db_form")
