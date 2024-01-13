@@ -60,7 +60,7 @@ class PurgeDBForm(FlaskForm):
                              choices=[
                                  ("warranties", "warranties"),
                                  ("shops", "shops"),
-                                 ("both", "both")
+                                 ("both", "warranties and shops")
                                  ],
                              default="both")
     submit = SubmitField("Purge DB", name="purge_db_form")
