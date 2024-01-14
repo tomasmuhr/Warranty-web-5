@@ -32,7 +32,7 @@ class DevelopmentConfig(Config):
     
     
 class ProductionConfig(Config):
-    SQLALCHEMY_DATABASE_URI = "{}://{}:{}@{}:{}/{}".format(
+    SQLALCHEMY_DATABASE_URI = "{}:///{}:{}@{}:{}/{}".format(
         os.environ.get("DB_ENGINE"     , "sqlite"),
         os.environ.get("DB_USERNAME"   , "root"),
         os.environ.get("DB_PASSWORD"   , ""),
@@ -41,5 +41,6 @@ class ProductionConfig(Config):
         os.environ.get("DB_NAME"       , "warranty.db")
     )
     RECORDS_PER_PAGE = 5
+    
      
      
