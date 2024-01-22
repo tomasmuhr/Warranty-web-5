@@ -16,19 +16,20 @@ def get_config_mode():
 
 class Config:
     # Flask configurations
-    SECRET_KEY = os.environ.get("SECRET_KEY")
+    # SECRET_KEY = os.environ.get("SECRET_KEY")
+    SECRET_KEY = os.urandom(32)
     
     # SQLAlchemy configurations
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_POOL_SIZE = 10
     SQLALCHEMY_POOL_RECYCLE = 180
     SQLALCHEMY_ENGINE_OPTIONS = {'pool_recycle' : 180}
+    BACKUP_EXTENSION = "db_bkp"
 
 
 class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty_dev.db"
-    ALLOWED_BACKUP_EXTENSIONS = [".sqlite_bkp"]
-    RECORDS_PER_PAGE = 100
+    RECORDS_PER_PAGE = 3
     
     
 class ProductionConfig(Config):
@@ -41,7 +42,6 @@ class ProductionConfig(Config):
     #     os.environ.get("DB_PORT"       , "5432"),
     #     os.environ.get("DB_NAME"       , "warranty.db")
     # )
-    ALLOWED_BACKUP_EXTENSIONS = [".db_bkp"]
     RECORDS_PER_PAGE = 10
     
      

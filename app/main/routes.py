@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 from pathlib import Path
 import shutil
 import sqlite3
@@ -164,7 +165,7 @@ def delete_shop(shop_id: int, linked_items: int, search_results: int):
         ).fetchall()
         
         item_ids = [item[0] for item in items]
-        print(f"Item_ids: {item_ids}")
+        # print(f"Item_ids: {item_ids}")
         
         db.session.execute(
             db.delete(Date)
@@ -422,14 +423,14 @@ def database():
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
                 else:
-                    current_app.logger.warning("Database restoration failed (not a Warranty App .sqlite_bkp file).")
+                    current_app.logger.warning(f"Database restoration failed (not a Warranty App .{os.environ.get('BACKUP_EXTENSION')} file).")
                     flash("The file is not a Warranty App sqlite3 database!", category="danger")
                     
                 return redirect(url_for("main.database"))
             
             else:
-                current_app.logger.warning("Database restoration failed (not a .sqlite_bkp file).")
-                flash("The file must be .sqlite_bkp!", category="danger")
+                current_app.logger.warning(f"Database restoration failed (not a .{os.environ.get('BACKUP_EXTENSION')} file).")
+                flash(f"The file must be .{os.environ.get('BACKUP_EXTENSION')}!", category="danger")
                 return redirect(url_for("main.database"))
             
             # Else
@@ -460,8 +461,8 @@ def database():
 @main_bp.route("/db_export")
 def db_export():
     db_path = Path(db.engine.url.database)
-    print(db_path)
-    backup_path = db_path.with_suffix(".sqlite_bkp")
+    # print(db_path)
+    backup_path = db_path.with_suffix(os.environ.get('BACKUP_EXTENSION'))
     
     # Create backup of the database file
     shutil.copyfile(db_path, backup_path)
@@ -576,9 +577,10 @@ def get_items_count_by_shops():
 
 
 def allowed_file(filename):
-    allowed_ext = current_app.config['ALLOWED_BACKUP_EXTENSIONS']
+    # backup_ext = current_app.config['BACKUP_EXTENSION']
+    backup_ext = os.environ.get('BACKUP_EXTENSION')
     
-    return "." in filename and Path(filename).suffix in allowed_ext
+    return "." in filename and Path(filename).suffix == backup_ext
     
 
 def is_sqlite_database(filename):
@@ -601,7 +603,7 @@ def is_sqlite_database(filename):
     
     
 def purge_warranties():
-    print("Purging warranties...")
+    # print("Purging warranties...")
     items_without_shop_query = db.session.query(
         Item.id
     ).where(
@@ -658,6 +660,6 @@ def purge_shops():
       
     db.session.commit()
     
-    print(empty_shops_query)
-    print(empty_shops)
-    print(empty_shops_list)
+    # print(empty_shops_query)
+    # print(empty_shops)
+    # print(empty_shops_list)

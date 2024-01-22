@@ -8,5 +8,6 @@ Dockerfile_dev
 .git/
 .vscode/
 logs/
+instance/
 app/data/
 errors_DISABLED/
