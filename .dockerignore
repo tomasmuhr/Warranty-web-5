@@ -1,3 +1,11 @@
 warranty.sqlite_bkp
 warranty.sqlite_bkp_corrupted
 Dockerfile
+.gitignore
+.env-sample
+__pycache__/
+.git/
+.vscode/
+logs/
+app/data/
+errors_DISABLED/
