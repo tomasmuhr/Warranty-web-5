@@ -26,7 +26,7 @@ class Config:
 
 
 class DevelopmentConfig(Config):
-    SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty.sqlite"
+    SQLALCHEMY_DATABASE_URI =  "sqlite:///warranty_dev.db"
     ALLOWED_BACKUP_EXTENSIONS = [".sqlite_bkp"]
     RECORDS_PER_PAGE = 100
     

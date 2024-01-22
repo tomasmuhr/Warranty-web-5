@@ -73,10 +73,10 @@ def shops():
     per_page = current_app.config["RECORDS_PER_PAGE"]
     shop_rows = shop_query.paginate(page=page, per_page=per_page, error_out=False)
     
-    print(f"\nShop query:\n{'-'*11}\n", shop_query)
-    print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
-    print(f"\nShop rows:\n{'-'*10}\n", shop_rows)
-    print(f"\nShop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
+    # print(f"\nShop query:\n{'-'*11}\n", shop_query)
+    # print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(shop_query).fetchall())
+    # print(f"\nShop rows:\n{'-'*10}\n", shop_rows)
+    # print(f"\nShop rows.items:\n{'-'*16}\n", shop_rows.items, "\n")
     
     return render_template("shops.html",
                            title="Shops",
@@ -217,9 +217,9 @@ def shop_view_modal(shop_id: str):
         .order_by(Date.expiration_date.desc())
     ).fetchall()
 
-    print(f"Shop_id: {shop_id}")
-    print(f"Returns expired:     {items_expired}")
-    print(f"Returns not expired: {items_not_expired}")
+    # print(f"Shop_id: {shop_id}")
+    # print(f"Returns expired:     {items_expired}")
+    # print(f"Returns not expired: {items_not_expired}")
     
     return render_template("_tables_warranty_items.html",
                            items_expired=items_expired,
@@ -235,7 +235,7 @@ def items():
     items_shops_dict = get_shops_by_items()
     # Get record count for shop view modal
     shops_items_count_dict = get_items_count_by_shops()
-    print(f"Shops_items_count_dict: \n{shops_items_count_dict}")
+    # print(f"Shops_items_count_dict: \n{shops_items_count_dict}")
     
     # Add form and shop_choices to initialize select field
     add_item_form = AddItemForm(shop_choices)
@@ -287,10 +287,10 @@ def items():
     per_page = current_app.config["RECORDS_PER_PAGE"]
     item_rows = item_query.paginate(page=page, per_page=per_page, error_out=False)
 
-    print(f"\Item query:\n{'-'*11}\n", item_query)
-    print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(item_query).fetchall())
-    print(f"\nItem rows:\n{'-'*10}\n", item_rows)
-    print(f"\nItem rows.items:\n{'-'*16}\n", item_rows.items, "\n")
+    # print(f"\Item query:\n{'-'*11}\n", item_query)
+    # print(f"\nFetchall():\n{'-'*11}\n", db.session.execute(item_query).fetchall())
+    # print(f"\nItem rows:\n{'-'*10}\n", item_rows)
+    # print(f"\nItem rows.items:\n{'-'*16}\n", item_rows.items, "\n")
     
     return render_template("items.html",
                            title="Items",

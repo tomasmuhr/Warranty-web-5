@@ -1,9 +1,10 @@
 warranty.sqlite_bkp
 warranty.sqlite_bkp_corrupted
-Dockerfile
+Dockerfile_dev
+.dockerignore
 .gitignore
 .env-sample
-__pycache__/
+*/__pycache__/
 .git/
 .vscode/
 logs/
