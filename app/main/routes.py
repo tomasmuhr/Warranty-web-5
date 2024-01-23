@@ -417,20 +417,22 @@ def database():
             
             # If file ok
             if file and allowed_file(file.filename):
-                # Check if the file is sqlite3 database
-                if is_sqlite_database(file.filename):
-                    file.save(Path(db.engine.url.database).parent / "warranty.sqlite")
+                # Check if the file is a Warranty app database
+                if is_warranty_app_database(file.filename):
+                    # file.save(Path(db.engine.url.database).parent / current_app.config["DB_NAME"])
+                    file.save(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                    print(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
                 else:
-                    current_app.logger.warning(f"Database restoration failed (not a Warranty App .{current_app.config('BACKUP_EXTENSION')} file).")
-                    flash("The file is not a Warranty App sqlite3 database!", category="danger")
+                    current_app.logger.warning(f"Database restoration failed (not a Warranty App database file).")
+                    flash("The file is not a Warranty App database!", category="danger")
                     
                 return redirect(url_for("main.database"))
             
             else:
-                current_app.logger.warning(f"Database restoration failed (not a .{current_app.config('BACKUP_EXTENSION')} file).")
-                flash(f"The file must be .{current_app.config('BACKUP_EXTENSION')}!", category="danger")
+                current_app.logger.warning(f"Database restoration failed (not a valid filename).")
+                flash(f"The backup filename is invalid. Try a different backup.", category="danger")
                 return redirect(url_for("main.database"))
             
         # PURGE DB
@@ -457,8 +459,8 @@ def database():
 @main_bp.route("/db_export")
 def db_export():
     db_path = Path(db.engine.url.database)
-    # print(db_path)
-    backup_path = db_path.with_suffix(os.environ.get('BACKUP_EXTENSION'))
+    # backup_path = db_path.with_name("warranty_bkp.db")
+    backup_path = db_path.with_name(current_app.config["DB_NAME_BACKUP"])
     
     # Create backup of the database file
     shutil.copyfile(db_path, backup_path)
@@ -573,14 +575,12 @@ def get_items_count_by_shops():
 
 
 def allowed_file(filename):
-    # backup_ext = current_app.config['BACKUP_EXTENSION']
-    backup_ext = current_app.config('BACKUP_EXTENSION')
-    
-    return "." in filename and Path(filename).suffix == backup_ext
+    return "." in filename and Path(filename).name == current_app.config["DB_NAME_BACKUP"]
     
 
-def is_sqlite_database(filename):
+def is_warranty_app_database(filename):
     try:
+        # conn = sqlite3.connect(filename)
         conn = sqlite3.connect(filename)
         cur = conn.cursor()
         tables = cur.execute(f"SELECT name FROM sqlite_master WHERE type='table'").fetchall()
@@ -588,6 +588,7 @@ def is_sqlite_database(filename):
         conn.close()
         
         table_names = [table[0] for table in tables]
+        print(table_names)
         needed_names = ("item", "date", "shop", "settings")
         if all(name in table_names for name in needed_names):
             return True
