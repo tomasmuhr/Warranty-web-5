@@ -425,7 +425,7 @@ def database():
                 # Check if the file is a Warranty app database
                 if is_warranty_app_database(backup_filename):
                     # FIXME: Restore DB
-                    backup_filename.rename(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                    backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
                     
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
