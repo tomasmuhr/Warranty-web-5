@@ -417,11 +417,16 @@ def database():
             
             # If file ok
             if file and allowed_file(file.filename):
+                # Save it and check validity
+                backup_filename = Path(db.engine.url.database).with_name(current_app.config["DB_NAME_BACKUP"])
+                
+                file.save(backup_filename)
+                
                 # Check if the file is a Warranty app database
-                if is_warranty_app_database(file.filename):
-                    # file.save(Path(db.engine.url.database).parent / current_app.config["DB_NAME"])
-                    file.save(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
-                    print(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                if is_warranty_app_database(backup_filename):
+                    # FIXME: Restore DB
+                    backup_filename.rename(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                    
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
                 else:
@@ -459,7 +464,6 @@ def database():
 @main_bp.route("/db_export")
 def db_export():
     db_path = Path(db.engine.url.database)
-    # backup_path = db_path.with_name("warranty_bkp.db")
     backup_path = db_path.with_name(current_app.config["DB_NAME_BACKUP"])
     
     # Create backup of the database file
@@ -580,7 +584,6 @@ def allowed_file(filename):
 
 def is_warranty_app_database(filename):
     try:
-        # conn = sqlite3.connect(filename)
         conn = sqlite3.connect(filename)
         cur = conn.cursor()
         tables = cur.execute(f"SELECT name FROM sqlite_master WHERE type='table'").fetchall()
@@ -588,7 +591,6 @@ def is_warranty_app_database(filename):
         conn.close()
         
         table_names = [table[0] for table in tables]
-        print(table_names)
         needed_names = ("item", "date", "shop", "settings")
         if all(name in table_names for name in needed_names):
             return True
