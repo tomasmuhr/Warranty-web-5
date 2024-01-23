@@ -423,20 +423,16 @@ def database():
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
                 else:
-                    current_app.logger.warning(f"Database restoration failed (not a Warranty App .{os.environ.get('BACKUP_EXTENSION')} file).")
+                    current_app.logger.warning(f"Database restoration failed (not a Warranty App .{current_app.config('BACKUP_EXTENSION')} file).")
                     flash("The file is not a Warranty App sqlite3 database!", category="danger")
                     
                 return redirect(url_for("main.database"))
             
             else:
-                current_app.logger.warning(f"Database restoration failed (not a .{os.environ.get('BACKUP_EXTENSION')} file).")
-                flash(f"The file must be .{os.environ.get('BACKUP_EXTENSION')}!", category="danger")
+                current_app.logger.warning(f"Database restoration failed (not a .{current_app.config('BACKUP_EXTENSION')} file).")
+                flash(f"The file must be .{current_app.config('BACKUP_EXTENSION')}!", category="danger")
                 return redirect(url_for("main.database"))
             
-            # Else
-            flash("Something went wrong. Please try again.", category="danger") 
-            return redirect(url_for("main.database"))
-    
         # PURGE DB
         if "purge_db_form" in request.form and purge_db_form.validate_on_submit():
             purge_option = purge_db_form.purge_radio.data
@@ -578,7 +574,7 @@ def get_items_count_by_shops():
 
 def allowed_file(filename):
     # backup_ext = current_app.config['BACKUP_EXTENSION']
-    backup_ext = os.environ.get('BACKUP_EXTENSION')
+    backup_ext = current_app.config('BACKUP_EXTENSION')
     
     return "." in filename and Path(filename).suffix == backup_ext
     
