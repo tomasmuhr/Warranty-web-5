@@ -38,6 +38,8 @@ def import_data():
         
     except sqlite3.Error as error:
         print("Failed!", error)
+        conn.rollback()
+        
     finally:
         if conn:
             conn.close()
