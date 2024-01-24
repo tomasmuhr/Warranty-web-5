@@ -17,7 +17,28 @@ def create_tables():
     
     
 def import_data():
-    print("Importing data ...")
-    backup_conn = sqlite3.connect(current_app.config["DB_NAME_BACKUP"])
-    print(backup_conn)
-    print("Imported.")
+    try:
+        print("Importing data ...")
+        conn = sqlite3.connect(current_app.config["DB_NAME"])
+        cursor = conn.cursor()
+        print(f"Connected to {current_app.config['DB_NAME']}.")
+        
+        query = (f"""
+                 ATTACH DATABASE '{current_app.config['DB_NAME_BACKUP']}' AS backup;
+                 INSERT INTO item SELECT * FROM backup.item;
+                 SELECT * FROM item;
+                 DETACH DATABASE backup;
+                 """)
+                            
+        cursor.executescript(query)
+        conn.commit()
+        cursor.close()
+        
+        print("Imported.")
+        
+    except sqlite3.Error as error:
+        print("Failed!", error)
+    finally:
+        if conn:
+            conn.close()
+            print("Connection closed.")
