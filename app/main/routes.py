@@ -1,9 +1,9 @@
 from datetime import datetime
-import os
 from pathlib import Path
 import shutil
 import sqlite3
 from flask import current_app, flash, redirect, render_template, request, send_file, url_for
+from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, or_
 from app.main import main_bp
 from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
@@ -424,7 +424,12 @@ def database():
                 
                 # Check if the file is a Warranty app database
                 if is_warranty_app_database(backup_filename):
-                    # FIXME: Restore DB
+                    # Close connection to the current database
+                    # TODO
+                    
+                    
+                    
+                    
                     backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
                     
                     current_app.logger.info("Database restored.")
