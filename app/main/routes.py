@@ -3,9 +3,9 @@ from pathlib import Path
 import shutil
 import sqlite3
 from flask import current_app, flash, redirect, render_template, request, send_file, url_for
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, or_
 from app.main import main_bp
+from app.main.database import create_tables, drop_tables
 from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
@@ -426,11 +426,12 @@ def database():
                 if is_warranty_app_database(backup_filename):
                     # Close connection to the current database
                     # TODO
+                    drop_tables()
+                    create_tables()
                     
                     
                     
-                    
-                    backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                    # backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
                     
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
