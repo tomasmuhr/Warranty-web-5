@@ -424,15 +424,30 @@ def database():
                 
                 # Check if the file is a Warranty app database
                 if is_warranty_app_database(backup_filename):
-                    # Close connection to the current database
+                    try:
+                        # Change connection to the current database
+                        current_db_path = Path(db.engine.url.database).parent
+                        current_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
+                        backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+
+                        # Point SQLAlchemy to the current database
+                        current_app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{current_app.config['DB_NAME']}"
+
+                    except sqlite3.Error as error:
+                        print(error)
+                        print(current_app.config["SQLALCHEMY_DATABASE_URI"])
+                        print("Restoring database failed.")
+                    
+
+
+                    
                     # TODO
-                    drop_tables()
-                    create_tables()
-                    import_data()
+                    # drop_tables()
+                    # create_tables()
+                    # import_data()
                     
                     
                     
-                    # backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
                     
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
