@@ -5,7 +5,6 @@ import sqlite3
 from flask import current_app, flash, redirect, render_template, request, send_file, url_for
 from sqlalchemy import func, or_
 from app.main import main_bp
-from app.main.database import create_tables, drop_tables, import_data
 from app.main.forms import AddItemForm, PurgeDBForm, ShopForm, UploadDBFileForm
 from app.models import Date, Item, Shop
 from app import db
@@ -418,39 +417,40 @@ def database():
             # If file ok
             if file and allowed_file(file.filename):
                 # Save it and check validity
-                backup_filename = Path(db.engine.url.database).with_name(current_app.config["DB_NAME_BACKUP"])
+                uri_path = Path(db.engine.url.database).parent
+                backup_file_path = uri_path / current_app.config["DB_NAME_BACKUP"]
                 
-                file.save(backup_filename)
+                file.save(backup_file_path)
                 
                 # Check if the file is a Warranty app database
-                if is_warranty_app_database(backup_filename):
+                if is_warranty_app_database(backup_file_path):
                     try:
-                        # Change connection to the current database
-                        current_db_path = Path(db.engine.url.database).parent
+                        # Close current database connection
+                        db.session.close()
+                        db.engine.dispose()
+                        
+                        # Point connection to in-memory database
                         current_app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///:memory:"
-                        backup_filename.replace(Path(db.engine.url.database).with_name(current_app.config["DB_NAME"]))
+                        
+                        # Replace current database with the backup
+                        backup_file_path.replace(uri_path / current_app.config["DB_NAME"])
 
-                        # Point SQLAlchemy to the current database
+                        # Point SQLAlchemy back to the restored database
                         current_app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{current_app.config['DB_NAME']}"
 
                     except sqlite3.Error as error:
                         print(error)
-                        print(current_app.config["SQLALCHEMY_DATABASE_URI"])
                         print("Restoring database failed.")
-                    
-
-
-                    
-                    # TODO
-                    # drop_tables()
-                    # create_tables()
-                    # import_data()
-                    
-                    
-                    
+                        
+                        print("Pointing SQLAlchemy back to the original database.")
+                        current_app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{current_app.config['DB_NAME']}"
+                        print(current_app.config["SQLALCHEMY_DATABASE_URI"])
+                        
+                        return redirect(url_for("main.database"))
                     
                     current_app.logger.info("Database restored.")
                     flash("The database has been successfully restored.", category="success")
+                    
                 else:
                     current_app.logger.warning(f"Database restoration failed (not a Warranty App database file).")
                     flash("The file is not a Warranty App database!", category="danger")
