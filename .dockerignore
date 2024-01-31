@@ -1,5 +1,7 @@
 warranty.sqlite_bkp
 warranty.sqlite_bkp_corrupted
+warranty_dev.db
+warranty_dev_bkp.db
 Dockerfile_dev
 .dockerignore
 .gitignore
