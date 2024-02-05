@@ -3,12 +3,6 @@
 
 {% block app_content %}
     <div class="text-center">
-        <span>
-            <!-- TODO remove for production? -->
-            <button class="btn btn-sm btn-outline-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseDB" aria-expanded="false" aria-controls="collapseExample">
-                Database location
-            </button>
-        </span>
         <div class="collapse" id="collapseDB">
             <div class="card card-body">
                 {{ db_file }}
