@@ -36,9 +36,6 @@ class Item(db.Model):
     price_per_piece: Mapped[Optional[float]] = mapped_column(db.Float)
     comment: Mapped[str] = mapped_column(db.String(255))
     shop_id: Mapped[int] = mapped_column(ForeignKey("shop.id"), nullable=True)
-    # TODO orphans - does not delete orphan
-    # dates: Mapped[List["Date"]] = relationship("Date", backref="item",
-    #                                             cascade="all", passive_deletes=True)
     date: Mapped[List["Date"]] = relationship("Date", backref="item")
 
     def __repr__(self):
@@ -49,7 +46,6 @@ class Date(db.Model):
     __tablename__ = "date"
     
     id: Mapped[int] = mapped_column(db.Integer, primary_key=True)
-    # item_id: Mapped[int] = mapped_column(ForeignKey("item.id", ondelete="CASCADE"), nullable=False)
     item_id: Mapped[int] = mapped_column(ForeignKey("item.id"), nullable=False)
     warranty_months: Mapped[int] = mapped_column(db.Integer, nullable=False)
     purchase_date: Mapped[datetime.date] = mapped_column(db.Date(), nullable=False)
