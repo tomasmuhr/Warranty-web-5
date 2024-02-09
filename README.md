@@ -1,4 +1,4 @@
-## Title: Warranty Tracker App
+# Title: Warranty Tracker App
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
