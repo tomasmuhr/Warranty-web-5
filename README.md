@@ -1,12 +1,4 @@
-"# Warranty App 5" 
-1. Change .env to production and no debug
-2. docker build -t warranty .
-3. docker run --name warranty_app -d -p 8000:8000 -v warranty:/app/instance/ warranty:latest
-    -- or --
-    docker-compose up
-
-
-# Title: Warranty Tracker App
+## Title: Warranty Tracker App
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
@@ -20,9 +12,10 @@ The Warranty Tracker App allows you to store information about your purchased it
 
 2. Items: You can store information about the goods you are purchasing and the length of its warranty.
 
-3. Search: You can search items and shops based on their names, comments, addresses etc.
+3. Database: You can backup your database to a local file and restore it later.
 
-4. Database: You can backup your database to a local file and restore it later.
+4. Search: You can search items and shops based on their names, comments, addresses etc.
+
 
 ## Requirements
 
@@ -40,13 +33,13 @@ To install and use this project, please follow the steps below:
 4. Rename '.env-sample' to '.env'
 
 5. Build the docker image by running the command:
-   'docker build -t warranty .'
+   `docker build -t warranty .`
 
 5. Run the Docker container by running it directly or using docker-compose command:
-   a) run it directly: 'docker run --name warranty_app -d -p 8000:8000 -v warranty:/app/instance/ warranty:latest' or 
-   b) run it using docker-compose: 'docker-compose up'
+   - run it directly: `docker run --name warranty_app -d -p 8000:8000 -v warranty:/app/instance/ warranty:latest` or 
+   - run it using docker-compose: `docker-compose up`
 
-6. Navigate your browser to 'localhost:8000' and the Warranty App should appear
+6. Navigate your browser to `localhost:8000` and the Warranty Tracker App should appear
 
 ## Contributing
 
