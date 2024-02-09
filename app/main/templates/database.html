@@ -3,13 +3,6 @@
 
 {% block app_content %}
     <div class="text-center">
-        <div class="collapse" id="collapseDB">
-            <div class="card card-body">
-                {{ db_file }}
-            </div>
-        </div>
-        <br>
-        <br>
         <div class="row row-cols-1 row-cols-md-3 g-4">
             <div class="col">
                 <div class="card h-100">
@@ -74,6 +67,7 @@
                     <a href="#" class="w-50 h-50 mx-auto stretched-link" data-bs-toggle="modal" data-bs-target="#purgeDBModal">
                         <img src="../main/pictures/database.png" class="card-img-top" alt="Purge DB">
                     </a>
+                    
                     <!-- Modal -->
                     <div class="modal fade" id="purgeDBModal" tabindex="-1" role="dialog" aria-labelledby="purgeDBModal" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -87,8 +81,10 @@
                                     <h5 class="text-red">Warning!</h5>
                                     <p class="text-red">The records will be permanently deleted.</p>
                                     <br>
-                                    {{ render_form(purge_db_form,
-                                        button_size="sm") }}
+                                    <div class="w-50 mx-auto">
+                                        {{ render_form(purge_db_form,
+                                            button_size="sm") }}
+                                    </div>
                                 </div>
                             </div>
                         </div>

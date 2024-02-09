@@ -391,8 +391,6 @@ def delete_item(item_id: int, redirect_to: str, query: str):
 # DATABASE
 @main_bp.route("/database", methods=['GET', 'POST'])
 def database():
-    db_file = db.engine.url.database
-    
     # Restore DB form
     upload_db_file_form = UploadDBFileForm()
     purge_db_form = PurgeDBForm()
@@ -478,7 +476,7 @@ def database():
             
             return redirect(url_for("main.database"))
     
-    return render_template("database.html", title="Database", db_file=db_file,
+    return render_template("database.html", title="Database",
                            upload_db_file_form=upload_db_file_form,
                            purge_db_form=purge_db_form)
 
