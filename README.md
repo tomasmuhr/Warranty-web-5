@@ -36,8 +36,10 @@ To install and use this project, please follow the steps below:
    `docker build -t warranty .`
 
 5. Run the Docker container by running it directly or using docker-compose command:
-   - run it directly: `docker run --name warranty_app -d -p 8000:8000 -v warranty:/app/instance/ warranty:latest` or 
-   - run it using docker-compose: `docker-compose up`
+   - run it directly:
+   `docker run --name warranty_app -d -p 8000:8000 -v warranty:/app/instance/ warranty:latest` or 
+   - run it using docker-compose:
+   `docker-compose up`
 
 6. Navigate your browser to `localhost:8000` and the Warranty Tracker App should appear
 
